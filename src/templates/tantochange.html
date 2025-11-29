@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html lang="ja" xml:lang="ja" xmlns="https://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<title>担当変更</title>
+<link href="/css/baselayout.css" type="text/css" rel="stylesheet" media="all" />
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/blitzer/jquery-ui.css" rel="stylesheet" type="text/css"/><!-- jquery UI のcss-->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js"></script><!-- jquery　本体-->
+<script type="text/javascript"  src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js"></script><!-- jquery-UI　本体-->
+<script type="text/javascript">
+
+$(document).ready(function(){
+  $("#datetimelist").scrollTop($("#datetimelist")[0].scrollHeight);
+});
+
+function sousin(val){
+  $('#com').val(val);
+  $("#mainform").submit();
+}
+</script>
+</head>
+
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0">
+<div class='matching01content'>
+<form action="tantochange.html" method="post" name="mainform" id='mainform'>
+
+
+<h1>担当変更</h1>
+
+<div class='contents-head01'>
+<h1>担当を変更します</h1>
+</div>
+
+{% if message%}
+<div class='contents-head01'>
+<h1>{{message}}</h1>
+</div>
+{% endif %}
+
+<div class='contents-input'>
+
+　旧担当 
+<select name="oldtanto" size="1">
+<option value="" ></option>
+{% for e in tanto %}
+<option value="{{e.key}}" >{{e.name}}</option>
+{% endfor %}
+</select>
+　
+→
+　新担当
+<select name="tanto" size="1">
+<option value="" ></option>
+{% for e in tanto %}
+<option value="{{e.key}}" >{{e.name}}</option>
+{% endfor %}
+</select>
+
+
+<input type=button onClick="sousin('メール送信');" value='実行'>
+</div>
+</form>
+</div>
+</body>
+</html>

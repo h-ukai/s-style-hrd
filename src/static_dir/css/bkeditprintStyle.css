@@ -1,0 +1,194 @@
+@charset "utf-8";
+
+* {
+	font-family: 'ＭＳ Ｐゴシック';
+}
+
+BODY {
+	background-color: #FFFFFF;
+}
+
+/* Link */
+  A:link    { color: BLUE ;}
+  A:visited { color: BLUE ;}
+  A:hover   { color: BLUE ;}
+
+/* Title */
+  .tit1 { width: 188px; height: 30pt; font-size: 14pt ;}  /* システム名         */
+  .tit2 { width: 400px; height: 30pt; font-size: 16pt ;}  /* 画面名             */
+  .tit3 { width: 200px; height: 30pt; font-size: 12pt ;}  /* ログインユーザー名 */
+  .tit4 { width: 200px; height: 30pt; font-size: 12pt ;}  /* 対象局署名         */
+
+
+.nonprint {
+ display : none;}
+div.header {
+ display : none;}
+div.footer {
+ display : none;}
+
+.imeActive{
+	ime-mode: active;
+}
+
+.imeDisabled{
+	ime-mode: disabled;
+}
+
+font {
+ color : #000000;}
+/* 注意書き用 */
+font.Disclaimer {
+font-size: 10px;
+}
+
+/* 外周テーブル印刷用 */
+table.outerTable {
+	width:99%;
+	border:none #FFFFFF 0px;
+	margin-left:auto;
+ 	margin-right:auto;
+	text-align:center;
+	border-collapse: collapse;
+}
+table.innerTable {
+	width:100%;
+	background-color:#999999;
+	margin-left:auto;
+ 	margin-right:auto;
+	text-align:center;
+	border-collapse: collapse;
+}
+/* ヘッダ用 */
+.menu_mg {
+    margin-top : 10%;
+}
+
+/* レイアウト編集画面用 */
+.div_80 {width:80%;};
+.bg_green {width:40%; background-color:#ccff00;};
+.bg_blank {height:300px;};
+.bg_img {height:720px;width:860px;background-color:#f7f5eb;};
+
+
+td {
+	font-size : 9pt;
+
+}
+
+/* 思索ソース */
+/* テーブル　インデックス */
+td.centerTd {
+	text-align:center;
+	border:solid #000000 1px;
+
+}
+/* テーブル　値 */
+td.leftTd {
+	text-align:left;
+	border:solid #000000 1px;
+}
+/* テーブル　大分類インデックス用幅 */
+td.indexWidth {
+	width:20%;
+	border:solid #000000 1px;
+}
+/* 一覧表のタイトル（白項目） */
+.listColorWhite {
+	background-color: #FFFFFF;
+	border:solid #000000 1px;
+}
+/* 一覧表のタイトル（白項目） */
+.listTableColorA {
+	background-color: #FFFFFF;
+	font-size: x-small;
+	border:solid #000000 1px;
+}
+.listTableColorB {
+	background-color: #FFFFFF;
+	border:solid #000000 1px;
+}
+/* 一覧表のタイトル（通常項目） */
+.indexTableColorA {
+	background-color: #f7f5eb;
+	border:solid 1px #000000;
+}
+/* 一覧表のタイトル（必須項目） */
+.indexTableColorB {
+	background-color: #f7f5eb;
+	border:solid 1px #000000;
+}
+/* 一覧表のタイトル（全角項目） */
+.indexTableColorC {
+	background-color: #f7f5eb;
+	color: #009900;
+	border:solid 1px #000000;
+}
+/* メニュー　お知らせメニュー用　大分類 */
+.tableIndexForOshiraseMenu {
+	font-size: large;
+	font-weight: bold;
+	color: white;
+	background-color : #0066FF;
+	text-align: center;
+	border:solid #000000 1px;
+}
+/* メニュー　Mｙレインズ用　大分類 */
+.tableIndexForMyReins {
+	font-size: large;
+	font-weight: bold;
+	color: white;
+	background-color : #FF0000;
+	text-align: center;
+	border:solid #000000 1px;
+}
+/* メニュー　会員用　大分類 */
+.tableIndexForKaiin {
+	font-size: large;
+	font-weight: bold;
+	color: white;
+	background-color : #FF0000;
+	text-align: center;
+	border:solid #000000 1px;
+}
+/* メニュー　物件用　大分類 */
+.tableIndexForBukken {
+	font-size: large;
+	font-weight: bold;
+	color: white;
+	background-color : #009933;
+	text-align: center;
+	border:solid #000000 1px;
+}
+/* メニュー　その他検索用　大分類 */
+.tableIndexForKensaku {
+	font-size: large;
+	font-weight: bold;
+	color: white;
+	background-color : #666666;
+	text-align: center;
+	border:solid #000000 1px;
+}
+/* 大分類 */
+.indexStyleA {
+	font-size: large;
+	font-weight: bold;
+	color: white;
+	background-color : #006633;
+	border:solid #000000 1px;
+}
+/* 中分類 */
+.indexStyleB {
+	font-size: medium;
+	font-weight: bold;
+	color: white;
+	background-color : #666600;
+	border:solid #000000 1px;
+}
+/* 小分類 */
+.indexStyleC {
+	font-size: small;
+	font-weight: bold;
+	background-color: #99CC99;
+	border:solid #000000 1px;
+}

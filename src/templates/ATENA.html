@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="/css/atena.css" rel="stylesheet" type="text/css" media="all">
+</head>
+
+<body>
+
+
+<div id="B4PrintAria">
+
+
+<div class="AtenaBox">
+
+{% for item in memlist %}
+
+
+{% if forloop.counter|divisibleby:"3" %}
+</div>
+<div class="AtenaBox">
+{% endif %}
+
+
+<!--宛名-->
+<ul class="wrap">
+<li class="Yuubin1">　〒{{item.zip}}</li>
+<li class="Address1">　{{item.address}}</li>
+<li class="Name1">　{{item.name}} 様</li>
+</ul>
+<!--宛名-->
+
+
+{% endfor %}
+
+</div>
+
+
+</div>
+
+</body>
+
+</html>

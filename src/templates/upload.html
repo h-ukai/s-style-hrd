@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+  <title>File Hangar: Upload file</title>
+  <link rel="stylesheet" type="text/css" href="/js/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css">
+
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+<!-- production -->
+<script type="text/javascript" src="/js/plupload/plupload.full.min.js"></script>
+<script type="text/javascript" src="/js/plupload/jquery.plupload.queue/jquery.plupload.queue.js"></script>
+
+<!-- debug 
+<script type="text/javascript" src="/js/plupload/moxie.js"></script>
+<script type="text/javascript" src="/js/plupload/plupload.dev.js"></script>
+<script type="text/javascript" src="/js/plupload/jquery.plupload.queue/jquery.plupload.queue.js"></script>
+-->
+
+<!-- old 
+
+  <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+  <script type="text/javascript" src="/js/plupload/plupload.full.js"></script>
+  <script type="text/javascript" src="/js/plupload/jquery.plupload.queue/jquery.plupload.queue.js"></script>
+  <script type="text/javascript" src="/js/plupload/browserplus2.4.21-min.js"></script>
+  <script type="text/javascript" src="/js/plupload/i18n/ja.js"></script>
+
+-->
+
+
+
+  <script type="text/javascript">
+    var vars = getUrlVars();
+
+
+$(function() {
+	// Setup html5 version
+	$("#uploader").pluploadQueue({
+		// General settings
+		runtimes : 'html5,flash,silverlight,html4',
+		url : '/upload.htmlxx',
+		chunk_size: '1000mb', //limit 2000mb
+		rename : true,
+		dragdrop: true,
+		
+		filters : {
+			// Maximum file size
+			max_file_size : '0',
+			// Specify what files to browse for
+			mime_types: [
+				{title : "Image files", extensions : "*"},
+				{title : "Zip files", extensions : "*"}
+			]
+		},
+		flash_swf_url : '/js/plupload/js/Moxie.swf',
+		silverlight_xap_url : '/js/plupload/js/Moxie.xap',
+		init: {
+      BeforeUpload: function(up, file) {
+        $.ajax({
+            url: '/FileUploadFormHandler/generate_upload_url',
+            data:{  
+                    CorpOrg_key:vars["CorpOrg_key"] ,
+                    Branch_Key:vars["Branch_Key"] ,
+                    bkID:vars["bkID"]
+                 },
+            async: false,
+            success: function(data) {
+              up.settings.url = data;
+            }
+        });
+      }
+		}
+	});
+});
+
+
+    function getUrlVars() 
+    { 
+        var vars = [], hash; 
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&'); 
+        for(var i = 0; i < hashes.length; i++) { 
+            hash = hashes[i].split('='); 
+            vars.push(hash[0]); 
+            vars[hash[0]] = hash[1]; 
+        } 
+    return vars; 
+    }
+  </script>
+</head>
+<body>
+  <h1>ファイルアップロードツールv2</h1>
+<form ..>
+    <div id="uploader">
+        <p>Your browser doesn't have Flash, Silverlight, Gears, BrowserPlus or HTML5 support.</p>
+    </div>
+</form>
+</body>
+</html>

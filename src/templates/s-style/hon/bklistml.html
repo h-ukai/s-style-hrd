@@ -1,0 +1,243 @@
+<html lang="ja">
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0">
+<div align="center">
+<table width="100%" border="0" cellspacing="0" cellpadding="10" background="">
+<tr>
+<td style="background-image:url(https://baikyaku.net/chikusaku/mailimg/01.jpg);background-position: 0% 0%;background-repeat:repeat-x;" align="center" valign="top">
+{{subject}}
+<br>
+<br>
+<table width="95%" border="0" cellspacing="4" cellpadding="18" bgcolor="#f7dfa5">
+<tr>
+<td align="left" bgcolor="#ffffee">
+<p>{{body|safe|linebreaks}}</p>
+</td>
+</tr>
+</table>
+<br>
+<br>
+<br>
+
+
+{% if data.bkdatalist %}
+<table width="95%" border="0" cellspacing="3" cellpadding="3" bgcolor="#ffca29">
+<tr>
+<td align="center" bgcolor="#ff8311"><font size="+3" color="white">特選情報</font></td>
+</tr>
+</table>
+{% endif %}
+
+
+<p>{% for bkdata in data.bkdatalist %}</p>
+<table width="95%" border="0" cellspacing="2" cellpadding="2" bgcolor="#c9caca">
+<tr>
+<td bgcolor="white">
+<table width="100%" border="0" cellspacing="5" cellpadding="0">
+<tr>
+<td align="center" bgcolor="#f4f0e5" width="110"><a href="{{data.bkdataurl}}{{bkdata.bkdata.bkID}}" target="_blank"><img src="{{bkdata.picdata.0.bloburl}}" alt="" width="74" height="110" border="0"></a></td>
+<td align="left" valign="top">
+<table width="100%" border="0" cellspacing="5" cellpadding="0" background="https://www.chikusaku-mansion.com/chikusa/cmn_img/t-back-chikusa.jpg">
+<tr>
+<td bgcolor="#ff8311" width="2"></td>
+<td>{{bkdata.bkdata.ttmnmi}}　{{bkdata.bkdata.tdufknmi|default:""}}{{bkdata.bkdata.shzicmi1|default:""}}{{bkdata.bkdata.shzicmi2|default:""}}</td>
+</tr>
+</table>
+<br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td align="left"><font color="#ff8311">●</font>交　通 　{{bkdata.bkdata.ekmi1|default:""}} {{bkdata.bkdata.ekmi2|default:""}} {{bkdata.bkdata.ekmi3|default:""}} 駅 <br>
+<font color="#ff8311">●</font>間　取　 {{bkdata.bkdata.mdrHysu1|floatformat|default:""}}{{bkdata.bkdata.mdrTyp1|default:""}}
+                    {% if bkdata.bkdata.stTyp11%}
+                    {% if bkdata.bkdata.stHrs11 %}
+                    {{bkdata.bkdata.stHrs11}}帖
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu11 %}
+                    ×{{bkdata.bkdata.stsu11}}
+                    {% endif %}
+                    {% endif %}
+                     
+                    {% if bkdata.bkdata.stTyp21 %}
+                    {% if bkdata.bkdata.stHrs21 %}
+                    {{bkdata.bkdata.stHrs21}}帖
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu21 %}
+                    ×{{bkdata.bkdata.stsu21}}
+                    {% endif %}
+                    {% endif %}
+                     
+                    {% if bkdata.bkdata.stTyp31 %}
+                    {% if bkdata.bkdata.stHrs31 %}
+                    {{bkdata.bkdata.stHrs31}}帖
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu31 %}
+                    ×{{bkdata.bkdata.stsu31}}
+                    {% endif %}
+                    {% endif %}
+                     
+                    {% if bkdata.bkdata.stTyp41 %}
+                    {% if bkdata.bkdata.stHrs41 %}
+                    {{bkdata.bkdata.stHrs41}}帖
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu41 %}
+                    ×{{bkdata.bkdata.stsu41}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if bkdata.bkdata.stTyp51 %}
+                    {% if bkdata.bkdata.stHrs51 %}
+                    {{bkdata.bkdata.stHrs51}}帖
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu51 %}
+                    ×{{bkdata.bkdata.stsu51}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if bkdata.bkdata.stTyp61 %}
+                    {% if bkdata.bkdata.stHrs61 %}
+                    {{bkdata.bkdata.stHrs61}}帖
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu61 %}
+                    ×{{bkdata.bkdata.stsu61}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if bkdata.bkdata.stTyp71 %}
+                    {% if bkdata.bkdata.stHrs71 %}
+                    {{bkdata.bkdata.stHrs71}}帖
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu71 %}
+                    ×{{bkdata.bkdata.stsu71}}
+                    {% endif %}
+                    {% endif %}                  
+                  <br>
+<font color="#ff8311">●</font>
+価　格 　{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default:""}}万円（税込）{% endif %}
+<br>
+
+<font color="#ff8311">●</font>最寄駅　 {% if bkdata.bkdata.ekmi1 %} 
+                    {{bkdata.bkdata.ensnmi1}}
+                    {{bkdata.bkdata.ekmi1}}駅
+                    {% if bkdata.bkdata.thHn11 %}
+                    徒歩約{{bkdata.bkdata.thHn11|floatformat}}分
+                    {% endif %}
+                    {% if bkdata.bkdata.thM21 %}
+                    徒歩約{{bkdata.thM21|floatformat}}ｍ
+                    {% endif %}
+                    {% if bkdata.bkdata.bs1 %}
+                    {{bkdata.bkdata.bs1|floatformat}}
+                    {% endif %}
+                    {% if bkdata.bkdata.bsRsnmi1 %}
+                    {{bbkdata.kdata.bsRsnmi1|floatformat}}
+                    {% endif %}
+                    {% if bkdata.bkdata.bstiMishu1 %}
+                    {{bkdata.bstiMishu1}}
+                    {% endif %}
+                    {% if bkdata.bkdata.tihHn1 %}
+                    徒歩 {{bkdata.bkdata.tihHn1|floatformat}} 分
+                    {% endif %}
+                    {% if bkdata.bkdata.tihM1 %}
+                    徒歩 {{bkdata.tihM1|floatformat}} ｍ
+                    {% endif %}
+                    {% if bkdata.bkdata.krmKm1 %}
+                    車 {{bkdata.bkdata.krmKm1|floatformat}} km
+                    {% endif %}
+                  {% endif %}
+                  {% if bkdata.bkdat.bkdata.ekmi2 %}
+                    {{bkdata.bkdata.ensnmi2}}
+                    {{bkdata.bkvdata.ekmi2}}駅
+                    {% if bkdata.bkdata.thHn12 %}
+                    徒歩約{{bkdata.thHn12|floatformat}}分
+                    {% endif %}
+                    {% if bkdata.thM22 %}
+                    徒歩約{{bkdata.thM22|floatformat}}ｍ
+                    {% endif %}
+                    {% if bkdata.bs2 %}
+                    {{bkdata.bs2}}
+                    {% endif %}
+                    {% if bkdata.bsRsnmi2 %}
+                    {{bkdata.bsRsnmi2}}
+                    {% endif %}
+                    {% if bkdata.bstiMishu2%}
+                    {{bkdata.bstiMishu2}}
+                    {% endif %}
+                    {% if bkdata.tihHn2 %}
+                    徒歩 {{bkdata.tihHn2|floatformat}} 分
+                    {% endif %}
+                    {% if bkdata.tihM2 %}
+                    徒歩 {{bkdata.tihM2|floatformat}} ｍ
+                    {% endif %}
+                    {% if bkdata.krmKm2 %}
+                    車 {{bkdata.krmKm2|floatformat}} km
+                    {% endif %}
+                  {% endif %}
+                  {% if bkdata.ekmi3 %} <br>
+　　　　　　　　　　　　{{bkdata.ensnmi3}}
+                    {{bkdata.ekmi3}}駅
+                    {% if bkdata.thHn13 %}
+                    徒歩約{{bkdata.thHn13|floatformat}}分
+                    {% endif %}
+                    {% if bkdata.thM23 %}
+                    徒歩約{{bkdata.thM23|floatformat}}ｍ
+                    {% endif %}
+                    {% if bkdata.bs3 %}
+                    {{bkdata.bs3}}
+                    {% endif %}
+                    {% if bkdata.bsRsnmi3 %}
+                    {{bkdata.bsRsnmi3}}
+                    {% endif %}
+                    {% if bkdata.bstiMishu3%}
+                    {{bkdata.bstiMishu3}}
+                    {% endif %}
+                    {% if bkdata.tihHn3 %}
+                    徒歩 {{bkdata.tihHn3|floatformat}} 分
+                    {% endif %}
+                    {% if bkdata.tihM3 %}
+                    徒歩 {{bkdata.tihM3|floatformat}} ｍ
+                    {% endif %}
+                    {% if bkdata.krmKm3 %}
+                    車 {{bkdata.krmKm3|floatformat}} km
+                    {% endif %}
+                    {% endif %}
+                    {% if bkdata.sntKutuShdn %}
+                    {{bkdata.sntKutuShdn}}
+                    {% endif %}
+                    {% if bkdata.kutuHn %}
+                    {{bkdata.kutuHn|floatformat}}分
+                    {% endif %}
+                    {% if bkdata.kutuM %}
+                    {{bkdata.kutuM|floatformat}}ｍ
+                    {% endif %}
+                    <p align="right" valign="bottom"><a href="{{data.bkdataurl}}{{bkdata.bkdata.bkID}}" target="_blank"><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="詳しくはこちら" width="107" height="19" border="0" vspace="3"></a></p>
+                  </td>
+
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<br>
+{% endfor %}
+<br>
+<br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#fff7e4" height="53">
+<tr>
+<td align="center" valign="bottom">
+<table width="100%" border="0" cellspacing="3" cellpadding="0" bgcolor="#ff8311">
+<tr>
+<td class="class10white" align="left"><font size="-2" color="#ffffee">株式会社 S-Style　〒464-0821 名古屋市千種区末盛通一丁目1番地 弘法屋本店ビル3Ｂ　TEL 052-751-5900　FAX 052-751-8100</font></td>
+<td class="class10white" align="right"><font size="-2" color="white">Copyright(C)2006 S-Style All rights reserved.</font></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</div>
+</body>
+
+</html>

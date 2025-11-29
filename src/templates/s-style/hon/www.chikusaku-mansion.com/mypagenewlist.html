@@ -1,0 +1,76 @@
+{% extends "mypagebase.html" %}
+
+{% block title %}{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block container %}
+<img src="img/t-list.jpg" alt="" width="795" height="43" border="0">
+<!--contents-01-->
+<div class="contents01">
+<span class="class-orange">●</span>物件検索条件の一覧です。50件まで登録できます。　　<input type="submit" name="submitButtonName" value="新しい検索条件の作成"></div>
+<!--contents01-END-->
+<!--contents02-->
+<div class="contents02">
+<input type="submit" name="submitButtonName" value="選択した物件を削除"><br>
+<br>
+					<table border="0" cellspacing="1" cellpadding="6" bgcolor="#949494">
+<tr>
+<td align="left" bgcolor="#ede1c8">選択</td>
+<td align="left" bgcolor="#ede1c8">更新日</td>
+<td align="left" bgcolor="#ede1c8" width="400">検索条件</td>
+<td align="center" bgcolor="#ede1c8">該当<br>
+物件数</td>
+<td align="center" bgcolor="#ede1c8">物件一覧</td>
+</tr>
+<tr>
+<td bgcolor="white"><input type="checkbox" name="checkboxName" value="checkboxValue"></td>
+<td bgcolor="white">
+<p>2011/07/23<br>
+13:44:02 </p>
+</td>
+<td bgcolor="white" width="400">岐阜県/岐阜市/岐阜市三里小学校/売り物件/マンション等/中古マンション/2011年4月20日以降に登録されたもの</td>
+<td align="center" bgcolor="white">5</td>
+<td bgcolor="white"><input type="submit" name="submitButtonName" value="詳細を表示する"></td>
+</tr>
+<tr>
+<td bgcolor="white"><input type="checkbox" name="checkboxName" value="checkboxValue"></td>
+<td bgcolor="white">
+<p>2010/09/12<br>
+16:47:23 </p>
+</td>
+<td bgcolor="white" width="400">岐阜県/岐阜市/売り物件/マンション等/中古マンション/価格1000万円以上1500万円以下/2010年8月12日以降に登録されたもの</td>
+<td align="center" bgcolor="white">2</td>
+<td bgcolor="white"><input type="submit" name="submitButtonName" value="詳細を表示する"></td>
+</tr>
+<tr>
+<td bgcolor="white"><input type="checkbox" name="checkboxName" value="checkboxValue"></td>
+<td bgcolor="white">2010/03/19<br>
+13:51:36 </td>
+<td bgcolor="white" width="400">岐阜県/関市/売り物件/一戸建住宅等/2010年2月19日以降に登録されたもの</td>
+<td align="center" bgcolor="white">4</td>
+<td bgcolor="white"><input type="submit" name="submitButtonName" value="詳細を表示する"></td>
+</tr>
+<tr>
+<td bgcolor="white"><input type="checkbox" name="checkboxName" value="checkboxValue"></td>
+<td bgcolor="white">2009/06/13<br>
+	10:29:24</td>
+<td bgcolor="white" width="400">愛知県/犬山市/売り物件/土地/土地坪45坪以上/2009年5月13日以降に登録されたもの</td>
+<td align="center" bgcolor="white">1</td>
+<td bgcolor="white"><input type="submit" name="submitButtonName" value="詳細を表示する"></td>
+</tr>
+<tr>
+<td bgcolor="white"><input type="checkbox" name="checkboxName" value="checkboxValue"></td>
+<td bgcolor="white">2007/07/13<br>
+19:11:25 </td>
+<td bgcolor="white" width="400">岐阜県/岐阜市のある地点を中心とした64km四方/売り物件/土地/土地坪1000坪以上/2007年6月13日以降に登録されたもの</td>
+<td align="center" bgcolor="white">3</td>
+<td bgcolor="white"><input type="submit" name="submitButtonName" value="詳細を表示する"></td>
+</tr>
+</table>
+				</div>
+<!--content02END-->
+
+{% endblock %}

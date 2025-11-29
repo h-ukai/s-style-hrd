@@ -1,0 +1,288 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html lang="ja" xml:lang="ja" xmlns="https://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<title>物件状況リスト</title>
+<link href="../css/styles.css" type="text/css" rel="stylesheet" media="all" />
+<link href="../css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script><!-- jquery　本体-->
+<script type="text/javascript"  src="../js/jquery-ui-1.8.16.custom.min.js"></script><!-- jquery-UI　本体-->
+<script type="text/javascript" src="../js/jTPS.js"></script>
+
+<link rel="stylesheet" type="text/css" href="../css/jTPS.css">
+
+<style>
+
+body {
+	font-family: Tahoma;
+	font-size: 9pt;
+}
+#tbl thead th {
+	white-space: nowrap;
+	overflow-x:hidden;
+	padding: 3px;
+}
+#tbl tbody td {
+	padding: 3px;
+}
+
+#appended{
+	white-space: nowrap;
+}
+</style>
+
+<script type="text/javascript">
+
+//ここ編集したら下の<th>タグも編集すること
+var flist = new Array("物件番号","作成状況","自社管理欄","業者名","代表電話番号","データ元",
+"広告転載区分","売買賃貸区分","物件種目","価格","所在地名1","所在地名2","所在地名3","建物名","部屋番号",
+"建物面積1","専有面積","建物構造","築年月(西暦)","坪単価","登記簿地目","土地面積","現況有姿分譲地",
+"接道方向1","接道方向2","接道状況","用途地域(1)","備考1","備考2","確認年月日","変更年月日","更新年月日","登録年月日");
+
+
+
+$(document).ready(function(){
+		$("select#jokyoName").change(function(){
+			$("#tbl tbody").empty();
+			$(".sortableHeader").removeClass('sortDesc').removeClass('sortAsc');
+			if ($("select#jokyoName").val()){
+	            $.ajax({
+	                url: "/jsonservice",
+	                dataType: "jsonp",
+	                data: {
+	                    com: "BKdata",
+	                    floatformat:"true",
+	                    //sksijky:"資料請求"
+	                    sksijky:$("select#jokyoName").val()
+	                },
+	                success: function(rows) {
+	                    //テーブルとして表示するため、htmlを構築
+						for (var i=0;i<rows.length;i++) {
+							$("#tbl tbody").append($("<tr/>").attr("id","tr" + i));
+							var row = rows[i];
+							for (var j=0;j<flist.length;j++) {
+								if(row[flist[j]]!=null){
+									if (flist[j] == "物件番号"){
+										$("#tr" + i).append(
+											$("<td/>").append(
+												$("<a/>").attr("href","../bkdchk.html?bkID=" + row[flist[j]]).text("⇒").attr("target","_blank")
+											),
+											$("<td/>").append(
+												$("<a/>").attr("href","../bkedit.html?bkID=" + row[flist[j]]).text(row[flist[j]]).attr("target","_blank")
+											)
+										);
+									}
+									else {
+										$("#tr" + i).append($("<td/>").attr("id","appended").text(row[flist[j]])) ;
+									}
+								}else{
+										$("#tr" + i).append($("<td/>").attr("id","appended")) ;
+								}
+							}
+						}
+
+
+						$('#tbl').jTPS( {perPages:[20,50,'ALL'],scrollStep:1,scrollDelay:30,
+							clickCallback:function () {
+								// target table selector
+								var table = '#tbl';
+								// store pagination + sort in cookie
+								//document.cookie = 'jTPS=sortasc:' + $(table + ' .sortableHeader').index($(table + ' .sortAsc')) + ',' +
+								//	'sortdesc:' + $(table + ' .sortableHeader').index($(table + ' .sortDesc')) + ',' +
+								//	'page:' + $(table + ' .pageSelector').index($(table + ' .hilightPageSelector')) + ';';
+							}
+						});
+	/*
+						// reinstate sort and pagination if cookie exists
+						var cookies = document.cookie.split(';');
+						for (var ci = 0, cie = cookies.length; ci < cie; ci++) {
+							var cookie = cookies[ci].split('=');
+							if (cookie[0] == 'jTPS') {
+								var commands = cookie[1].split(',');
+								for (var cm = 0, cme = commands.length; cm < cme; cm++) {
+									var command = commands[cm].split(':');
+									if (command[0] == 'sortasc' && parseInt(command[1]) >= 0) {
+										$('#tbl .sortableHeader:eq(' + parseInt(command[1]) + ')').click();
+									} else if (command[0] == 'sortdesc' && parseInt(command[1]) >= 0) {
+										$('#tbl .sortableHeader:eq(' + parseInt(command[1]) + ')').click().click();
+									} else if (command[0] == 'page' && parseInt(command[1]) >= 0) {
+										$('#tbl .pageSelector:eq(' + parseInt(command[1]) + ')').click();
+									}
+								}
+							}
+						}
+						// bind mouseover for each tbody row and change cell (td) hover style
+						$('#tbl tbody tr:not(.stubCell)').live('mouseover mouseout',
+							function (e) {
+								// hilight the row
+								e.type == 'mouseover' ? $(this).children('td').addClass('hilightRow') : $(this).children('td').removeClass('hilightRow');
+							}
+						);
+	*/
+	                }
+	            });
+			}
+       });
+	$('#tbl').jTPS( {perPages:[20,50,'ALL'],scrollStep:1,scrollDelay:30,
+		clickCallback:function () {
+			// target table selector
+			var table = '#tbl';
+			// store pagination + sort in cookie
+			document.cookie = 'jTPS=sortasc:' + $(table + ' .sortableHeader').index($(table + ' .sortAsc')) + ',' +
+				'sortdesc:' + $(table + ' .sortableHeader').index($(table + ' .sortDesc')) + ',' +
+				'page:' + $(table + ' .pageSelector').index($(table + ' .hilightPageSelector')) + ';';
+		}
+	});
+	// reinstate sort and pagination if cookie exists
+/*
+	var cookies = document.cookie.split(';');
+	for (var ci = 0, cie = cookies.length; ci < cie; ci++) {
+		var cookie = cookies[ci].split('=');
+		if (cookie[0] == 'jTPS') {
+			var commands = cookie[1].split(',');
+			for (var cm = 0, cme = commands.length; cm < cme; cm++) {
+				var command = commands[cm].split(':');
+				if (command[0] == 'sortasc' && parseInt(command[1]) >= 0) {
+					$('#tbl .sortableHeader:eq(' + parseInt(command[1]) + ')').click();
+				} else if (command[0] == 'sortdesc' && parseInt(command[1]) >= 0) {
+					$('#tbl .sortableHeader:eq(' + parseInt(command[1]) + ')').click().click();
+				} else if (command[0] == 'page' && parseInt(command[1]) >= 0) {
+					$('#tbl .pageSelector:eq(' + parseInt(command[1]) + ')').click();
+				}
+			}
+		}
+	}
+*/
+	// bind mouseover for each tbody row and change cell (td) hover style
+/*
+	$('#tbl tbody tr:not(.stubCell)').live('mouseover mouseout',
+		function (e) {
+			// hilight the row
+			e.type == 'mouseover' ? $(this).children('td').addClass('hilightRow') : $(this).children('td').removeClass('hilightRow');
+		}
+	);
+*/
+	$(document).on('mouseover', '#tbl tbody tr:not(.stubCell)',
+		function (e) {
+			// hilight the row
+			$(this).children('td').addClass('hilightRow') ;
+		}
+	);
+
+	$(document).on('mouseout', '#tbl tbody tr:not(.stubCell)',
+		function (e) {
+			// hilight the row
+			$(this).children('td').removeClass('hilightRow');
+		}
+	);
+
+});
+
+
+
+</script>
+
+</head>
+
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0">
+<div align="center">
+<br />
+<table width="1500" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td align="left">
+<h2>物件状況リスト</h2>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td align="left">
+<table width="100%" border="0" cellspacing="1" cellpadding="5">
+<tr>
+<td>状況　<select id="jokyoName" name="jokyoName" size="1">
+<option value="" selected></option>
+<option value="請求チェック">請求チェック</option>
+<option value="一覧のみ">一覧のみ</option>
+<option value="資料請求">資料請求</option>
+<option value="依頼中">依頼中</option>
+<option value="入手不可">入手不可</option>
+<option value="入手済み">入手済み</option>
+<option value="分類チェック">分類チェック</option>
+<option value="不要">不要</option>
+<option value="未作成">未作成</option>
+<option value="作成済み">作成済み</option>
+<option value="HP掲載">HP掲載</option>
+</select></td>
+</tr>
+</table>
+</td>
+<td align="left" valign="top" width="10"></td>
+<td align="left" valign="top">
+</td>
+</tr>
+</table>
+<br />
+<br />
+
+<div style="width:1500px; overflow-x:scroll;">
+<table name="tbl" id ="tbl" style="border: 1px solid #ccc;" cellspacing="0" >
+	<thead id="tblthead">
+		<tr>
+		<th sort=重複チェック>重複チェック</th>
+		<th sort=物件番号>物件番号</th>
+		<th sort=作成状況>作成状況</th>
+		<th sort=自社管理欄>自社管理欄</th>
+		<th sort=業者名>業者名</th>
+		<th sort=代表電話番号>代表電話番号</th>
+		<th sort=データ元>データ元</th>
+		<th sort=広告転載区分>広告転載区分</th>
+		<th sort=売買賃貸区分>売買賃貸区分</th>
+		<th sort=物件種目>物件種目</th>
+		<th sort=価格>価格</th>
+		<th sort=所在地名1>所在地名1</th>
+		<th sort=所在地名2>所在地名2</th>
+		<th sort=所在地名3>所在地名3</th>
+		<th sort=建物名>建物名</th>
+		<th sort=部屋番号>部屋番号</th>
+		<th sort=建物面積1>建物面積1</th>
+		<th sort=専有面積>専有面積</th>
+		<th sort=建物構造>建物構造</th>
+		<th sort=築年月(西暦)>築年月(西暦)</th>
+		<th sort=坪単価>坪単価</th>
+		<th sort=登記簿地目>登記簿地目</th>
+		<th sort=土地面積>土地面積</th>
+		<th sort=現況有姿分譲地>現況有姿分譲地</th>
+		<th sort=接道方向1>接道方向1</th>
+		<th sort=接道方向2>接道方向2</th>
+		<th sort=接道状況>接道状況</th>
+		<th sort=用途地域(1)>用途地域(1)</th>
+		<th sort=備考1>備考1</th>
+		<th sort=備考2>備考2</th>
+		<th sort=確認年月日>確認年月日</th>
+		<th sort=変更年月日>変更年月日</th>
+		<th sort=更新年月日>更新年月日</th>
+		<th sort=登録年月日>登録年月日</th>
+		</tr>
+	</thead>
+	<tbody id="tbltbody">
+	</tbody>
+	<tfoot class="nav">
+		<tr>
+			<td colspan=8>
+				<div class="pagination"></div>
+				<div class="paginationTitle">Page</div>
+				<div class="selectPerPage"></div>
+				<div class="status"></div>
+			</td>
+		</tr>
+	</tfoot>
+
+</table>
+</div>
+
+</td>
+</tr>
+</table>
+</div>
+</body>
+
+</html>

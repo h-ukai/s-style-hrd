@@ -1,0 +1,19 @@
+# GAE Migration File List
+# main.pyとそれが直接呼び出すファイル群
+# 1行に1ファイル、空行と#で始まる行は無視されます
+
+main.py
+appengine_config.py
+setting.py
+application/login.py
+application/logout.py
+application/regist.py
+application/proc.py
+application/bkedit.py
+application/blobstoreutl.py
+application/handler.py
+application/RemoveAll.py
+application/uploadbkdata.py
+application/uploadbkdataformaster.py
+application/duplicationcheck.py
+application/json.py

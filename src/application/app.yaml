@@ -1,0 +1,77 @@
+application: amanedb
+version: 2
+runtime: python
+api_version: 1
+
+
+builtins:
+- remote_api: on
+- appstats: on
+- deferred: on
+- datastore_admin: on
+
+inbound_services:
+- mail
+
+
+#includes:
+#- mapreduce/include.yaml
+#ソースを確認したら  script: mapreduce.main.APPを呼ぼうとしてエラーを出していた
+
+handlers:
+
+- url: /mapreduce(/.*)?
+  script: mapreduce/main.py
+  login: admin
+
+- url: /remote_api
+  script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
+  login: admin
+
+- url: /_ah/queue/deferred
+  script: $PYTHON_LIB/google/appengine/ext/deferred/deferred.py
+  login: admin
+
+- url: /stats.*
+  script: $PYTHON_LIB/google/appengine/ext/appstats/ui.py
+
+- url: /js
+  static_dir: static_dir/js
+
+- url: /css
+  static_dir: static_dir/css
+
+- url: /img
+  static_dir: static_dir/img
+
+- url: /example_12.json
+  static_dir: static_dir/example_12.json
+
+- url: /test2.html
+  static_files: static_dir/test2.html
+  upload: static_dir/test2.html
+
+- url: /robots.txt
+  static_files: static_dir/robots.txt
+  upload: static_dir/robots.txt
+
+- url: /favicon.ico
+  static_files: static_dir/favicon.ico
+  upload: static_dir/favicon.ico
+
+- url: /googlecdbb673c96dbc903.html
+  static_files: static_dir/html/googlecdbb673c96dbc903.html
+  upload: static_dir/html/googlecdbb673c96dbc903.html
+
+- url: /_ah/mail/.*
+  script: main.py
+
+- url: /show/.*
+  script: main.py
+
+- url: /.*
+  script: main.py
+  
+libraries:
+- name: django
+  version: "1.4"

@@ -1,0 +1,60 @@
+{% extends "manage/base.html" %}
+{% block title %}担当者変更{% endblock %}
+{% block content %}
+  <script type="text/javascript">
+    function createtag() {
+      window.close();
+    }
+
+    function submitChange() {
+      document.getElementById('loadingMessage').style.display = 'block';
+      document.getElementById('mainForm').submit();
+    }
+  </script>
+
+  <link href="/css/styles.css" rel="stylesheet" type="text/css" media="all">
+  <style>
+    #loadingMessage { display: none; }
+  </style>
+
+  <div id="loadingMessage">
+    <font color="red"><strong>読み込み中です。お待ちください...</strong></font>
+  </div>
+
+  <form id="mainForm" action="" method="POST">
+    {% if csrf_token %}<input type="hidden" name="csrf_token" value="{{ csrf_token }}">{% endif %}
+
+    <h3>担当変更</h3>
+
+    <table border="0">
+      <tr>
+        <td>変更前：</td>
+        <td>
+          <select name="before_user" size="1">
+            <option value="unselected">---</option>
+            {% for user in userlist %}
+            <option value="{{ user.uid | default('', true) }}">{{ user.nik | default('', true) }}</option>
+            {% endfor %}
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>変更後：</td>
+        <td>
+          <select name="after_user" size="1">
+            <option value="unselected">---</option>
+            {% for user in userlist %}
+            <option value="{{ user.uid | default('', true) }}">{{ user.nik | default('', true) }}</option>
+            {% endfor %}
+          </select>
+        </td>
+      </tr>
+    </table>
+
+    <br>
+    <input type="button" value="変更" onclick="submitChange()">
+  </form>
+
+  <hr>
+  結果：{{ result | default('', true) }}
+{% endblock %}

@@ -1,0 +1,249 @@
+{% extends "applicationpagebase.html" %}
+
+{% block title %}
+{{data.listKey}}　｜　【千種区マンション探し.com】
+{% endblock title %}
+
+{% block head %}
+<script type="text/javascript" src="https://www.chikusaku-mansion.com/js/smooth.pack.js"></script>
+<script language="javascript" src="https://www.chikusaku-mansion.com/js/navi2.js"></script>
+
+<style type="text/css">
+<!--
+body {
+	background-image:url(https://www.chikusaku-mansion.com/cmn_img/back01.jpg);
+	background-repeat:repeat-x;
+}
+-->
+</style>
+{% endblock head %}
+
+{% block content %}
+
+<table width="100%" border="0" cellspacing="5" cellpadding="0" background="cmn_img/t01.jpg" height="42">
+	<tr>
+		<td class="class14orange" width="240"></td>
+		<td class="class14b" align="left" width="560"></td>
+	</tr>
+</table>
+<table border="0" cellspacing="3" cellpadding="0">
+	<tr>
+		<td><img src="https://www.chikusaku-mansion.com/cmn_img/yajirushi01.gif" alt="" width="14" height="10" border="0"></td>
+		<td class="class14b"><a href="https://s-style-hrd.appspot.com/show/s-style/hon/www.chikusaku-mansion.com/bklist/bklist.html?listkey=全ての販売情報&offset=0&media=web">全ての販売情報</a></td>
+		<td width="15"></td>
+		<td><img src="https://www.chikusaku-mansion.com/cmn_img/yajirushi01.gif" alt="" width="14" height="10" border="0"></td>
+		<td class="class14b"><a href="https://s-style-hrd.appspot.com/show/s-style/hon/www.chikusaku-mansion.com/bklist/bklist.html?listkey=リノベーション&offset=0&media=web">リノベーション済み情報</a></td>
+		<td width="15"></td>
+		<td><img src="https://www.chikusaku-mansion.com/cmn_img/yajirushi01.gif" alt="" width="14" height="10" border="0"></td>
+		<td class="class14b"><a href="https://s-style-hrd.appspot.com/show/s-style/hon/www.chikusaku-mansion.com/bklist/bklist.html?listkey=リフォーム&offset=0&media=web">リフォーム済み情報</a></td>
+	</tr>
+</table>
+<br>
+
+
+
+
+
+
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td align="right"><a href="{{data.offsetpre}}">前の10件を見る</a>　｜　<a href="{{data.offsetnext}}">次の10件を見る</a></td>
+  </tr>
+</table>
+<br />
+
+{% for bkdata in data.bkdatalist %}
+
+<!--
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr height="11">
+    <td width="11" height="11" background="img-waku/01.jpg"></td>
+    <td height="11" background="img-waku/02.jpg"></td>
+    <td width="11" height="11" background="img-waku/03.jpg"></td>
+  </tr>
+  <tr>
+    <td width="11" background="img-waku/08.jpg"></td>
+    <td><table width="100%" border="0" cellspacing="5" cellpadding="0">
+        <tr>
+          <td align="center" bgcolor="#f4f0e5" width="110"><a href="{{data.bkdataurl}}{{bkdata.bkdata.bkID}}" target="_blank"><img src="{{bkdata.picdata.0.bloburl}}" alt="" width="74" height="110" border="0" /></a></td>
+          <td align="left" valign="top"><p class="class-title-article">【{{bkdata.bkdata.bkID}}】{{data.bkdata.ttmnmi|default:""}}</p>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td align="left">
+                <br />
+                <span class="class14red">{{data.bkdata.kkkybku|join:""}}{{data.bkdata.bku3|default:""}}{{data.bkdata.bku4|default:""}}</span>
+<br />
+
+
+                <span class="class-orange">●</span>交　通 　{{bkdata.bkdata.ekmi1|default:""}} {{bkdata.bkdata.ekmi2|default:""}} {{bkdata.bkdata.ekmi3|default:""}} 駅 <br />
+                  <span class="class-orange">●</span>間　取
+                    {{bkdata.bkdata.mdrHysu1|floatformat|default:""}}{{bkdata.bkdata.mdrTyp1|default:""}}
+                    {% if bkdata.bkdata.stTyp11%}
+                    {% if bkdata.bkdata.stHrs11 %}
+                    {{bkdata.bkdata.stHrs11}}帖
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu11 %}
+                    ×{{bkdata.bkdata.stsu11}}
+                    {% endif %}
+                    {% endif %}
+
+                    {% if bkdata.bkdata.stTyp21 %}
+                    {% if bkdata.bkdata.stHrs21 %}
+                    {{bkdata.bkdata.stHrs21}}帖
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu21 %}
+                    ×{{bkdata.bkdata.stsu21}}
+                    {% endif %}
+                    {% endif %}
+
+                    {% if bkdata.bkdata.stTyp31 %}
+                    {% if bkdata.bkdata.stHrs31 %}
+                    {{bkdata.bkdata.stHrs31}}帖
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu31 %}
+                    ×{{bkdata.bkdata.stsu31}}
+                    {% endif %}
+                    {% endif %}
+
+                    {% if bkdata.bkdata.stTyp41 %}
+                    {% if bkdata.bkdata.stHrs41 %}
+                    {{bkdata.stHrs41}}帖
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu41 %}
+                    ×{{bkdata.bkdata.stsu41}}
+                    {% endif %}
+                    {% endif %}
+
+                    {% if bkdata.bkdata.stTyp51 %}
+                    {% if bkdata.bkdata.stHrs51 %}
+                    {{bkdata.bkdata.stHrs51}}帖
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu51 %}
+                    ×{{bkdata.bkdata.stsu51}}
+                    {% endif %}
+                    {% endif %}
+
+                    {% if bkdata.bkdata.stShziki61 %}
+                    {% if bkdata.bkdata.stHrs61 %}
+                    {{bkdata.bkdata.stHrs61}}帖
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu61 %}
+                    ×{{bkdata.bkdata.stsu61}}
+                    {% endif %}
+                    {% endif %}
+
+                    {% if bkdata.bkdata.stTyp71 %}
+                    {% if bkdata.bkdata.stHrs71 %}
+                    {{bkdata.bkdata.stHrs71}}帖
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu71 %}
+                    ×{{bkdata.bkdata.stsu71}}
+                    {% endif %}
+                    {% endif %}
+
+                  <br />
+                  <span class="class-orange">●</span>価　格 　{{bkdata.kakakuM|default:""}}万円（税込）<br />
+														</td>
+                <td align="right" valign="bottom"><a href="{{data.bkdataurl}}{{bkdata.bkdata.bkID}}" target="_blank"><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="詳しくはこちら" width="107" height="19" border="0" vspace="3" /></a></td>
+              </tr>
+            </table></td>
+        </tr>
+      </table></td>
+    <td width="11" background="img-waku/04.jpg"></td>
+  </tr>
+  <tr height="11">
+    <td width="11" height="11" background="img-waku/07.jpg"></td>
+    <td height="11" background="img-waku/06.jpg"></td>
+    <td width="11" height="11" background="img-waku/05.jpg"></td>
+  </tr>
+</table>
+<br />
+
+-->
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr height="11">
+    <td width="11" height="11" background="/article/img-waku/01.jpg"></td>
+    <td height="11" background="/article/img-waku/02.jpg"></td>
+    <td width="11" height="11" background="/article/img-waku/03.jpg"></td>
+  </tr>
+  <tr>
+    <td width="11" background="/article/img-waku/08.jpg"></td>
+    <td><table width="100%" border="0" cellspacing="5" cellpadding="0">
+        <tr>
+          <td align="center" bgcolor="#f4f0e5" width="130"><a href="{{data.bkdataurl}}{{bkdata.bkdata.bkID}}" target="_blank"><img src="{{bkdata.picdata.0.bloburl}}" alt="" width="88" height="130" border="0" /></a></td>
+          <td align="left" valign="top"><p class="class-title-article-top">【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default:""}}</p>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td align="left">
+
+{% if bkdata.bkdata.kkkybku %}
+<span class="class14red">{{bkdata.bkdata.kkkybku|join:" "}} </span>
+<br />
+{% endif %}
+<span class="class-orange">●</span>価　格
+{{bkdata.kakakuM|default:""}}万円（税込）
+<br />
+<span class="class-orange">●</span>交　通
+{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default:""}}分　{% endif %}
+<br />
+
+<span class="class-orange">●</span>面　積
+
+{% if bkdata.bkdata.snyuMnskSyuBbnMnsk2 %}
+専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+{% if bkdata.bkdata.blcnyTrsMnsk %}
+ 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+{% if bkdata.bkdata.tcMcbnSumnsk %}
+ 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+<br />
+<span class="class-orange">●</span>間　取
+{{bkdata.bkdata.mdrHysu1|floatformat|default:""}}{{bkdata.bkdata.mdrTyp1|default:""}}
+<br />
+                  </td>
+                <td align="right" valign="bottom"><a href="{{data.bkdataurl}}{{bkdata.bkdata.bkID}}" target="_blank"><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="詳しくはこちら" width="107" height="19" border="0" vspace="3" /></a></td>
+              </tr>
+            </table></td>
+        </tr>
+      </table></td>
+    <td width="11" background="/article/img-waku/04.jpg"></td>
+  </tr>
+  <tr height="11">
+    <td width="11" height="11" background="/article/img-waku/07.jpg"></td>
+    <td height="11" background="/article/img-waku/06.jpg"></td>
+    <td width="11" height="11" background="/article/img-waku/05.jpg"></td>
+  </tr>
+</table>
+<br />
+
+
+
+
+{% endfor %}
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td align="right"><a href="{{data.offsetpre}}">前の10件を見る</a>　｜　<a href="{{data.offsetnext}}">次の10件を見る</a></td>
+  </tr>
+</table>
+
+{% endblock content %}

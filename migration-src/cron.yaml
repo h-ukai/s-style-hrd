@@ -1,0 +1,18 @@
+cron:
+- description: cronjobs job
+  url: /cron/cronjobs
+  schedule: every 2 hours from 9:00 to 21:00
+  timezone: Asia/Tokyo
+
+# IMAP メール受信ジョブ（/_ah/mail/* の代替）
+- description: check incoming mail via IMAP
+  url: /tasks/check-incoming-mail
+  schedule: every 10 minutes
+  timezone: Asia/Tokyo
+  # IMAP ポーリング方式でメールを取得
+  # 既存の email_receiver.py の処理ロジックを IMAP 版に変更する必要があります
+
+# 注意:
+# - Python 3.11 でも cron.yaml は継続使用可能
+# - Cron エンドポイントは X-Appengine-Cron: true ヘッダーでセキュリティチェック必須
+# - タイムゾーンは Asia/Tokyo を指定

@@ -1,0 +1,55 @@
+# Python 3.11 では MapReduce ライブラリは廃止されました
+# バッチ処理はCronジョブ + Pythonスクリプトで実装します
+
+# 移行方法:
+# 1. 各MapReduceタスクをCronジョブに変換
+# 2. application/mapreducemapper.py の処理ロジックを通常のバッチ処理に変更
+#
+# 例: bkdataput タスク
+# - Cron設定: cron.yaml に追加
+#   - description: bkdata batch update
+#     url: /tasks/bkdata-batch-update
+#     schedule: daily 03:00
+#     timezone: Asia/Tokyo
+#
+# - ハンドラー実装:
+#   @app.route('/tasks/bkdata-batch-update')
+#   def bkdata_batch_update():
+#       # X-Appengine-Cron ヘッダーチェック
+#       if request.headers.get('X-Appengine-Cron') != 'true':
+#           return 'Unauthorized', 401
+#
+#       # BKdata エンティティを取得して処理
+#       query = BKdata.query()
+#       for entity in query.fetch():
+#           # bkdataput の処理ロジック
+#           entity.put()
+#
+#       return 'OK', 200
+
+# 旧MapReduce定義（参考）:
+# - name: bkdataput
+#   mapper:
+#     input_reader: mapreduce.input_readers.DatastoreInputReader
+#     handler: application.mapreducemapper.bkdataput
+#     entity_kind: application.models.bkdata.BKdata
+#
+# - name: bklist
+#   mapper:
+#     handler: application.mapreducemapper.bkdlistupdate
+#     entity_kind: application.models.bklist
+#
+# - name: bloburlschange
+#   mapper:
+#     handler: application.mapreducemapper.bloburlschange
+#     entity_kind: application.models.blob.Blob
+#
+# - name: message
+#   mapper:
+#     handler: application.mapreducemapper.messageupdate
+#     entity_kind: application.models.
+
+# 注意:
+# - MapReduce ライブラリは完全廃止
+# - 大量データ処理が必要な場合は Cloud Dataflow を検討
+# - 小規模バッチ処理は Cron + Python スクリプトで十分

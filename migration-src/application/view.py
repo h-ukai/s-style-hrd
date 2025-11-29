@@ -1,0 +1,159 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+"""My Contact List, a simple address book application
+
+Author    : OKAZAKI Hiroki (okaz@teshigoto.net, https://www.teshigoto.net/)
+Version   : $Id: view.py,v 1.3 2009/02/04 06:27:21 okaz Exp $
+Copyright : Copyright (c) 2009 OKAZAKI Hiroki
+License   : Python
+"""
+
+import os
+import re
+import gettext
+from flask import request
+
+# Python 3: webapp2 は廃止、Flask に移行
+
+class View:
+    default_lang = 'en'
+    supported_lang = ['ja', 'en']
+
+    def __init__(self, flask_request=None):
+        #
+        # initialize for gettext
+        #
+        self.flask_request = flask_request or request
+        self.lang = {}
+
+        locale_path = os.path.dirname(__file__) + '/locale'
+        #f = open(locale_path + '/temp.txt', 'r')
+        #locale_path = os.path.dirname(__file__) + '/application'
+
+        #print "locale_path:::" + locale_path
+        for langname in self.supported_lang:
+            self.lang[langname] = gettext.translation('resource',
+                                                      locale_path,
+                                                      languages=[langname])
+
+        # Python 3: os.environ['HTTP_ACCEPT_LANGUAGE'] → Flask request.headers.get()
+        accept_lang = self.flask_request.headers.get('Accept-Language', '')
+        if accept_lang:
+            # REVIEW-L2: 例外処理の不足: match() が None を返す可能性がある
+            # 推奨: match の結果を確認してから group() を呼び出す
+            match = re.compile('^.{2}').match(accept_lang)
+            if match:
+                self.default_lang = match.group()
+            else:
+                self.default_lang = 'en'
+        else:
+            self.default_lang = 'en'
+
+    def render(self, tmpl_fn, tmpl_val):
+        #
+        # HTML rendering
+        # Flask: template.render() を Jinja2 render_template() に移行
+        #
+        from flask import render_template
+        self._set_msg(tmpl_val)
+        html_output = render_template(tmpl_fn + '.html', **tmpl_val)
+        return html_output
+
+    def set_default_lang(self, new_lang):
+        #
+        # exchange default language
+        #
+        self.default_lang = new_lang
+
+    def _set_msg(self, dict):
+        #
+        # set message resource with gettexxt
+        #
+        accept_lang = self.default_lang
+        if not accept_lang:
+            accept_lang = 'en'
+        if not (accept_lang in self.supported_lang):
+            accept_lang = 'en'
+
+        self.lang[accept_lang].install()
+        _ = self.lang[accept_lang].gettext
+
+        #
+        # static messages list
+        #
+        msg = {
+            #
+            # login.html
+            #
+            'login_welcome' : _('login_welcome'),
+            'login_id' : _('login_id'),
+            'login_pwd' : _('login_pwd'),
+            'login_submit' : _('login_submit'),
+            'new_regist' : _('new_regist'),
+            'resign' : _('resign'),
+
+            #
+            # regist.html
+            #
+            'regist_step' : _('regist_step'),
+            'new_login_id' : _('new_login_id'),
+            'new_login_pwd' : _('new_login_pwd'),
+            'new_user_email' : _('new_user_email'),
+            'new_regist' : _('new_regist'),
+            'return_top' : _('return_top'),
+
+            #
+            # resign.html
+            #
+            'resign_step' : _('resign_step'),
+            'resign_login_id' : _('resign_login_id'),
+            'resign_login_pwd' : _('resign_login_pwd'),
+            'resign_user_email' : _('resign_user_email'),
+            'resign' : _('resign'),
+
+            #
+            # proc.html
+            #
+            'lang_en' : _('lang_en'),
+            'lang_ja' : _('lang_ja'),
+            'auth_success' : _('auth_success'),
+            'logout' : _('logout'),
+            }
+
+        #
+        # set static messages to buffer
+        # Python 3: dict.iteritems() → dict.items()
+        #
+        for i, v in msg.items():
+            if not i in dict:
+                dict[i] = v
+            else:
+                print("duplicated key %s in %s " % (i, __file__))
+
+        #
+        # error and completed message setting with gettext translation
+        #
+        if 'error_msg' in dict and dict['error_msg']:
+            dict['error_msg'] = _(dict['error_msg'])
+
+        if 'completed_msg' in dict and dict['completed_msg']:
+            dict['completed_msg'] = _(dict['completed_msg'])
+
+        #
+        # dynamic messages list for gettext converter
+        #
+        error_msg_list = (
+            "_('not_found')",
+            "_('short_pwd')",
+            "_('invalid_email_address')",
+            "_('duplicated_id')",
+            "_('illegal_key')",
+            "_('login_id_not_found')",
+            )
+
+        completed_msg_list = (
+            "_('regist_confirm_completed')",
+            "_('resign_completed')",
+            "_('login_id_not_found')",
+            )

@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html lang="ja" xml:lang="ja" xmlns="https://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<title>顧客台帳</title>
+<link href="css/baselayout.css" type="text/css" rel="stylesheet" media="all" />
+<!-- jquery UI のcss-->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js"></script><!-- jquery　本体-->
+<script type="text/javascript"  src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js"></script><!-- jquery-UI　本体-->
+<script type="text/javascript" src="../js/jQueryMultiCheckbox.js"></script>
+
+</head>
+
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0">
+
+<div class="wrapper">
+
+<!--header-->
+<div class="header">
+<select name="selectName" size="1">
+<option selected="selected" value="one">メニュー</option>
+<option value="one">物件登録</option>
+<option value="two">レインズアップロード</option>
+<option value="three">アドレスリスト（小学校区）アップロード</option>
+<option value="one">重複チェック</option>
+<option value="two">顧客メール一斉送信</option>
+<option value="three">顧客検索</option>
+<option value="three">顧客グループ管理</option>
+<option value="three">顧客新規登録</option>
+<option value="three">資料作成状況</option>
+</select>
+</div>
+<!--header End-->
+
+<form action="./bksearch.html" method="post" name="frmbksearch" id="frmbksearch">
+<input type="hidden" name="memberID" value="{{memberID}}"/>
+<input type="hidden" name="key" value="{{key}}"/>
+<input type="hidden" name="page" value="{{page}}"/>
+
+<div class="container">
+<div class="contents">
+<!-- ここから本文記入 -->
+<!--contents-head01-->
+<li class="contents-head01"><input type="text" name="textfieldName" value="00000000" size="13" />　<input type="text" name="textfieldName" value="aa業者" size="25" />　<input type="text" name="textfieldName" size="25" /></li>
+<!--contents-head01 END-->
+<!--contents-head02-->
+<li class="contents-head02"><button name="buttonName" type="button">フォロー状況</button><button name="buttonName" type="button">顧客台帳</button><button name="buttonName" type="button">検索条件</button><button name="buttonName" type="button">新規登録</button></li>
+<!--contents-head02 END-->
+
+<!--contents-input-->
+<div class="contents-input">
+<input type="submit" name="submitButtonName" value="保存" />
+</div>
+<!--contents-input End-->
+
+<!--contents-input-->
+<div class="contents-input">
+
+<div class="space02">
+区分 <select name="status" id="status" size="1">
+<option value="顧客" >顧客</option>
+<option value="業者" >業者</option>
+<option value="建築業者" >建築業者</option>
+<option value="紹介者" >紹介者</option>
+<option value="担当" >担当</option>
+<option value="管理者" >管理者</option>
+<option value="その他" >その他</option>
+</select>　　
+登録年月日:<input type="text" name="tourokunengappi" id="tourokunengappi" value="" size="11" />　　
+担当 <select name="tanto" size="1">
+<option value="one">first</option>
+<option value="two">second</option>
+<option value="three">third</option>
+</select>
+</div>
+
+<div class="space01">
+サイト名 <input type="text" name="sitename" id="sitename" value="社内顧客登録" />
+</div>
+
+<div class="space01">
+売<input type="checkbox" name="uri" value="1" />
+買<input type="checkbox" name="kai" value="1" />
+貸<input type="checkbox" name="kashi" value="1" />
+借<input type="checkbox" name="kari" value="1" />　　
+媒介種類 <select name="baikai" size="1">　　
+<option  value=""></option>
+<option value="一般" >一般</option>
+<option value="専任" >専任</option>
+<option value="専属専任" >専属専任</option>
+<option value="その他" >その他</option>
+</select></div>
+
+<div class="space01">
+成約　<select name="seiyaku" size="1">
+<option  value=""></option>
+<option value="未成約" >未成約</option>
+<option value="成約" >成約</option>
+<option value="契予" >契予</option>
+<option value="決予" >決予</option>
+<option value="辞退" >辞退</option>
+<option value="休止" >休止</option>
+<option value="ブラック" >ブラック</option>
+<option value="その他" >その他</option>
+</select>　　
+成約年月日 <input type="text" name="seiyakunengappi" id="seiyakunengappi" value="" size="11" />　　成約アンケート <input id="seiyakuankeito" type="checkbox" name="seiyakuankeito" value="1"/></div>
+
+<div class="space01">
+メンバーID <input type="text" name="memberID" id="memberID" value="" size="11" />　　氏名 <input type="text" name="name" id="name" value="" size="11" />　　読み仮名 <input type="text" name="yomi" id="yomi" value="" size="11" /></div>
+
+<div class="space02">
+年齢 <input type="text" name="age" id="age" value="" size="11" />　　勤続年数 <input type="text" name="kinzoku" id="kinzoku" value="" size="11" /></div>
+
+<div class="space01">
+入居大人 <input type="text" name="otona" id="otona" value="" size="11" />　　入居子供 <input type="text" name="kodomo" id="kodomo" value="" size="11" />　　勤め先 <input type="text" name="tutomesaki" id="tutomesaki" value="" size="11" /></div>
+
+<div class="space02">
+郵便番号 <input type="text" name="zip" id="zip" value="" size="11" /></div>
+
+<div class="space02">
+住所　　 <input type="text" name="address" id="address" style="width: 400px;" value=""/>
+</div>
+<div class="space01">
+所在地1  <input id="address1" style="width: 200px;" type="text" name="address1" value="" />　　
+所在地2 <input type="text" name="address2" id="address2" value="" size="11" /></div>
+
+<div class="space01">
+電話番号 <input type="text" name="phone" id="phone" value="" size="11" />　　
+FAX番号 <input type="text" name="fax" id="fax" value="" size="11" />　　
+携帯番号 <input type="text" name="mobilephone" id="mobilephone" value="" size="11" /></div>
+
+<div class="space02">
+送信方法 <select name="access" size="1">　　
+<option  value=""></option>
+<option value="メール" >メール</option>
+<option value="FAX" >FAX</option>
+<option value="郵送" >郵送</option>
+<option value="手渡し" >手渡し</option>
+<option value="その他" >その他</option>
+</select>　　
+Mail <input type="text" name="mail" id="mail" value="" size="11" /></div>
+
+<div class="space01">
+ネットID <input type="text" name="netID" id="netID" value="" size="11" />　　パスワード <input type="text" name="netPass" id="netPass" value="" size="11" /></div>
+
+<div class="space02">
+自己資金 <input type="text" name="zikoshikin" id="zikoshikin" value="" size="11" />　　返済予定額月々 <input type="text" name="heisaituki" id="heisaituki" value="" size="11" /></div>
+
+<div class="space01">
+返済予定額ボーナス <input type="text" name="heisaibonasu" id="heisaibonasu" value="" size="11" />　　購入時期 <input type="text" name="kounyuziki" id="kounyuziki" value="" size="11" />年
+</div>
+
+<div class="space02">
+区分 <select name="rank" size="1">
+<option  value=""></option>
+<option value="A" >A</option>
+<option value="B" >B</option>
+<option value="C" >C</option>
+<option value="D" >D</option>
+<option value="E" >E</option>
+<option value="F" >F</option>
+<option value="G" >G</option>
+<option value="H" >H</option>
+<option value="I" >I</option>
+<option value="J" >J</option>
+<option value="K" >K</option>
+<option value="L" >L</option>
+<option value="M" >M</option>
+<option value="N" >N</option>
+<option value="O" >O</option>
+<option value="P" >P</option>
+<option value="Q" >Q</option>
+<option value="R" >R</option>
+<option value="S" >S</option>
+<option value="T" >T</option>
+<option value="U" >U</option>
+<option value="V" >V</option>
+<option value="W" >W</option>
+<option value="X" >X</option>
+<option value="Y" >Y</option>
+<option value="Z" >Z</option>
+</select>　　
+サービス <input type="text" name="service" value="" size="28"/>　　
+</div>
+
+<div class="space01">
+MNo <input type="text" name="mno" id="mno" value="" size="11" />　　
+MR <input type="text" name="mr" value=""  size="11" /></div>
+
+<div class="space01">
+獲得媒体 <select name="baitai" size="1">
+<option  value=""></option>
+<option value="★" >★</option>
+<option value="★" >★</option>
+<option value="★" >★</option>
+<option value="★" >★</option>
+</select>　　
+初回アクセス <select name="syokai" size="1">
+<option  value=""></option>
+<option value="★" >★</option>
+<option value="★" >★</option>
+<option value="★" >★</option>
+<option value="★" >★</option>
+</select>　　
+紹介業者 <select name="gyosya" size="1">
+<option  value=""></option>
+<option value="★" >★</option>
+<option value="★" >★</option>
+<option value="★" >★</option>
+<option value="★" >★</option>
+</select>　　
+</div>
+<br>
+
+<li>備考
+<li><textarea name="bikou" rows="7" cols="65"></textarea>
+
+</div>
+<!--contents-input End-->
+
+</div><!--contents END-->
+
+
+<!--leftcontent-->
+<div class="leftcontent">
+<div class="calendar">
+<p>カレンダー</p>
+</div>
+</div>
+<!--leftcontent End-->
+
+<p class="container-clear">&nbsp;</p>
+</div><!-- // container END -->
+
+<!--rightcontent-->
+<div class="rightcontent">
+<div class="title">
+未フォロー
+</div>
+<div class="content">
+<li><a href="#">二世帯住宅</a>
+<li><a href="#">TEL有り</a>
+<li><a href="#">シャッターの鍵について</a>
+<li><a href="#">決済について</a>
+<li><a href="#">見学希望</a>
+<li><a href="#">収益物件</a>
+</div>
+</div>
+<!--rightcontent End-->
+
+<div class="footer">Database</div>
+
+</div><!--wrapper End-->
+
+
+</body>
+</html>

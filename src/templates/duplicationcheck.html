@@ -1,0 +1,32 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<META HTTP-EQUIV="REFRESH" CONTENT="10;URL=/duplicationcheck/bkdata.html">
+<title>重複チェック</title>
+</head>
+<body>
+	重複チェック<br>
+　　　負荷軽減のため１０秒ごとに{{limit}}物件づつ処理します。(残り:{{count}})
+    <ul id="my-list">
+   {% for info in result %}
+     <li>{{info|default_if_none:""}}
+   {% endfor %}
+     </ul>
+   {{error_msg}}
+
+   <h3>重複チェックルール</h3>
+   <ul>
+   	<li>物件番号が同じなら重複</li>
+   	<li>"土地" "賃貸土地" "戸建住宅等" "住宅以外の建物全部" "賃貸一戸建" "賃貸外全"　の場合</li>
+   		<ul>
+
+                    <li>所在地２まで一致で土地面積が一致なら重複</li>
+        </ul>
+     <li>"マンション等" "住宅以外の建物一部" "賃貸マンション" "賃貸外一"　の場合</li>
+        <ul>
+                    <li>所在地２まで一致で所在階と部屋番号が同じなら重複</li>
+                   <li>所在地２まで一致で所在階と間取りと専有面積が同じなら重複</li>
+        </ul>
+   </ul> 	
+</body>
+</html>

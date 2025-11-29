@@ -1,0 +1,5 @@
+This is a small django application for verifying oauth signed request
+in Google App Engine Environment. It also enables you to associate
+opensocial user (domain:opensocial_viewer_id style) with django user
+on GAE.
+

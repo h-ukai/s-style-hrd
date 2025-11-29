@@ -1,0 +1,133 @@
+# -*- coding: utf-8 -*-
+# Another login utility sample on Google App Engine.
+# Copyright (C) 2009 OKAZAKI Hiroki
+# OKAZAKI Hiroki <okaz@teshigoto.net>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: $Id: ja.po,v 1.2 2009/02/04 06:21:06 okaz Exp $\n"
+"POT-Creation-Date: 2009-01-30 18:02+JST\n"
+"PO-Revision-Date: $Date: 2009/02/04 06:21:06 $\n"
+"Last-Translator: OKAZAKI Hiroki <okaz@teshigoto.net>\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: regist.py:122
+msgid "confirm_mail_body"
+msgstr "このメールに記載された URL をクリックして登録を完了してください。"
+
+#: view.py:71
+msgid "login_welcome"
+msgstr "Google App Engine 用に独自のログイン機能を追加するサンプルシステムです。"
+
+#: view.py:72
+msgid "login_id"
+msgstr "ログイン名"
+
+#: view.py:73
+msgid "login_pwd"
+msgstr "パスワード"
+
+#: view.py:74
+msgid "login_submit"
+msgstr "ログインする"
+
+#: view.py:75 view.py:86
+msgid "new_regist"
+msgstr "新規登録"
+
+#: view.py:76 view.py:101
+msgid "resign"
+msgstr "登録解除"
+
+#: view.py:77
+msgid "not_found"
+msgstr "ログイン名またはパスワードが間違っています。"
+
+#: view.py:82
+msgid "regist_step"
+msgstr "各項目を入力してから「登録する」ボタンを押して下さい。後ほどメールを差し上げますので、その内容に従って登録手続きを完了させて下さい。"
+
+#: view.py:83
+msgid "new_login_id"
+msgstr "登録したいログイン名"
+
+#: view.py:84
+msgid "new_login_pwd"
+msgstr "登録したいパスワード"
+
+#: view.py:85
+msgid "new_user_email"
+msgstr "連絡先のメールアドレス"
+
+#: view.py:87
+msgid "return_top"
+msgstr "入口に戻る"
+
+#: view.py:88
+msgid "short_pwd"
+msgstr "パスワードは8文字以上必要です。"
+
+#: view.py:89
+msgid "invalid_email_address"
+msgstr "メールアドレスに何らかの誤りがあります。"
+
+#: view.py:90
+msgid "duplicated_id"
+msgstr "指定のログイン名は既に登録済みです。他の名前を指定してください。"
+
+#: view.py:91
+msgid "regist_completed"
+msgstr "仮登録が完了しましたが、まだアカウントは有効になっていません。送信されたメールの内容に従って、本登録を完了してください。"
+
+#: view.py:92
+msgid "illegal_key"
+msgstr "認証キーに何らかの誤りがあります。"
+
+#: view.py:97
+msgid "resign_step"
+msgstr "登録を解除したいアカウントのログイン名とパスワードを入力してください。"
+
+#: view.py:98
+msgid "resign_login_id"
+msgstr "ログイン名"
+
+#: view.py:99
+msgid "resign_login_pwd"
+msgstr "パスワード"
+
+#: view.py:100
+msgid "resign_user_email"
+msgstr "メールアドレス"
+
+#: view.py:102
+msgid "resign_completed"
+msgstr "登録を解除しました。"
+
+#: view.py:103
+msgid "login_id_not_found"
+msgstr "指定のアカウントが見つかりませんでした。"
+
+#: view.py:108
+msgid "lang_en"
+msgstr "English"
+
+#: view.py:109
+msgid "lang_ja"
+msgstr "Japanese"
+
+#: view.py:110
+msgid "auth_success"
+msgstr "ログイン認証が成功しました。"
+
+#: view.py:111
+msgid "logout"
+msgstr "ログアウト"
+
+#:
+msgid "regist_confirm_completed"
+msgstr "新規登録の手続きがすべて完了しました。ログインが可能です。"

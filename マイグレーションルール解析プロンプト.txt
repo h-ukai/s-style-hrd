@@ -1,0 +1,128 @@
+あなたは Google App Engine Python 2.7 から Python 3.11 へのマイグレーションを設計するエキスパートです。
+
+このプロジェクト専用の「マイグレーション状態ファイル（GAE_MIGRATION_STATE.md）」を段階的に更新していきます。
+
+### 実行環境の前提
+
+- **プロジェクトルート**: `C:\Users\hrsuk\prj\s-style-hrd`
+- **実際のソースコード**: `C:\Users\hrsuk\prj\s-style-hrd\src\` 配下
+- **マイグレーション状態ファイル**: `C:\Users\hrsuk\prj\s-style-hrd\GAE_MIGRATION_STATE.md`
+- **重要**: GAE_MIGRATION_STATE.md は必ず Edit ツールで直接編集し、完全なファイル内容を出力しないこと
+
+### やってほしいこと
+
+1. **対象ファイルの選定**
+   - `C:\Users\hrsuk\prj\s-style-hrd\GAE_MIGRATION_STATE.md` を Read ツールで読み込む
+   - 「## 未処理」セクションの先頭から最大5個のファイルパスを対象に選ぶ
+   - YAMLファイルは分析のみ（マイグレーションルール抽出）、Pythonファイルはインポート解析も行う
+
+2. **ファイルの読み込みと分析**
+   - 未処理リストのパスは `src/` を含まないプロジェクト相対パス（例: `app.yaml`, `application/login.py`）
+   - 実際のファイルは `C:\Users\hrsuk\prj\s-style-hrd\src\` 配下にある
+   - 読み込み時は絶対パスを使用: `C:\Users\hrsuk\prj\s-style\hrd\src\{未処理リストのパス}`
+   - それでも見つからない場合は、Glob で `C:\Users\hrsuk\prj\s-style-hrd\src` 配下を検索
+   - 各ファイルを読み込み、Python 3.11 + 本プロジェクト方針に基づいて分析する
+
+3. **マイグレーションルールの抽出と追記**
+   
+   **記録すべきもの（以下の3カテゴリのみ）:**
+   
+   a) **方針決定（選択肢が複数ある場合）**
+      - 例: メール送信に `smtplib` を選択（理由: 外部サービス依存回避）
+      - 例: Session管理に Flask-Session を選択（理由: 既存Datastoreモデル活用）
+      - 選択理由を1行で併記する
+   
+   b) **大幅変更（既存コードと全く異なる実装になる箇所）**
+      - 例: Blobstore → GCS完全移行、`create_upload_url()` → Signed URL
+      - 例: Memcache → Redis、`memcache.set()` → `redis_client.set()`
+      - APIレベルでの置き換えのみ記録（構文変更は不要）
+   
+   c) **統一仕様（モジュール間で認識を共有すべき仕様）**
+      - 例: JSON処理は `json` 統一、`ensure_ascii=False` 必須
+      - 例: Key文字列化は `key.urlsafe().decode()` 統一
+      - 例: CSVエンコーディングは `cp932` 統一
+   
+   **記録不要なもの:**
+   - Python 2→3の一般的な構文変更（`print`, `except as`, `.items()` 等）
+   - webapp2→Flaskの基本的な置き換え（`self.request.get` → `request.args.get` 等）
+   - NDB queryの基本構文（`Model.query()`, `filter()` 等）
+   - その他、LLMが一般知識として知っている内容
+   
+   **フォーマット:**
+   - 必ず箇条書き `- ` で記述
+   - 選択理由が必要な場合のみ併記（1行で簡潔に）
+   - コード例は最小限（API名のみでOK）
+
+4. **プロジェクト内依存モジュールの抽出（Pythonファイルのみ）**
+   - `import` / `from ... import ...` されているプロジェクト内モジュールを特定
+   - プロジェクト内モジュールの判定基準:
+     - `from application.xxx import ...` → `application/xxx.py` を追加
+     - `from geo.xxx import ...` → `geo/xxx.py` を追加
+     - `import application.xxx` → `application/xxx.py` を追加
+   - **パスは `src/` を含めず、プロジェクトルートからの相対パス**で記述
+   - すでに「## 処理済み」または「## 未処理」に存在するものは除外
+   - 新規発見したモジュールを「## 未処理」セクションに追記
+
+5. **処理状態の更新**
+   - 今回処理対象としたファイルを「## 未処理」から削除
+   - 「## 処理済み」セクションの末尾に追加
+
+6. **GAE_MIGRATION_STATE.md の更新方法**
+   - **必ず Edit ツールを使用して直接編集する**
+   - old_string に現在のセクション全体を指定
+   - new_string に更新後のセクション全体を指定
+   - **完全なファイル内容を出力しない**（Edit ツールで編集済みのため不要）
+
+### 重要な制約
+
+- **セクション構造の維持**
+  - 「## 処理済み」「## 未処理」「## マイグレーションルール」の3セクションは必須
+  - セクション名は変更しない
+  - セクションの順序は維持する
+
+- **フォーマットの統一**
+  - すべてのファイル名とルールは Markdown の `- ` 箇条書きで記述
+  - 選択理由や説明は同じ行に簡潔に併記
+  - コード部分はバッククォート `` ` `` で囲む
+
+- **パス表記の統一**
+  - GAE_MIGRATION_STATE.md 内のパスは `src/` を含めない
+  - 実際のファイル読み込み時は `C:\Users\hrsuk\prj\s-style-hrd\src\` を前置
+  - 例: 未処理リスト `application/login.py` → 実ファイル `C:\Users\hrsuk\prj\s-style-hrd\src\application\login.py`
+
+- **処理量の制限**
+  - 1回の実行で最大5個のファイルまで処理
+  - これにより段階的な分析が可能
+
+### マイグレーションルールの記述例（良い例 / 悪い例）
+
+**良い例:**
+```markdown
+### 方針決定
+- メール送信: `smtplib` 使用（理由: 既存SMTP実装維持、外部依存回避）
+- Task Queue: Cloud Tasks API (`google.cloud.tasks_v2`)
+
+### 大幅変更
+- Blobstore → GCS: `create_upload_url()` → Signed URL
+- Memcache → Redis: `memcache.set()` → `redis_client.set()`
+
+### 統一仕様
+- JSON: 標準 `json`、`ensure_ascii=False` 必須
+- Key文字列化: `key.urlsafe().decode()` 統一
+- CSV: `cp932` 入力、`utf-8` 出力
+```
+
+**悪い例（冗長すぎ）:**
+```markdown
+- **Python 2 の `print` 文は Python 3 では `print()` 関数に変更する。**
+- **`except Exception, e:` は Python 3 では `except Exception as e:` に変更する。**
+- **webapp2 の `self.request.get('param')` は Flask では `request.args.get('param')` または `request.form.get('param')` に置き換える。GET パラメータの場合は `request.args.get()` を使用し、POST データの場合は `request.form.get()` を使用する。両方に対応する場合は `request.values.get()` を使用することができる。**
+```
+→ これらは一般知識なので記録不要
+
+### 注意事項
+
+- プロジェクト構造: `C:\Users\hrsuk\prj\s-style-hrd\src\` フォルダ配下にメインコードがある
+- 重複確認: 未処理リストに追加する前に、既存の処理済み/未処理リストを確認
+- 実用性重視: マイグレーションルールは **プロジェクト固有の決定事項のみ** を記録
+- Edit後の出力は不要: Edit ツールが自動的に変更結果を表示するため、完全なファイル内容を再出力しない

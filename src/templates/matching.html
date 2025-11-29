@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html lang="ja" xml:lang="ja" xmlns="https://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<title>マッチング</title>
+<link href="/css/baselayout.css" type="text/css" rel="stylesheet" media="all" />
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/blitzer/jquery-ui.css" rel="stylesheet" type="text/css"/><!-- jquery UI のcss-->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js"></script><!-- jquery　本体-->
+<script type="text/javascript"  src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js"></script><!-- jquery-UI　本体-->
+<script type="text/javascript">
+
+$(document).ready(function(){
+  $("#datetimelist").scrollTop($("#datetimelist")[0].scrollHeight);
+});
+
+function sousin(val){
+  $('#com').val(val);
+  $("#mainform").submit();
+}
+</script>
+</head>
+
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0">
+<div class='matching01content'>
+<form action="matching.html" method="post" name="mainform" id='mainform'>
+<input type="text" id="com" name="com" style="position:absolute;visibility:hidden">
+
+
+<h1>マッチング</h1>
+
+{% if message%}
+<div class='contents-head01'>
+<h1>{{message}}</h1>
+</div>
+{% endif %}
+
+
+<div class='contents-head01'>
+顧客の購入希望条件にあわせて物件を選別し顧客にメールで配信します
+</div>
+
+<div class='contents-input'>
+☆ワークフロー<br />
+１．対象物件の選択・資料作成（人為的に定時に行います）<br />
+２．マッチング（人為的にスタートします）<br />
+３．メール送信（人為的にスタートします）<br />
+</div>
+
+<div class='contents-input'>
+☆パラメータ<br />
+１．希望条件<br />
+２．顧客のモチベーションの指数化<br />
+３．メールの送信頻度<br />
+</div>
+
+
+<div class='contents-input'>
+<h2>マッチング履歴</h2>
+<div class='leftcontent'>
+<div clss='scrollcontener' style="height:100px; overflow-y:scroll;" id="datetimelist">
+<table class='content'>
+
+{%for e in dateentitys %}
+
+<tr>
+<td>
+{{e|default_if_none:""|date:"Y/m/d H:i:s"}}
+</td>
+</tr>
+
+{% endfor %}
+
+</table>
+</div>
+<input type=button class='content' onClick="sousin('履歴削除');" value='最新履歴削除'>
+</div>
+</div>
+
+
+<div class='contents-input'>
+
+
+<h2>マッチング対象サービス</h2>
+
+<p>
+マッチングの対象サービスの選択は「顧客台帳」のいずれかのサービス名で設定することができます<br />
+（すべての顧客を対象としてマッチングを行う場合なにも設定しないでください。）
+</p>
+
+<select name="service" id="service">
+    <option {{param.service|default_if_none:" selected"}} value=""></option>
+  {%for sv in servicelist%}
+    <option value="{{sv}}" {% ifequal sv param.service %} selected{% endifequal %}>{{sv}}</option>
+  {% endfor %}
+</select>
+
+
+<!--
+<h2>マッチング対象物件</h2>
+
+<p>
+マッチングの対象物件の選択は「資料作成状況」のいずれかの段階を指定することができます<br />
+（資料請求前のすべての物件を対象としてマッチングを行う場合「請求チェック」をマッチング対象物件とします<br />
+作成済みの物件を対象としてマッチングを行う場合「作成済み」をマッチング対象物件とします）
+</p>
+
+<select name="sksijky" id="sksijky">
+                            <option {{sksijky|default_if_none:" selected"}} value=""></option>
+                            <option value="請求チェック" {% ifequal sksijky "請求チェック" %} selected{% endifequal %}>請求チェック</option>
+                            <option value="一覧のみ" {% ifequal sksijky "一覧のみ" %} selected{% endifequal %}>一覧のみ</option>
+                            <option value="資料請求" {% ifequal sksijky "資料請求" %} selected{% endifequal %}>資料請求</option>
+                            <option value="依頼中" {% ifequal sksijky "依頼中" %} selected{% endifequal %}>依頼中</option>
+                            <option value="入手不可" {% ifequal sksijky "入手不可" %} selected{% endifequal %}>入手不可</option>
+                            <option value="入手済み" {% ifequal sksijky "入手済み" %} selected{% endifequal %}>入手済み</option>
+                            <option value="分類チェック" {% ifequal sksijky "分類チェック" %} selected{% endifequal %}>分類チェック</option>
+                            <option value="不要" {% ifequal sksijky "不要" %} selected{% endifequal %}>不要</option>
+                            <option value="未作成" {% ifequal sksijky "未作成" %} selected{% endifequal %}>未作成</option>
+                            <option value="作成済み" {% ifequal sksijky "作成済み" %} selected{% endifequal %}>作成済み</option>
+                            <option value="ＨＰ掲載" {% ifequal sksijky "ＨＰ掲載" %} selected{% endifequal %}>ＨＰ掲載</option>
+</select>
+-->
+
+
+<h2>請求チェック設定</h2>
+
+<p>
+条件に該当した物件の資料請求の扱い決定します<br />
+</p>
+
+<select name="seikyu" id="seikyu">
+                            <option value="すべて資料請求する" {% ifequal param.seikyu "すべて資料請求する" %} selected{% endifequal %}>すべて資料請求する</option>
+                            <option value="すべて資料請求しない" {% ifequal param.seikyu "すべて資料請求しない" %} selected{% endifequal %}>すべて資料請求しない</option>
+</select>
+
+
+<h2>マッチング開始</h2>
+<input type=button  onClick="sousin('マッチング開始');" value='実行'>
+
+</div>
+
+
+
+<div class='contents-input'>
+
+<h2>メール設定</h2>
+
+メールの送信頻度は顧客のモチベーションに応じて最適化すべきです<br />
+熱い顧客には毎日でも即時メールするべきですが<br />
+モチベーションの下がった顧客に毎日メールすると見てもらえなくなったり<br />
+スパム判定されてしまうことがあります<br />
+そこでモチベーションの下がった顧客には一定期間の間隔を開けて送信するべきです<br />
+モチベーションは相手からの問い合わせからの経過時間とその間に送った資料数で判定します<br />
+経過時間と送信料の判定基準は任意で調整することができるので<br />
+lev1の設定をはるかに大きな数字にすることですべての顧客に毎日送るという設定も可能です<br />
+<br />
+<h3>レベル１設定</h3>(即日送付する顧客の下限：すべての顧客を毎日送付にするには無言日数と送信数を多く取る)
+<br />
+無言日数：<input name="lev1noreactiondays" type=text value={{param.lev1noreactiondays}}>
+<br />
+最多送信物件数：<input name="lev1maxsended" type=text value={{param.lev1maxsended}}>
+<h3>レベル２設定</h3>(一日おきに送付する顧客の下限)
+<br />
+無言日数：<input name="lev2noreactiondays" type=text value={{param.lev2noreactiondays}}>
+<br />
+最多送信物件数：<input name="lev2maxsended" type=text value={{param.lev2maxsended}}>
+<br />
+<h3>最低レベル：</h3>
+このレベルを超えた顧客には送信しません
+<br />
+<input name="limitdistance" type=text value={{param.limitdistance}}>
+<br />
+
+
+
+</div>
+
+<div class='contents-input'>
+
+<h2>メール送信</h2>
+
+
+<h3>送信設定</h3>
+<p>
+条件に該当した物件の送信の内容を決定します<br />
+</p>
+
+<select name="sousinsyurui" id="sousinsyurui">
+                            <option value="作成済みのみ" {{param.sousinsyurui|default_if_none:" selected"}} {% ifequal sousinsyurui "作成済みのみ" %} selected{% endifequal %}>作成済みのみ</option>
+                            <option value="入手不可以外すべて" {% ifequal param.sousinsyurui "入手不可以外すべて" %} selected{% endifequal %}>入手不可以外すべて</option>
+</select>
+
+
+<br />
+メディア
+<br />
+
+<input name="media" size=20 type=text value={{param.media|default_if_none:""}}>
+<br />
+
+メールタイトル<br />
+<input name="subject" size=135 type=text value={{param.subject|default_if_none:""}}>
+<br />
+<br />
+通信欄<br />
+<textarea name="body" rows="50" cols="130">{{param.body|default_if_none:""}}</textarea>
+<br />
+<br />
+
+
+<input type=button onClick="sousin('メール送信');" value='実行'>
+</div>
+
+<div class='contents-input'>
+
+<h2>すべての設定を保存</h2>
+
+<input type=button onClick="sousin('保存');" value='保存'>
+</div>
+
+</form>
+</div>
+</body>
+</html>

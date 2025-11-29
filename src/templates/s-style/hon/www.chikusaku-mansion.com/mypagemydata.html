@@ -1,0 +1,122 @@
+{% extends "mypagebase.html" %}
+
+{% block title %}登録内容の変更{% endblock %}
+
+
+    {% block container %}
+
+<!--contents-input-->
+<div class="contents-input">
+<input type="submit" name="" value="保存する" src="">
+<input type="hidden" name="CorpOrg_key_name" id="CorpOrg_key_name" value="{{corp}}">
+<input type="hidden" name="Branch_Key_name" id="Branch_Key_name" value="{{branch}}">
+</div>
+<!--contents-input End-->
+
+<!--contents-input-->
+<div class="contents-input">
+
+<div class="space01">
+氏名 
+<input type="text" name="name" id="name"
+value="{{data.name|default_if_none:""}}" size="11" />　　
+読み仮名 
+<input type="text" name="yomi" id="yomi"
+value="{{data.yomi|default_if_none:""}}" size="11" />
+</div>
+
+<div class="space02">
+年齢 <input type="text" name="age" id="age" value="{{data.age|floatformat|default_if_none:""}}" size="11" />
+　　勤続年数 <input type="text" name="kinzoku" id="kinzoku" value="{{data.kinzoku|floatformat|default_if_none:""}}" size="11" />
+</div>
+
+<div class="space01">
+入居大人 <input type="text" name="otona" id="otona" value="{{data.otona|floatformat|default_if_none:""}}" size="11" />
+　　入居子供 <input type="text" name="kodomo" id="kodomo" value="{{data.kodomo|floatformat|default_if_none:""}}" size="11" />
+ 　勤め先 <input type="text" name="tutomesaki" id="tutomesaki" value="{{data.tutomesaki|default_if_none:""}}" size="11" />
+</div>
+
+<div class="space02">
+郵便番号 <input type="text" name="zip" id="zip"value="{{data.zip|default_if_none:""}}" size="11" />
+</div>
+<div class="space02">
+住所　　 <input type="text" name="address" id="address" style="width: 400px;" value="{{data.address|default_if_none:""}}"/>
+</div>
+<div class="space01">
+所在地1 <input type="text" name="address1" id="address1" value="{{data.address1|default_if_none:""}}" style="width: 200px;" />
+　所在地2 <input type="text" name="address2" id="address2" value="{{data.address2|default_if_none:""}}" size="11" />
+</div>
+
+<div class="space01">
+電話番号 <input type="text" name="phone" id="phone" value="{{data.phone|default_if_none:""}}" size="11" />
+　　FAX番号 <input type="text" name="fax" id="fax" value="{{data.fax|default_if_none:""}}" size="11" />
+　　携帯番号 <input type="text" name="mobilephone" id="mobilephone" value="{{data.mobilephone|default_if_none:""}}" size="11" />
+</div>
+
+<div class="space02">
+会社連絡先
+</div>
+<div class="space02">
+社名 　　<input type="text" name="phone" id="phone" value="" size="35" />　　
+</div>
+<div class="space02">
+読み仮名 <input type="text" name="CorpOrg_yomi" id="CorpOrg_yomi" value="" size="35" />　　
+</div>
+<div class="space02">
+役職　　 <input type="text" name="fax" id="fax" value="" size="20" />
+</div>
+<div class="space02">
+郵便番号 <input type="text" name="CorpOrg_zip" id="CorpOrg_zip" value="" size="11" />  
+所在地 <input type="text" name="CorpOrg_address" id="CorpOrg_address" value="" size="50" />
+</div>
+<div class="space02">
+所在地1 <input type="text" name="CorpOrg_address1" id="CorpOrg_address1" value="" size="20" />
+　　所在地2 <input type="text" name="CorpOrg_address2" id="CorpOrg_address2" value="" size="20" />
+</div>
+<div class="space01">
+電話番号 <input type="text" name="CorpOrg_phone" id="CorpOrg_phone" value="" size="11" />  
+　　FAX番号 <input type="text" name="CorpOrg_fax" id="CorpOrg_fax" value="" size="11" />
+</div>
+
+<div class="space02">
+送信方法 
+<select name="access" size="1">
+<option {{data.access|default_if_none:" selected"}} value=""></option>
+<option value="メール" {% ifequal data.access "メール" %} selected{% endifequal %}>
+メール
+</option>
+<option value="FAX" {% ifequal data.access "FAX" %} selected{% endifequal %}>
+FAX
+</option>
+<option value="郵送" {% ifequal data.access "郵送" %} selected{% endifequal %}>
+郵送
+</option>
+<option value="手渡し" {% ifequal data.access "手渡し" %} selected{% endifequal %}>
+手渡し
+</option>
+<option value="その他" {% ifequal data.access "その他" %} selected{% endifequal %}>
+その他
+</option>
+</select>
+　　Mail 
+<input type="text" name="mail" id="mail" value="{{data.mail|default_if_none:""}}" size="11" />
+</div>
+<div class="space01">
+ネットID ：{{data.netID|default_if_none:""}}
+　　パスワード 
+<input type="text" name="netPass" id="netPass" value="{{data.netPass|default_if_none:""}}" size="11" />
+</div>
+
+<div class="space02">
+自己資金 <input type="text" name="zikoshikin" id="zikoshikin" value="{{data.zikoshikin|floatformat|default_if_none:""}}" size="11" />
+　　返済予定額月々 <input type="text" name="heisaituki" id="heisaituki" value="{{data.heisaituki|floatformat|default_if_none:""}}" size="11" />
+</div>
+<div class="space01">
+返済予定額ボーナス <input type="text" name="heisaibonasu" id="heisaibonasu" value="{{data.heisaibonasu|floatformat|default_if_none:""}}" size="11" />
+　　購入時期 <input type="text" name="kounyuziki" id="kounyuziki" value="{{data.kounyuziki|default_if_none:""}}" size="11" />年
+</div>
+
+
+</div><!--contents-input End-->
+
+    {% endblock %}

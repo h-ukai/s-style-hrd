@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "https://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <link rel="stylesheet" href="../css/main.css" type="text/css" />
+  <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon" />
+		<link rel="stylesheet" href="../js/colorbox-master/example2/colorbox.css" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script src="../js/colorbox-master/jquery.colorbox.js"></script>
+		<script>
+			$(document).ready(function(){
+				//Examples of how to assign the Colorbox event to elements
+				$(".iframe").colorbox({iframe:true, width:"600px", height:"500px",
+					/*
+					onOpen:function(){ alert('onOpen: colorbox is about to open'); },
+					onLoad:function(){ alert('onLoad: colorbox has started to load the targeted content'); },
+					onComplete:function(){ alert('onComplete: colorbox has displayed the loaded content'); },
+					onCleanup:function(){ alert('onCleanup: colorbox has begun the close process'); },
+					*/
+					onClosed:function(){
+					    window.location.reload(1);
+					}
+				});
+				$('.non-retina').colorbox({rel:'group5', transition:'none'})
+				$('.retina').colorbox({rel:'group5', transition:'none', retinaImage:true, retinaUrl:true});
+
+				//Example of preserving a JavaScript event for inline calls.
+				$("#click").click(function(){
+					$('#click').css({"background-color":"#f00", "color":"#fff", "cursor":"inherit"}).text("Open this window again and this message will still be here.");
+					return false;
+				});
+			});
+		</script>
+
+  <title>画像管理</title>
+</head>
+
+<body>
+<h1>{{bkID}}</h1>
+<p>物件ファイル管理 v2</p>
+{% for mblob in blobs %}
+	<div class="bloblist" id="{{mblob.media}}"  style="clear: both">
+	<hr />
+	<h3 style="line-height:1em; padding:3px;margin:3px">
+	{{mblob.media}}
+	</h3>
+		{% for blob in mblob.cblob %}
+			<form action="{{ edit_url }}/{{blob.blobNo}}" method="POST" enctype="multipart/form-data">
+				<div style="float:left;width:105px;height:232px;text-align:center">
+				<div style="height:115px ;margin-left:auto;margin-right:auto;overflow:hidden">
+			    <input type="text" name="title" value = "{{ blob.title|default_if_none:"" }}" style="width:97px"><br>
+			    {{blob.html|safe}}
+				</div>
+			    <input type="text" name="content" value = "{{ blob.content|default_if_none:"" }}" style="width:97px"><br>
+		m
+		<input type="text" name="media" value = "{{blob.media|default_if_none:""}}" style="width:6em">
+		p
+		<input type="text" name="pos" value = "{{blob.pos|default_if_none:""}}" style="width:6em"><br>
+		<INPUT type="submit" name="submit" value="削除" >
+		<INPUT type="submit" name="submit" value="更新" >
+			    </div>
+		    </form>
+		{% endfor %}
+	</div>
+{% endfor %}
+<div style="clear: both">
+<hr />
+        <a href="{{multiupload_url}}" class='iframe' title=""><input type="button" value="ファイルアップロード" /></a>
+</div>
+<hr />
+	<h3 style="line-height:1em; padding:3px;margin:3px">
+	参照画像
+	</h3>
+		{% for blob in samples %}
+			<form action="{{ edit_url }}" method="POST" enctype="multipart/form-data">
+				<div style="float:left;width:105px;text-align:center">
+				<div style="margin-left:auto;margin-right:auto;overflow:hidden">
+			    <a href="../bkedit.html?bkID={{ blob.bkID|default_if_none:"" }}" target="_blank">{{ blob.ttmnmi|default_if_none:"" }}</a><br>
+			    <input type="text" name="title" value = "{{ blob.title|default_if_none:"" }}" style="width:97px"><br>
+			    {{blob.html|safe}}
+				</div>
+			    <input type="text" name="content" value = "{{ blob.content|default_if_none:"" }}" style="width:97px"><br>
+				m
+				<input type="text" name="media" value = "{{blob.media|default_if_none:""}}" style="width:6em">
+				p
+				<input type="text" name="pos" value = "{{blob.pos|default_if_none:""}}" style="width:6em"><br>
+		        <input type="submit" name="submit" value="追加">
+				<INPUT type="hidden" name="bloburl" value="{{blob.bloburl|default_if_none:""}}" >
+				<INPUT type="hidden" name="thumbnailurl" value="{{blob.thumbnailurl|default_if_none:""}}" >
+				<INPUT type="hidden" name="filename" value="{{blob.filename|default_if_none:""}}" >
+				<INPUT type="hidden" name="html" value="{{blob.html|default_if_none:""}}" >
+				<INPUT type="hidden" name="blobKey" value="{{blob.blobKey|default_if_none:""}}" >
+					    </div>
+		    </form>
+		{% endfor %}
+
+</body>
+</html>

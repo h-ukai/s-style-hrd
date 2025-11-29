@@ -1,0 +1,74 @@
+# application: s-style-hrd
+# version: 1
+runtime: python311
+
+# エラーだらけになる月額1万円設定
+# instance_class: B2
+# basic_scaling:
+#   max_instances: 3
+#   idle_timeout: 5m
+
+
+# 月額2万以上になる設定
+# instance_class: F4
+# automatic_scaling:
+#   min_idle_instances: 0
+#   max_instances: 2
+#   min_pending_latency: 15s
+#   max_pending_latency: 15s
+#   max_concurrent_requests: 50
+
+# 月額1.5万円になる設定
+instance_class: B4
+basic_scaling:
+  max_instances: 2
+  idle_timeout: 5m
+
+# Python 3.11では builtins, api_version, threadsafe, libraries, includes は削除されました
+# remote_api, appstats, deferred は別の方法で実装する必要があります
+
+# inbound_services の mail は廃止されました
+# メール受信は IMAP ポーリング方式に移行します
+
+entrypoint: gunicorn -b :$PORT main:app
+
+handlers:
+
+# remote_api, deferred, appstats は Python 3.11 では利用できません
+# 代替実装が必要です
+
+- url: /js
+  static_dir: static_dir/js
+
+- url: /css
+  static_dir: static_dir/css
+
+- url: /img
+  static_dir: static_dir/img
+
+- url: /example_12.json
+  static_dir: static_dir/example_12.json
+
+- url: /test2.html
+  static_files: static_dir/test2.html
+  upload: static_dir/test2.html
+
+- url: /robots.txt
+  static_files: static_dir/robots.txt
+  upload: static_dir/robots.txt
+
+- url: /favicon.ico
+  static_files: static_dir/favicon.ico
+  upload: static_dir/favicon.ico
+
+- url: /googlecdbb673c96dbc903.html
+  static_files: static_dir/html/googlecdbb673c96dbc903.html
+  upload: static_dir/html/googlecdbb673c96dbc903.html
+
+# /_ah/mail/* は廃止されました (IMAP ポーリング方式に移行)
+
+# グローバル変数
+env_variables:
+  # reCAPTCHA
+  RECAPTCHA_SITE_KEY: '6LfRxU4aAAAAAD6BDE23lHzfDy3OX2h8qqV-bH2Q'
+  RECAPTCHA_SECRET_KEY: '6LfRxU4aAAAAAB-Dk4Hj0knERSxCPDmStgE24xyD'

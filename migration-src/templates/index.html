@@ -1,0 +1,673 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="https://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>千種区不動産</title>
+<meta name="description" content="名古屋市千種区の不動産サイトです。新築・中古マンション、一戸建、土地、豊富な不動産情報掲載" />
+<meta name="keywords" content="千種区,千種,不動産,名古屋,覚王山,マンション,中古マンション,土地,一戸建" />
+<link href="../css/topstyles.css" rel="stylesheet" type="text/css" media="all" />
+</head>
+
+<a name="pagetop"></a>
+
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0">
+
+<!--Wrapper-->
+<div id="Wrapper">
+
+
+
+<!--HeadBox-->
+<div id="HeadBox">
+<h1>名古屋市千種区を中心に、マンション・土地・新築・中古一戸建など豊富な不動産物件情報を掲載しています。不動産の査定もお気軽にご相談下さい。alidbnnlenlii</h1>
+<li class="Logo"><a href="#">千種区不動産.com</a></li>
+</div><!--HeadBox-->
+
+
+
+<!--ContentsBox-->
+<div id="ContentsBox">
+<h3><a href="https://www.s-style.ne.jp" >S-Styleメインサイト</a></h3>
+
+<div class="S-StyleEstateBox">
+<h4><a href="https://s-style-hrd.appspot.com/show/s-style/hon/www.s-style.ne.jp/bklistmesID/bklist.html?offset=0&media=web&mesID=604180" >土地</a></h4>
+<div class="TextBox">
+
+{% for bkdata in tochi %}
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr height="11">
+    <td width="11" height="11" background="../img/top-img/01.jpg"></td>
+    <td height="11" background="../img/top-img/02.jpg"></td>
+    <td width="11" height="11" background="../img/top-img/03.jpg"></td>
+  </tr>
+  <tr>
+    <td width="11" background="../img/top-img/08.jpg"></td>
+    <td><table width="100%" border="0" cellspacing="5" cellpadding="0">
+        <tr>
+          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default:""}}</a></p>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td align="left">
+
+{% if bkdata.bkdata.kkkybku %}
+<span class="class14red">{{bkdata.bkdata.kkkybku|join:" "}} </span>
+<br />
+{% endif %}
+<span class="class-orange">●</span>価　格
+{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default:""}}万円（税込）{% endif %}
+<br />
+<span class="class-orange">●</span>交　通
+{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default:""}}分　{% endif %}
+<br />
+
+<span class="class-orange">●</span>面　積
+
+{% if bkdata.bkdata.snyuMnskSyuBbnMnsk2 %}
+専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+{% if bkdata.bkdata.blcnyTrsMnsk %}
+ 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+{% if bkdata.bkdata.tcMcbnSumnsk %}
+ 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+<br />
+<span class="class-orange">●</span>間　取
+{{bkdata.bkdata.mdrHysu1|floatformat|default:""}}{{bkdata.bkdata.mdrTyp1|default:""}}
+<br />
+                  </td>
+                <td align="right" valign="bottom"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" ><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="詳しくはこちら" width="107" height="19" border="0" vspace="3" /></a></td>
+              </tr>
+            </table></td>
+        </tr>
+      </table></td>
+    <td width="11" background="../img/top-img/04.jpg"></td>
+  </tr>
+  <tr height="11">
+    <td width="11" height="11" background="../img/top-img/07.jpg"></td>
+    <td height="11" background="../img/top-img/06.jpg"></td>
+    <td width="11" height="11" background="../img/top-img/05.jpg"></td>
+  </tr>
+</table>
+<br />
+<a href="https://www.s-style.ne.jp" >名古屋 千種 マンション 不動産 株式会社S-Style</a>
+
+
+{% endfor %}
+
+</div>
+</div>
+
+<div class="S-StyleEstateBox">
+<h4><a href="https://s-style-hrd.appspot.com/show/s-style/hon/www.s-style.ne.jp/bklistmesID/bklist.html?offset=0&media=web&mesID=593326" >新築戸建</a></h4>
+<div class="TextBox">
+
+{% for bkdata in shinchiku %}
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr height="11">
+    <td width="11" height="11" background="../img/top-img/01.jpg"></td>
+    <td height="11" background="../img/top-img/02.jpg"></td>
+    <td width="11" height="11" background="../img/top-img/03.jpg"></td>
+  </tr>
+  <tr>
+    <td width="11" background="../img/top-img/08.jpg"></td>
+    <td><table width="100%" border="0" cellspacing="5" cellpadding="0">
+        <tr>
+          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default:""}}</a></p>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td align="left">
+
+{% if bkdata.bkdata.kkkybku %}
+<span class="class14red">{{bkdata.bkdata.kkkybku|join:" "}} </span>
+<br />
+{% endif %}
+<span class="class-orange">●</span>価　格
+{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default:""}}万円（税込）{% endif %}
+<br />
+<span class="class-orange">●</span>交　通
+{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default:""}}分　{% endif %}
+<br />
+
+<span class="class-orange">●</span>面　積
+
+{% if bkdata.bkdata.snyuMnskSyuBbnMnsk2 %}
+専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+{% if bkdata.bkdata.blcnyTrsMnsk %}
+ 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+{% if bkdata.bkdata.tcMcbnSumnsk %}
+ 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+<br />
+<span class="class-orange">●</span>間　取
+{{bkdata.bkdata.mdrHysu1|floatformat|default:""}}{{bkdata.bkdata.mdrTyp1|default:""}}
+<br />
+                  </td>
+                <td align="right" valign="bottom"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" ><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="詳しくはこちら" width="107" height="19" border="0" vspace="3" /></a></td>
+              </tr>
+            </table></td>
+        </tr>
+      </table></td>
+    <td width="11" background="../img/top-img/04.jpg"></td>
+  </tr>
+  <tr height="11">
+    <td width="11" height="11" background="../img/top-img/07.jpg"></td>
+    <td height="11" background="../img/top-img/06.jpg"></td>
+    <td width="11" height="11" background="../img/top-img/05.jpg"></td>
+  </tr>
+</table>
+<br />
+{% endfor %}
+
+
+</div>
+</div>
+
+<div class="S-StyleEstateBox">
+<h4><a href="https://s-style-hrd.appspot.com/show/s-style/hon/www.s-style.ne.jp/bklistmesID/bklist.html?offset=0&media=web&mesID=599278">中古戸建</a></h4>
+<div class="TextBox">
+
+{% for bkdata in tyuukoko %}
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr height="11">
+    <td width="11" height="11" background="../img/top-img/01.jpg"></td>
+    <td height="11" background="../img/top-img/02.jpg"></td>
+    <td width="11" height="11" background="../img/top-img/03.jpg"></td>
+  </tr>
+  <tr>
+    <td width="11" background="../img/top-img/08.jpg"></td>
+    <td><table width="100%" border="0" cellspacing="5" cellpadding="0">
+        <tr>
+          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default:""}}</a></p>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td align="left">
+
+{% if bkdata.bkdata.kkkybku %}
+<span class="class14red">{{bkdata.bkdata.kkkybku|join:" "}} </span>
+<br />
+{% endif %}
+<span class="class-orange">●</span>価　格
+{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default:""}}万円（税込）{% endif %}
+<br />
+<span class="class-orange">●</span>交　通
+{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default:""}}分　{% endif %}
+<br />
+
+<span class="class-orange">●</span>面　積
+
+{% if bkdata.bkdata.snyuMnskSyuBbnMnsk2 %}
+専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+{% if bkdata.bkdata.blcnyTrsMnsk %}
+ 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+{% if bkdata.bkdata.tcMcbnSumnsk %}
+ 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+<br />
+<span class="class-orange">●</span>間　取
+{{bkdata.bkdata.mdrHysu1|floatformat|default:""}}{{bkdata.bkdata.mdrTyp1|default:""}}
+<br />
+                  </td>
+                <td align="right" valign="bottom"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" ><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="詳しくはこちら" width="107" height="19" border="0" vspace="3" /></a></td>
+              </tr>
+            </table></td>
+        </tr>
+      </table></td>
+    <td width="11" background="../img/top-img/04.jpg"></td>
+  </tr>
+  <tr height="11">
+    <td width="11" height="11" background="../img/top-img/07.jpg"></td>
+    <td height="11" background="../img/top-img/06.jpg"></td>
+    <td width="11" height="11" background="../img/top-img/05.jpg"></td>
+  </tr>
+</table>
+<br />
+
+<a href="https://www.s-style.ne.jp" >名古屋 千種 マンション 不動産 株式会社S-Style</a>
+
+{% endfor %}
+
+</div>
+</div>
+
+<div class="S-StyleEstateBox">
+<h4><a href="https://s-style-hrd.appspot.com/show/s-style/hon/www.s-style.ne.jp/bklistmesID/bklist.html?offset=0&media=web&mesID=595317" >中古マンション</a></h4>
+<div class="TextBox">
+{% for bkdata in chukoman %}
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr height="11">
+    <td width="11" height="11" background="../img/top-img/01.jpg"></td>
+    <td height="11" background="../img/top-img/02.jpg"></td>
+    <td width="11" height="11" background="../img/top-img/03.jpg"></td>
+  </tr>
+  <tr>
+    <td width="11" background="../img/top-img/08.jpg"></td>
+    <td><table width="100%" border="0" cellspacing="5" cellpadding="0">
+        <tr>
+          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default:""}}</a></p>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td align="left">
+
+{% if bkdata.bkdata.kkkybku %}
+<span class="class14red">{{bkdata.bkdata.kkkybku|join:" "}} </span>
+<br />
+{% endif %}
+<span class="class-orange">●</span>価　格
+{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default:""}}万円（税込）{% endif %}
+<br />
+<span class="class-orange">●</span>交　通
+{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default:""}}分　{% endif %}
+<br />
+
+<span class="class-orange">●</span>面　積
+
+{% if bkdata.bkdata.snyuMnskSyuBbnMnsk2 %}
+専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+{% if bkdata.bkdata.blcnyTrsMnsk %}
+ 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+{% if bkdata.bkdata.tcMcbnSumnsk %}
+ 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+<br />
+<span class="class-orange">●</span>間　取
+{{bkdata.bkdata.mdrHysu1|floatformat|default:""}}{{bkdata.bkdata.mdrTyp1|default:""}}
+<br />
+                  </td>
+                <td align="right" valign="bottom"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" ><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="詳しくはこちら" width="107" height="19" border="0" vspace="3" /></a></td>
+              </tr>
+            </table></td>
+        </tr>
+      </table></td>
+    <td width="11" background="../img/top-img/04.jpg"></td>
+  </tr>
+  <tr height="11">
+    <td width="11" height="11" background="../img/top-img/07.jpg"></td>
+    <td height="11" background="../img/top-img/06.jpg"></td>
+    <td width="11" height="11" background="../img/top-img/05.jpg"></td>
+  </tr>
+</table>
+<br />
+
+
+<a href="https://www.s-style.ne.jp" >名古屋 千種 マンション 不動産 株式会社S-Style</a>
+
+{% endfor %}
+
+</div>
+</div>
+
+<div class="S-StyleEstateBox">
+<h4><a href="https://s-style-hrd.appspot.com/show/s-style/hon/www.s-style.ne.jp/bklistmesID/bklist.html?offset=0&media=web&mesID=602284" >収益物件</a></h4>
+<div class="TextBox">
+
+{% for bkdata in syueki %}
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr height="11">
+    <td width="11" height="11" background="../img/top-img/01.jpg"></td>
+    <td height="11" background="../img/top-img/02.jpg"></td>
+    <td width="11" height="11" background="../img/top-img/03.jpg"></td>
+  </tr>
+  <tr>
+    <td width="11" background="../img/top-img/08.jpg"></td>
+    <td><table width="100%" border="0" cellspacing="5" cellpadding="0">
+        <tr>
+          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default:""}}</a></p>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td align="left">
+
+{% if bkdata.bkdata.kkkybku %}
+<span class="class14red">{{bkdata.bkdata.kkkybku|join:" "}} </span>
+<br />
+{% endif %}
+<span class="class-orange">●</span>価　格
+{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default:""}}万円(税込){% endif %}
+<br />
+<span class="class-orange">●</span>交　通
+{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default:""}}分　{% endif %}
+<br />
+
+<span class="class-orange">●</span>面　積
+
+{% if bkdata.bkdata.snyuMnskSyuBbnMnsk2 %}
+専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+{% if bkdata.bkdata.blcnyTrsMnsk %}
+ 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+{% if bkdata.bkdata.tcMcbnSumnsk %}
+ 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+<br />
+<span class="class-orange">●</span>間　取
+{{bkdata.bkdata.mdrHysu1|floatformat|default:""}}{{bkdata.bkdata.mdrTyp1|default:""}}
+<br />
+                  </td>
+                <td align="right" valign="bottom"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" ><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="詳しくはこちら" width="107" height="19" border="0" vspace="3" /></a></td>
+              </tr>
+            </table></td>
+        </tr>
+      </table></td>
+    <td width="11" background="../img/top-img/04.jpg"></td>
+  </tr>
+  <tr height="11">
+    <td width="11" height="11" background="../img/top-img/07.jpg"></td>
+    <td height="11" background="../img/top-img/06.jpg"></td>
+    <td width="11" height="11" background="../img/top-img/05.jpg"></td>
+  </tr>
+</table>
+<br />
+
+<a href="https://www.s-style.ne.jp" >名古屋 千種 マンション 不動産 株式会社S-Style</a>
+
+
+{% endfor %}
+
+
+</div>
+</div>
+
+<div class="S-StyleEstateBox">
+<h4><a href="https://s-style-hrd.appspot.com/show/s-style/hon/www.s-style.ne.jp/bklistmesID/bklist.html?offset=0&media=web&mesID=611083" >賃貸</a></h4>
+<div class="TextBox">
+
+{% for bkdata in tintai %}
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr height="11">
+    <td width="11" height="11" background="../img/top-img/01.jpg"></td>
+    <td height="11" background="../img/top-img/02.jpg"></td>
+    <td width="11" height="11" background="../img/top-img/03.jpg"></td>
+  </tr>
+  <tr>
+    <td width="11" background="../img/top-img/08.jpg"></td>
+    <td><table width="100%" border="0" cellspacing="5" cellpadding="0">
+        <tr>
+          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri2}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default:""}}</a></p>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td align="left">
+
+{% if bkdata.bkdata.kkkybku %}
+<span class="class14red">{{bkdata.bkdata.kkkybku|join:" "}} </span>
+<br />
+{% endif %}
+<span class="class-orange">●</span>価　格
+{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default:""}}万円（税込）{% endif %}
+<br />
+<span class="class-orange">●</span>交　通
+{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default:""}}分　{% endif %}
+<br />
+
+<span class="class-orange">●</span>面　積
+
+{% if bkdata.bkdata.snyuMnskSyuBbnMnsk2 %}
+専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+{% if bkdata.bkdata.blcnyTrsMnsk %}
+ 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+{% if bkdata.bkdata.tcMcbnSumnsk %}
+ 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+<br />
+<span class="class-orange">●</span>間　取
+{{bkdata.bkdata.mdrHysu1|floatformat|default:""}}{{bkdata.bkdata.mdrTyp1|default:""}}
+<br />
+                  </td>
+                <td align="right" valign="bottom"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" ><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="詳しくはこちら" width="107" height="19" border="0" vspace="3" /></a></td>
+              </tr>
+            </table></td>
+        </tr>
+      </table></td>
+    <td width="11" background="../img/top-img/04.jpg"></td>
+  </tr>
+  <tr height="11">
+    <td width="11" height="11" background="../img/top-img/07.jpg"></td>
+    <td height="11" background="../img/top-img/06.jpg"></td>
+    <td width="11" height="11" background="../img/top-img/05.jpg"></td>
+  </tr>
+</table>
+<br />
+
+<a href="https://www.s-style.ne.jp" >名古屋 千種 マンション 不動産 株式会社S-Style</a>
+
+{% endfor %}
+
+
+</div>
+</div>
+
+
+
+<h3><a href="https://www.chikusaku-mansion.com/">千種区マンション.com</a></h3>
+
+<div class="MansionEstateBox">
+<h4><a href="https://www.chikusaku-mansion.com/">新着マンション情報</a></h4>
+<div class="TextBox">
+
+{% for bkdata in mansion %}
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr height="11">
+    <td width="11" height="11" background="../img/top-img/01.jpg"></td>
+    <td height="11" background="../img/top-img/02.jpg"></td>
+    <td width="11" height="11" background="../img/top-img/03.jpg"></td>
+  </tr>
+  <tr>
+    <td width="11" background="../img/top-img/08.jpg"></td>
+    <td><table width="100%" border="0" cellspacing="5" cellpadding="0">
+        <tr>
+          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri2}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default:""}}</a></p>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td align="left">
+
+{% if bkdata.bkdata.kukkTnsiKbn == "広告可" %}
+
+{% if bkdata.bkdata.kkkybku %}
+<span class="class14red">{{bkdata.bkdata.kkkybku|join:" "}} </span>
+<br />
+{% endif %}
+
+
+<span class="class-orange">●</span>価　格
+{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default:""}}万円（税込）{% endif %}
+<br />
+<span class="class-orange">●</span>交　通
+{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default:""}}　{% endif %}
+{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default:""}}駅　{% endif %}
+{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default:""}}分　{% endif %}
+<br />
+
+<span class="class-orange">●</span>面　積
+
+{% if bkdata.bkdata.snyuMnskSyuBbnMnsk2 %}
+専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+{% if bkdata.bkdata.blcnyTrsMnsk %}
+ 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+{% if bkdata.bkdata.tcMcbnSumnsk %}
+ 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|floatformat:"-2"}}
+m<sup>2</sup>
+{% endif %}
+
+<br />
+<span class="class-orange">●</span>間　取
+{{bkdata.bkdata.mdrHysu1|floatformat|default:""}}{{bkdata.bkdata.mdrTyp1|default:""}}
+<br />
+                  </td>
+                <td align="right" valign="bottom"><a href="{{data.bkdatauri2}}{{bkdata.bkdata.bkID}}" ><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="詳しくはこちら" width="107" height="19" border="0" vspace="3" /></a></td>
+              </tr>
+            </table></td>
+        </tr>
+      </table></td>
+    <td width="11" background="../img/top-img/04.jpg"></td>
+  </tr>
+  <tr height="11">
+    <td width="11" height="11" background="../img/top-img/07.jpg"></td>
+    <td height="11" background="../img/top-img/06.jpg"></td>
+    <td width="11" height="11" background="../img/top-img/05.jpg"></td>
+  </tr>
+</table>
+{% else %}
+<br />
+
+<span class="class14red"><a href="{{data.bkdatauri2}}{{bkdata.bkdata.bkID}}" >この物件は会員のみ公開しております。新規会員登録／ログインはこちらです。</a></span>
+
+<br />
+                  </td>
+                <td align="right" valign="bottom"><a href="{{data.bkdatauri2}}{{bkdata.bkdata.bkID}}" ><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="詳しくはこちら" width="107" height="19" border="0" vspace="3" /></a></td>
+              </tr>
+            </table></td>
+        </tr>
+      </table></td>
+    <td width="11" background="../img/top-img/04.jpg"></td>
+  </tr>
+  <tr height="11">
+    <td width="11" height="11" background="../img/top-img/07.jpg"></td>
+    <td height="11" background="../img/top-img/06.jpg"></td>
+    <td width="11" height="11" background="../img/top-img/05.jpg"></td>
+  </tr>
+</table>
+
+{% endif %}
+
+<br />
+
+<a href="https://www.chikusaku-mansion.com/">名古屋 千種 マンション 千種区マンション.com</a>
+
+
+<br />
+
+
+
+{% endfor %}
+</div>
+</div>
+
+
+</div><!--ContentsBox-->
+
+
+
+<div id="FooterBox">
+<h5><a href="https://www.s-style.ne.jp" >名古屋 千種 マンション 不動産 株式会社S-Style</a></h5>
+<h6>〒464-0821 名古屋市千種区末盛通一丁目1番地　弘法屋本店ビル3Ｂ<br />TEL 052-751-5900　FAX 052-751-8100</h6>
+</div>
+
+
+</div><!--Wrapper-->
+
+
+</body>
+
+</html>

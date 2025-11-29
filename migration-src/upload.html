@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>CSVファイルのアップロード</title>
+  <script type="text/javascript">
+    function openwindow() {
+      window.open("message.htm", "", "width=700,height=400");
+    }
+
+    function createtag() {
+      window.close();
+    }
+  </script>
+</head>
+<body>
+  <h3>CSVファイルを選択してアップロードしてください。</h3>
+  <p>csvファイルはあらかじめ整列されているShift-JISファイルである必要があります。</p>
+
+  <ul id="my-list">
+    {% for info in result %}
+    <li>{{ info | default('', true) }}</li>
+    {% endfor %}
+  </ul>
+
+  {% if error_msg %}
+  <p style="color: red;">{{ error_msg }}</p>
+  {% endif %}
+
+  {% if source %}
+  <p>import: {{ source }}</p>
+  {% endif %}
+
+  <form method="post" action="" enctype="multipart/form-data">
+    {% if csrf_token %}<input type="hidden" name="csrf_token" value="{{ csrf_token }}">{% endif %}
+    <label>ファイル: <input type="file" name="file" size="30"></label>
+    <input type="submit" value="アップロード">
+  </form>
+</body>
+</html>

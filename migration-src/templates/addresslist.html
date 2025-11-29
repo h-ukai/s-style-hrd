@@ -1,0 +1,468 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="ja" xml:lang="ja" xmlns="https://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<title>物件検索アドレスリスト管理</title>
+<link href="../css/baselayout.css" type="text/css" rel="stylesheet" media="all" />
+
+<link href="../css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css"/><!-- jquery UI のcss-->
+<script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script><!-- jquery　本体-->
+<script type="text/javascript"  src="../js/jquery-ui-1.8.16.custom.min.js"></script><!-- jquery-UI　本体-->
+
+<script type="text/javascript" src="../js/jQueryMultiCheckbox.js"></script>
+<style>
+
+.ui-autocomplete-loading {
+	background: white url('../img/ui-anim_basic_16x16.gif') right center no-repeat;
+}
+.ui-autocomplete {
+    max-height: 300px;
+    width: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 20px;
+}
+#jquery-ui-autocomplete label {
+    float: left;
+    margin-right: 0.5em;
+    color: black;
+    font-size: 13px;
+}
+</style>
+<script type="text/javascript">
+
+var ajaxURL = "https://s-style-hrd.appspot.com/jsonservice";
+var ajaxareaURL = "https://s-style-hrd.appspot.com/jsonservice";
+var con = 0;
+
+$(document).ready(function(){
+
+	var urlvar;
+	var list = null;
+	urlvar = getUrlVars();
+	if ($("#listid").val()){
+	    list = $("#listid").val();
+	}
+	if (list == null){
+    	list = urlvar['list'];
+	}
+	if (list){
+		$("#listid").val(list);
+		addresslistname();
+    	addressset();
+	}
+    $('#addresslistfrm').bind('submit', function(event,firedEvent) {
+        if(firedEvent.currentTarget.id=='delete'){
+            if(confirm("リストが削除されます\nよろしいですか？"))
+            {
+                //$('#addresslistfrm').submit();
+                accept("削除する");
+                $("#listid").val("");
+                $("#division").val("");
+                $("#listname").val("");
+                removeadd1();
+                return false;
+            }
+            else {return false;}
+        }
+        else{
+            //$('#addresslistfrm').submit();
+            accept("保存する");
+            return false;
+        }
+      });
+      $('#addresslistfrm input[type="submit"]').bind('click',function(e) {
+        $(this.form).trigger('submit',[e]);
+            //event.stopPropagation();
+            return false;
+      });
+
+    $("#listname").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: ajaxareaURL ,
+                dataType: "jsonp",
+                data: {
+                    com: "area",
+                    division:$("#division").val(),
+                    search_key: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label:  item['名前'] + ' (' + item['区分'] + ')',
+                            value: item['名前'],
+                            id: item['key'],
+                            division: item['区分']
+                        }
+                    }));
+                 }
+
+             });
+         },
+
+        width: 200,
+		minLength: 0,
+		delay: 1000,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+		select: function(ev, ui) {
+		    $("#listid").val(ui.item.id);
+		    $("#division").val(ui.item.division);
+    		addressset();
+		}
+    });
+    addadress(0);
+});
+
+function accept(submitstr){
+    var postData = {};
+    var postDatastr = $("form").serialize();
+/*
+    $('form').find(':input').each(function(){
+        if ( !$(this).is(':disabled') ) {
+            // disableでない場合のみサーバに送る
+            if ( $(this).attr('type') == 'radio'  || $(this).attr('type') == "checkbox" ) {
+                // ラジオボタンの場合
+                if ( $(this).is(':checked') ) {
+                    postData[$(this).attr('name')] = $(this).val();
+                }
+            }
+            else if ( $(this).get(0).tagName == "SELECT" ) {
+                // セレクトボックスの場合
+                postData[$(this).attr('name')] = $(this).val();
+            }
+            else {
+                // その他
+                postData[$(this).attr('name')] = $(this).val();
+            }
+        }
+    });
+*/
+    postDatastr += "&submit=" + submitstr;
+    $.post('/addresslist.html',postDatastr,function(data){
+        //...callback処理
+        $("#message").html("<strong>" + $("#message",data).html() + "</strong>");
+        $("#listid").val($("#listid",data).val());
+        if ($("#listid",data).val()){
+            if (window.opener){
+                //window.opener.setadlist($("#listid",data).val(),$("#listname").val(),$("#division").val());
+                //window.close();
+            }
+            if (parent){
+                parent.setadlist($("#listid",data).val(),$("#listname").val(),$("#division").val());
+                parent.tb_remove();
+            }
+        }
+    });
+    return false;
+}
+
+
+function addadress(pos){
+    $("#addresslist" + pos + " #address1").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: ajaxURL ,
+                dataType: "jsonp",
+                data: {
+                    com: "address1",
+                    todofukenmei:$("#addresslist" + pos + " #tdufknmi").val(),
+                    search_key: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            value: item['市区町村名']
+                        }
+                    }));
+                }
+            });
+        },
+        width: 500,
+		minLength: 0,
+		delay: 1000,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+        select: function() {
+			//　イベント処理
+            //addaddress2(pos);
+            $("#addresslist" + pos + " #address1id").val('');
+            if(pos==con){
+                addad1();
+            }
+        }
+    })
+}
+
+function getExplicitOriginalTarget( _event )
+{
+    return document.activeElement || _event.explicitOriginalTarget;
+}
+
+function removeadd1(){
+    $("*[name=addresslist]:not(:first)").remove();
+    $("#address1").val("");
+    $("#tdufknmi").val("");
+    removeadd2($("*[name=addresslist]:first"));
+    con = 0;
+}
+
+function removeadd2(obj){
+    //$("#address1",obj).autocomplete( "destroy" )
+    $("#address2",obj).removeAttr("title");
+    $("#address2",obj).val("");
+    $(">div>span",obj).remove();
+}
+
+function addad1(){
+    con++;
+    $("#addresslist" + (con - 1)).clone().appendTo("#addresslistset").attr("id","addresslist" + con);
+    $("#addresslist" + con + " #address1").val("")
+    $("#addresslist" + con + " #address2").removeAttr("title");
+    $("#addresslist" + con + " #address2").val("");
+    $("#addresslist" + con + " #address1id").val("");
+    addadress(con);
+}
+
+function addad2(obj){
+    //$(pos).empty();
+    //alert($("#tdufknmi",obj).val());
+    removeadd2(obj);
+    $.ajax({
+        url: ajaxURL ,
+        dataType: "jsonp",
+//        async:false,
+        data: {
+            com: "address2",
+            todofukenmei:$("#tdufknmi",obj).val(),
+            shikutyosonmei:$("#address1",obj).val(),
+        },
+        success: function(rows) {
+            for (var i=0;i<rows.length;i++) {
+                var row = rows[i];
+                if (i==0){
+                    $("#address2",obj).attr("title",row['大字・町丁目']);
+                }
+                else{
+                    $("#address2",obj).attr("title",$("#address2",obj).attr("title") + ',' + row['大字・町丁目']);
+                }
+            }
+            $("#address2",obj).multicheckbox({show:'show'});
+        }
+    });
+}
+
+function addad2data(obj){
+    //$(pos).empty();
+    //alert($("#tdufknmi",obj).val());
+    $.ajax({
+        url: ajaxareaURL ,
+        dataType: "jsonp",
+//        async:false,
+        data: {
+            com: "address2data",
+            key:$("#address1id",obj).val(),
+        },
+        success: function(rows) {
+            if(rows.length){
+                addad2(obj);
+                //$("#address2",obj).multicheckbox({show:'show'});
+                for (var i=0;i<rows.length;i++) {
+                    var row = rows[i];
+                    var s;
+                    if (i==0){
+                        $("#address2",obj).val(row['大字・町丁目']);
+                    }
+                    else{
+                        $("#address2",obj).val($("#address2",obj).val() + ',' + row['大字・町丁目']);
+                    }
+                }
+                //$("#address2",obj).multicheckbox({show:'show'});
+            }
+        }
+    });
+}
+
+
+function addressset(){
+    //$(pos).empty();
+    //alert($("#tdufknmi",obj).val());
+    $.ajax({
+        url: ajaxareaURL ,
+        dataType: "jsonp",
+        data: {
+            com: "addressset",
+            key:$("#listid").val()
+        },
+        success: function(rows) {
+            removeadd1();
+            for (var i=0;i<rows.length;i++) {
+                row = rows[i];
+                $("#addresslist" + i + " #tdufknmi").val(row['都道府県名']);
+                $("#addresslist" + i + " #address1").val(row['所在地名1']);
+                $("#addresslist" + i + " #address1id").val(row['key']);
+                addad1();
+                addad2data($("#addresslist" + i));
+            }
+        }
+    });
+}
+
+
+function addresslistname(){
+    $.ajax({
+        url: ajaxareaURL ,
+        dataType: "jsonp",
+        data: {
+            com: "addresslistname",
+            key:$("#listid").val()
+        },
+        success: function(rows) {
+            $("#listname").val(rows['名前']);
+            $("#division").val(rows['区分']);
+        }
+    });
+}
+
+
+function getUrlVars()
+{
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++) {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars;
+}
+
+
+</script>
+
+</head>
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0">
+<form action="/addresslist.html" method="post" name="addresslistfrm" id="addresslistfrm">
+<div class="addresslist01">
+<div class="left">
+<input type="hidden" name="memberID" value="{{memberID|default_if_none:""}}"/>
+<input type="hidden" name="modal" id = "modal" value="{{modal|default_if_none:""}}"/>
+<input type="hidden" name="listid" id="listid" value="{{key|default_if_none:""}}"/>
+区分：<input type="text" name="division" id="division" value="{{division|default_if_none:""}}" size="11" />
+地名一覧名：<input type="text" name="listname" id="listname" value="{{listname|default_if_none:""}}" size="11" />
+</div>
+
+<div class="right">
+<span id = message>{{Message|default_if_none:""}}</span>
+<input type="submit" name="submit" id="submit"  title="" value="保存する"/>
+<input type="submit" name="submit" id="delete"  title="" value="削除する"/>
+</div>
+</div>
+
+
+<div class="addresslist01">
+<div id="addresslistset" name="addresslistset">
+<div id="addresslist0" name="addresslist">
+<br/>
+都道府県<select name="tdufknmi" id ="tdufknmi" size="1">
+  <option {{data.tdufknmi|default_if_none:" selected"}} value=""></option>
+  <option value="北海道" {% if data.tdufknmi == "北海道" %} selected{% endif %}>北海道</option>
+  <option value="青森県" {% if data.tdufknmi == "青森県" %} selected{% endif %}>青森県</option>
+  <option value="岩手県" {% if data.tdufknmi == "岩手県" %} selected{% endif %}>岩手県</option>
+  <option value="宮城県" {% if data.tdufknmi == "宮城県" %} selected{% endif %}>宮城県</option>
+  <option value="秋田県" {% if data.tdufknmi == "秋田県" %} selected{% endif %}>秋田県</option>
+  <option value="山形県" {% if data.tdufknmi == "山形県" %} selected{% endif %}>山形県</option>
+  <option value="福島県" {% if data.tdufknmi == "福島県" %} selected{% endif %}>福島県</option>
+  <option value="茨城県" {% if data.tdufknmi == "茨城県" %} selected{% endif %}>茨城県</option>
+  <option value="栃木県" {% if data.tdufknmi == "栃木県" %} selected{% endif %}>栃木県</option>
+  <option value="群馬県" {% if data.tdufknmi == "群馬県" %} selected{% endif %}>群馬県</option>
+  <option value="埼玉県" {% if data.tdufknmi == "埼玉県" %} selected{% endif %}>埼玉県</option>
+  <option value="千葉県" {% if data.tdufknmi == "千葉県" %} selected{% endif %}>千葉県</option>
+  <option value="東京都" {% if data.tdufknmi == "東京都" %} selected{% endif %}>東京都</option>
+  <option value="神奈川県" {% if data.tdufknmi == "神奈川県" %} selected{% endif %}>神奈川県</option>
+  <option value="新潟県" {% if data.tdufknmi == "新潟県" %} selected{% endif %}>新潟県</option>
+  <option value="富山県" {% if data.tdufknmi == "富山県" %} selected{% endif %}>富山県</option>
+  <option value="石川県" {% if data.tdufknmi == "石川県" %} selected{% endif %}>石川県</option>
+  <option value="福井県" {% if data.tdufknmi == "福井県" %} selected{% endif %}>福井県</option>
+  <option value="山梨県" {% if data.tdufknmi == "山梨県" %} selected{% endif %}>山梨県</option>
+  <option value="長野県" {% if data.tdufknmi == "長野県" %} selected{% endif %}>長野県</option>
+  <option value="岐阜県" {% if data.tdufknmi == "岐阜県" %} selected{% endif %}>岐阜県</option>
+  <option value="静岡県" {% if data.tdufknmi == "静岡県" %} selected{% endif %}>静岡県</option>
+  <option value="愛知県" {% if data.tdufknmi == "愛知県" %} selected{% endif %}>愛知県</option>
+  <option value="三重県" {% if data.tdufknmi == "三重県" %} selected{% endif %}>三重県</option>
+  <option value="滋賀県" {% if data.tdufknmi == "滋賀県" %} selected{% endif %}>滋賀県</option>
+  <option value="京都府" {% if data.tdufknmi == "京都府" %} selected{% endif %}>京都府</option>
+  <option value="大阪府" {% if data.tdufknmi == "大阪府" %} selected{% endif %}>大阪府</option>
+  <option value="兵庫県" {% if data.tdufknmi == "兵庫県" %} selected{% endif %}>兵庫県</option>
+  <option value="奈良県" {% if data.tdufknmi == "奈良県" %} selected{% endif %}>奈良県</option>
+  <option value="和歌山県" {% if data.tdufknmi == "和歌山県" %} selected{% endif %}>和歌山県</option>
+  <option value="鳥取県" {% if data.tdufknmi == "鳥取県" %} selected{% endif %}>鳥取県</option>
+  <option value="島根県" {% if data.tdufknmi == "島根県" %} selected{% endif %}>島根県</option>
+  <option value="岡山県" {% if data.tdufknmi == "岡山県" %} selected{% endif %}>岡山県</option>
+  <option value="広島県" {% if data.tdufknmi == "広島県" %} selected{% endif %}>広島県</option>
+  <option value="山口県" {% if data.tdufknmi == "山口県" %} selected{% endif %}>山口県</option>
+  <option value="徳島県" {% if data.tdufknmi == "徳島県" %} selected{% endif %}>徳島県</option>
+  <option value="香川県" {% if data.tdufknmi == "香川県" %} selected{% endif %}>香川県</option>
+  <option value="愛媛県" {% if data.tdufknmi == "愛媛県" %} selected{% endif %}>愛媛県</option>
+  <option value="高知県" {% if data.tdufknmi == "高知県" %} selected{% endif %}>高知県</option>
+  <option value="福岡県" {% if data.tdufknmi == "福岡県" %} selected{% endif %}>福岡県</option>
+  <option value="佐賀県" {% if data.tdufknmi == "佐賀県" %} selected{% endif %}>佐賀県</option>
+  <option value="長崎県" {% if data.tdufknmi == "長崎県" %} selected{% endif %}>長崎県</option>
+  <option value="熊本県" {% if data.tdufknmi == "熊本県" %} selected{% endif %}>熊本県</option>
+  <option value="大分県" {% if data.tdufknmi == "大分県" %} selected{% endif %}>大分県</option>
+  <option value="宮崎県" {% if data.tdufknmi == "宮崎県" %} selected{% endif %}>宮崎県</option>
+  <option value="鹿児島県" {% if data.tdufknmi == "鹿児島県" %} selected{% endif %}>鹿児島県</option>
+  <option value="沖縄県" {% if data.tdufknmi == "沖縄県" %} selected{% endif %}>沖縄県</option>
+</select>
+所在地１<input type="text" name="address1" id="address1" value="{{data.address1.shzicmi1|default_if_none:""}}" size="11" />
+<input type="hidden" name="address1id" id="address1id" value="{{data.address1.shzicmi1id|default_if_none:""}}" size="11" />
+所在地１を削除する場合は消して保存してください
+<div id=shzicmi2frm name=shzicmi2frm >
+<input type="button" value="所在地２を追加する"  ONCLICK="addad2($(this).parent().parent())" />
+　<input type="button" value="所在地２を削除する" ONCLICK="removeadd2($(this).parent().parent())"/>
+　<br />
+<input type="text" name="address2" id="address2"  title="" value="" style="width:80%;"/>
+</div>
+</div>
+
+</div>
+</div>
+
+</form>
+<script type="text/javascript">
+
+
+
+  var _gaq = _gaq || [];
+
+  _gaq.push(['_setAccount', 'UA-7545989-12']);
+
+  _gaq.push(['_trackPageview']);
+
+
+
+  (function() {
+
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+
+  })();
+
+
+
+</script>
+
+</body>
+</html>

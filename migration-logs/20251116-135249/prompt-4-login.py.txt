@@ -1,0 +1,130 @@
+﻿あなたは Google App Engine Python 2.7 から Python 3.11 へのマイグレーションを実行するエキスパートです。
+
+### 実行環境の前提
+
+- **プロジェクトルート**: `C:\Users\hrsuk\prj\s-style-hrd`
+- **ソースコード**: `C:\Users\hrsuk\prj\s-style-hrd\src\` 配下
+- **出力先**: `C:\Users\hrsuk\prj\s-style-hrd\migration-src\` 配下（ディレクトリ構造維持）
+- **マイグレーションルール**: `C:\Users\hrsuk\prj\s-style-hrd\GAE_MIGRATION_STATE.md` に記載
+- **進捗管理**: `C:\Users\hrsuk\prj\s-style-hrd\migration-progress.md` で共有
+
+### やってほしいこと
+
+1. **マイグレーションルールの確認**
+   - `C:\Users\hrsuk\prj\s-style-hrd\GAE_MIGRATION_STATE.md` を Read ツールで読み込む
+   - 「## マイグレーションルール」セクションの内容を理解する
+
+2. **対象ファイルの読み込み**
+   - 対象ファイルのパスはプロンプト末尾で指定されます
+   - Read ツールで対象ファイルを読み込む
+
+3. **マイグレーション実行**
+   - マイグレーションルールに従って、対象ファイルを Python 3.11 + Flask + NDB に移行する
+   - **重要**: 出力は `migration-src/` 配下に保存（元ファイルは変更しない）
+   - Write ツールを使用して**新規ファイル**として出力パスに保存
+   - 以下の順序で変更を適用:
+     1. インポート文の修正（`google.appengine.ext` → `google.cloud.ndb` 等）
+     2. モデル定義の修正（`db.Model` → `ndb.Model` 等）
+     3. webapp2 → Flask の変更（ハンドラークラス → ルート関数）
+     4. リクエスト/レスポンス処理の変更
+     5. Python 2→3 構文の修正（`print`, `except as`, `.iteritems()` → `.items()` 等）
+
+4. **依存関係の記録**
+   - 対象ファイルがインポートしている**プロジェクト内モジュール**を特定
+   - プロジェクト内モジュールの判定基準:
+     - `from application.xxx import ...` → プロジェクト内
+     - `from geo.xxx import ...` → プロジェクト内
+     - `import application.xxx` → プロジェクト内
+     - `from google.cloud import ...` → 外部ライブラリ（記録不要）
+
+   - 依存モジュールを `migration-progress.md` に記録:
+     ```markdown
+     ### ✅ [ファイル名]
+     - **状態**: 完了
+     - **日時**: [現在時刻を YYYY-MM-DD HH:MM:SS 形式で]
+     - **依存関係**:
+       - `application/models/member.py` (まだ未処理)
+       - `application/session.py` (まだ未処理)
+     - **注意事項**:
+       - session.pyで使用している認証ロジックは既存のSHA256を維持
+       - models/member.pyのReferencePropertyは3箇所あり
+     ```
+
+5. **依存モジュールへのコメント追記（将来の参照用）**
+   - 依存モジュールが `migration-src/` にすでに存在する場合:
+     - そのファイルの冒頭に以下のコメントを**Edit ツールで追記**:
+       ```python
+       # 参照元: [現在処理中のファイル名] から参照されています
+       ```
+   - まだ存在しない場合:
+     - `migration-progress.md` の「## 未処理の依存関係」セクションに記録
+
+6. **処理結果の記録**
+   - 処理完了後、`migration-progress.md` に **Edit ツールで追記**
+   - 以下の形式で記録:
+     ```markdown
+     ### ✅ [ファイル名]
+     - **状態**: 完了
+     - **日時**: [現在時刻]
+     - **出力パス**: migration-src/[ファイルパス]
+     - **依存関係**: [依存モジュールリスト]
+     - **注意事項**: [次のエージェントへの引き継ぎ事項があれば]
+     ```
+
+7. **セキュリティチェック**
+   - XSS, SQLインジェクション, コマンドインジェクション等の脆弱性がないか確認
+   - 脆弱性を見つけた場合は修正せずコメントとログで報告する
+
+### 重要な制約
+- **追加の機能は実装しない**:すでに稼働中のシステムであり安定して継続利用するのが目的。重大な脅威を発見してもログとソースコードにコメントするのみにする。
+- **元ファイルは変更しない**: `src/` 配下のファイルは読み込みのみ
+- **出力は migration-src/ へ**: Write ツールで新規ファイルとして保存
+- **ディレクトリ構造を維持**: `src/application/login.py` → `migration-src/application/login.py`
+- **進捗ファイルへの記録必須**: Edit ツールで `migration-progress.md` に追記
+- **GAE_MIGRATION_STATE.md は読み込みのみ**: 編集しない
+- **完全なファイル内容を出力しない**: Write/Edit後は要約のみ報告
+- **自動実行**: すべてのファイル操作（Read/Write/Edit）を確認なしで実行する
+
+### ファイルパス例
+
+- **ソース**: `C:\Users\hrsuk\prj\s-style-hrd\src\application\login.py`
+- **出力**: `C:\Users\hrsuk\prj\s-style-hrd\migration-src\application\login.py`
+- **進捗管理**: `C:\Users\hrsuk\prj\s-style-hrd\migration-progress.md`
+
+---
+
+
+---
+
+## Target File Information
+
+**Target file**: application/login.py
+**Source path**: .\src\application\login.py
+**Output path**: .\migration-src\application\login.py
+
+## Important Additional Instructions
+
+1. **Output destination**
+   - Read source file: .\src\application\login.py
+   - Save migration result to: .\migration-src\application\login.py
+   - Use Write tool to save as new file
+
+2. **Dependency processing**
+   - Identify project modules imported by this file
+   - Record unprocessed dependencies in migration-progress.md
+   - Add comment to dependent module files noting the reference
+
+3. **Result recording**
+   - After completion, append to migration-progress.md with Edit tool
+   - Format:
+     ### [OK] application/login.py
+     - **Status**: Completed
+     - **Time**: [current time]
+     - **Dependencies**: [list of dependent modules]
+     - **Notes**: [handover items for next agent if any]
+
+4. **Current progress**
+   - Progress: 4 / 15 files
+   - Progress state file: .\migration-progress.md
+
+Start migration now.

@@ -1,0 +1,5 @@
+cron:
+- description: cronjobs job
+  url: /cron/cronjobs
+  schedule: every 2 hours from 9:00 to 21:00
+  timezone: Asia/Tokyo

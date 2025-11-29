@@ -1,0 +1,70 @@
+{% extends "mypagebase.html" %}
+
+{% block title %}マイページ{% endblock %}
+
+{% block container %}
+<img src="/img/t-maypage.jpg" alt="" width="795" height="43" border="0">
+<!--contents-01-->
+<div class="contents01">
+<span class="class-orange">●</span>マイページでは、トピックスにあなたの当サイト利用履歴を一覧表示します<br>
+<span class="class-orange">●</span>ご住所などが変更されたときは、【ユーザー情報変更】ボタンをクリックして、表示されるページにて変更してください<br>
+<span class="class-orange">●</span>郵送させて頂きました物件一覧より、ダイレクトに物件の詳細をご覧になる場合は、<br>
+物件のレコード番号をこちら <input type="text" name="textfieldName" size="24"> に入力して、<input type="submit" name="submitButtonName" value="表示"> ボタンをクリックしてください<br>
+</div>
+<!--contents01-END-->
+
+<!--contents02-->
+    <div class="contents02">
+
+        <!--leftcontent-->
+        <div class="leftcontent">
+        <p class="class-title01">トピックス</p>
+        あなたの最新10件の利用履歴をご紹介します。<br>
+        クリックすると、詳しい情報が表示されます。<br>
+        <br>
+
+            <div class="topics">
+            <li>
+            <span class="class-orange">●</span> 2011/07/22<a href="#">新着物件に0件追加されました</a>
+            </li>
+            <li>
+            <span class="class-orange">●</span> 2011/07/22<a href="#">新着物件に0件追加されました</a>
+            </li>
+            <li>
+            <span class="class-orange">●</span> 2011/07/22<a href="#">新着物件に0件追加されました</a>
+            </li>
+            <li>
+            <span class="class-orange">●</span> 2011/07/22<a href="#">新着物件に0件追加されました</a>
+            </li>
+            </div>
+        </div>
+        <!--leftcontent-END-->
+
+        <!--rightcontent-->
+        <div class="rightcontent">
+        						<p class="class-title01">ユーザー情報</p>
+        						<table border="0" cellspacing="1" cellpadding="6" bgcolor="#949494">
+        						<tr>
+        							<td bgcolor="#ede1c8">お名前</td>
+        							<td bgcolor="white">□□□□□□</td>
+        						</tr>
+        						<tr>
+        							<td bgcolor="#ede1c8">ご住所<br>
+        							</td>
+        							<td bgcolor="white">
+        								<p>□□□□□□</p>
+        							</td>
+        						</tr>
+        						<tr>
+        							<td bgcolor="#ede1c8">登録日<br>
+        							</td>
+        							<td bgcolor="white">
+        								<p>2011.01.01　<input type="submit" name="submitButtonName" value="ユーザー情報変更"></p>
+        							</td>
+        						</tr>
+        					</table>
+        </div>
+        <!--rightcontent-END-->
+    </div>
+    <!--content02END-->
+{% endblock %}

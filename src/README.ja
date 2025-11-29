@@ -1,0 +1,120 @@
+$Id: README.ja,v 1.5 2009/02/04 10:33:37 okaz Exp $
+
+My Contact List
+Another login utility sample on Google App Engine
+=================================================
+
+License
+-------
+
+Another login utility sample on Google App Engine のライセンスは
+PSF(Python Software Foundation License)に準拠します。
+
+ただし cs.py は下記の URL から別途入手したものなので、再配布などの際に
+は各自でライセンスをご確認ください。
+
+https://pythonscripts.net/ciphersaber-in-python-download-610.html 
+
+もっとも cs.py の中で "perl artistic license, or whatever other free
+license you want, at your choice" と宣言しているので、問題になるような
+ことは恐らく無いだろうと考えています。
+
+
+Abstract
+--------
+
+Another login utility sample は Google App Engine 用のアプリケーション
+に対して、Google のアカウント管理とは別に、独自のアカウント管理機能を
+提供します。
+
+このサンプルプログラムはあくまでもひな形として作成したものであり、実運
+用に際してはさらにテストや機能追加の必要があります。
+
+このサンプルプログラムが現在提供しているのは「ログイン認証」「セッショ
+ン管理」「新規登録」「登録解除」の４つです。
+
+このサンプルプログラムは gettext を利用して多国語に対応しています。
+
+このサンプルプログラムは現在次の URL で実際に動作しています。
+
+    https://teshigoto-showcase-02.appspot.com/
+
+このサンプルプログラムに関するご質問やご指摘は次のアドレスまでお寄せく
+ださい。
+
+    okaz＠teshigoto.net  (https://www.teshigoto.net/)
+
+
+Installation
+------------
+
+Another login utility sample は Google App Engine 専用のサンプルプログ
+ラムです。このプログラムを改良する場合は、開発環境として Google App
+Engine SDK 1.1.8 (or later) が必要になります。
+
+ここで配布しているソースコードは Linux 用の SDK を使って開発しましたが、
+他のプラットホーム用 SDK でもそのまま利用可能だと思われます。ただし、
+gettext のための locale データファイルについて、シンボリックリンクを利
+用しています。このあたりが Windows 環境では引っかかるかもしれません。
+
+ソースコードは teshigoto-showcase-02_verX.X.tar.gz というファイルで配
+布しています。これを展開すると loginutil3 というディレクトリが作られて、
+すべての必要なファイル群が取り出されます。
+
+config.pyについては、実行環境に応じて内容を編集する必要があります。
+
+    BASE_URL = 'https://<YOUR APPLICATION NAME>.appspot.com'
+    ADMIN_EMAIL = '<YOUR ACCOUNT>@gmail.com'
+
+このサンプルプログラムを Google App Engine で動かすときは、BASE_URL に
+実際のアプリケーション名を設定します。また、ローカル環境で動作させると
+きは BASE_URL = 'https://192.168.1.1:8080' のように設定します。ここで設
+定した値は、ユーザの仮登録時に送信されるメール本文に記載される URL の
+一部として使われます。
+
+もうひとつ config.py で設定するは ADMIN_EMAIL です。この値はユーザの仮
+登録時に送信されるメールの Sender として使われます。Google App Engine
+で動作させるときは、Google App Engine 管理者アカウントのメールアドレス
+を正しく設定しないと、メール送信が動作しないようです。
+
+ローカル環境で動作を確認するときは、loginutil3 のあるディレクトリで次
+のコマンドを実行します。
+
+    $ dev_appserver.py loginutil3
+
+問題が発生しなければこれで Web サーバ（ポート番号 8080）が立ち上がり、
+https://localhost:8080/ で Another login utility sample にアクセスする
+ことが出来ます。
+
+--address オプションを使い Web サーバのアドレスを明示的に指定すること
+で、localhost 以外の端末からアクセス可能になります。また、このプログラ
+ムが利用している Datastore を初期化したいときは --clear_datastore オプ
+ションを指定します。
+
+    $ dev_appserver.py --address=192.168.1.1 loginutil3
+
+    $ dev_appserver.py --clear_datastore loginutil3
+
+また、このサンプルプログラムでは Google App Engine のメール送信機能を
+使っています。ローカルの開発環境でメール送信の確認を行うときは、起動時
+のコマンドオプションにメールサーバの指定を付加してください。
+
+    $ dev_appserver.py --enable_sendmail loginutil3
+
+これらのオプションは起動時に同時に指定することが可能です。その他のオプ
+ションについては --help を参照してください。
+
+起動時によくある間違いは loginutil3 ディレクトリに入ったところで
+dev_appserver.py を動かそうとすることです。必ず loginutil3 ディレクト
+リと同レベルのところで dev_appsever.py を起動する必要があります。
+
+このサンプルプログラムを実際の Google App Engine にアップロードするに
+は次のコマンドを実行します。
+
+    $ appcfg.py update loginutil3
+
+もちろん事前に Google App Engine のアカウントを取得しておく必要があり
+ます。
+
+
+以上

@@ -1,0 +1,242 @@
+<html lang="ja">
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0">
+<div align="center">
+<table width="100%" border="0" cellspacing="0" cellpadding="10" background="">
+<tr>
+<td style="background-image:url(https://baikyaku.net/chikusaku/mailimg/01.jpg);background-position: 0% 0%;background-repeat:repeat-x;" align="center" valign="top">
+{{subject}}
+<br>
+<br>
+<table width="95%" border="0" cellspacing="4" cellpadding="18" bgcolor="#f7dfa5">
+<tr>
+<td align="left" bgcolor="#ffffee">
+<p>{{body|safe|linebreaks}}</p>
+</td>
+</tr>
+</table>
+<br>
+<br>
+<br>
+
+
+{% if data.bkdatalist %}
+<table width="95%" border="0" cellspacing="3" cellpadding="3" bgcolor="#ffca29">
+<tr>
+<td align="center" bgcolor="#ff8311"><font size="+3" color="white">迚ｹ驕ｸ諠�蝣ｱ</font></td>
+</tr>
+</table>
+{% endif %}
+
+
+<p>{% for bkdata in data.bkdatalist %}</p>
+<table width="95%" border="0" cellspacing="2" cellpadding="2" bgcolor="#c9caca">
+<tr>
+<td bgcolor="white">
+<table width="100%" border="0" cellspacing="5" cellpadding="0">
+<tr>
+<td align="center" bgcolor="#f4f0e5" width="110"><a href="{{data.bkdataurl}}{{bkdata.bkdata.bkID}}" target="_blank"><img src="{{bkdata.picdata.0.bloburl}}" alt="" width="74" height="110" border="0"></a></td>
+<td align="left" valign="top">
+<table width="100%" border="0" cellspacing="5" cellpadding="0" background="https://www.chikusaku-mansion.com/chikusa/cmn_img/t-back-chikusa.jpg">
+<tr>
+<td bgcolor="#ff8311" width="2"></td>
+<td>{{bkdata.bkdata.ttmnmi}}縲�{{bkdata.bkdata.tdufknmi|default:""}}{{bkdata.bkdata.shzicmi1|default:""}}{{bkdata.bkdata.shzicmi2|default:""}}</td>
+</tr>
+</table>
+<br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td align="left"><font color="#ff8311">笳�</font>莠､縲�騾� 縲�{{bkdata.bkdata.ekmi1|default:""}} {{bkdata.bkdata.ekmi2|default:""}} {{bkdata.bkdata.ekmi3|default:""}} 鬧� <br>
+<font color="#ff8311">笳�</font>髢薙��蜿悶�� {{bkdata.bkdata.mdrHysu1|floatformat|default:""}}{{bkdata.bkdata.mdrTyp1|default:""}}
+                    {% if bkdata.bkdata.stTyp11%}
+                    {% if bkdata.bkdata.stHrs11 %}
+                    {{bkdata.bkdata.stHrs11}}蟶�
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu11 %}
+                    ﾃ養{bkdata.bkdata.stsu11}}
+                    {% endif %}
+                    {% endif %}
+                     
+                    {% if bkdata.bkdata.stTyp21 %}
+                    {% if bkdata.bkdata.stHrs21 %}
+                    {{bkdata.bkdata.stHrs21}}蟶�
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu21 %}
+                    ﾃ養{bkdata.bkdata.stsu21}}
+                    {% endif %}
+                    {% endif %}
+                     
+                    {% if bkdata.bkdata.stTyp31 %}
+                    {% if bkdata.bkdata.stHrs31 %}
+                    {{bkdata.bkdata.stHrs31}}蟶�
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu31 %}
+                    ﾃ養{bkdata.bkdata.stsu31}}
+                    {% endif %}
+                    {% endif %}
+                     
+                    {% if bkdata.bkdata.stTyp41 %}
+                    {% if bkdata.bkdata.stHrs41 %}
+                    {{bkdata.bkdata.stHrs41}}蟶�
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu41 %}
+                    ﾃ養{bkdata.bkdata.stsu41}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if bkdata.bkdata.stTyp51 %}
+                    {% if bkdata.bkdata.stHrs51 %}
+                    {{bkdata.bkdata.stHrs51}}蟶�
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu51 %}
+                    ﾃ養{bkdata.bkdata.stsu51}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if bkdata.bkdata.stTyp61 %}
+                    {% if bkdata.bkdata.stHrs61 %}
+                    {{bkdata.bkdata.stHrs61}}蟶�
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu61 %}
+                    ﾃ養{bkdata.bkdata.stsu61}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if bkdata.bkdata.stTyp71 %}
+                    {% if bkdata.bkdata.stHrs71 %}
+                    {{bkdata.bkdata.stHrs71}}蟶�
+                    {% endif %}
+                    {% if bkdata.bkdata.stsu71 %}
+                    ﾃ養{bkdata.bkdata.stsu71}}
+                    {% endif %}
+                    {% endif %}                  
+                  <br>
+<font color="#ff8311">笳�</font>
+萓｡縲�譬ｼ 縲�{% if bkdata.bkdata.kkkksyk %}萓｡譬ｼ蠢懆ｫ�{% else %}{{bkdata.kakakuM|default:""}}荳�蜀��ｼ育ｨ手ｾｼ�ｼ閲% endif %}
+<br>
+
+<font color="#ff8311">笳�</font>譛�蟇�鬧�縲� {% if bkdata.bkdata.ekmi1 %} 
+                    {{bkdata.bkdata.ensnmi1}}
+                    {{bkdata.bkdata.ekmi1}}鬧�
+                    {% if bkdata.bkdata.thHn11 %}
+                    蠕呈ｭｩ邏к{bkdata.bkdata.thHn11|floatformat}}蛻�
+                    {% endif %}
+                    {% if bkdata.bkdata.thM21 %}
+                    蠕呈ｭｩ邏к{bkdata.thM21|floatformat}}�ｽ�
+                    {% endif %}
+                    {% if bkdata.bkdata.bs1 %}
+                    {{bkdata.bkdata.bs1|floatformat}}
+                    {% endif %}
+                    {% if bkdata.bkdata.bsRsnmi1 %}
+                    {{bbkdata.kdata.bsRsnmi1|floatformat}}
+                    {% endif %}
+                    {% if bkdata.bkdata.bstiMishu1 %}
+                    {{bkdata.bstiMishu1}}
+                    {% endif %}
+                    {% if bkdata.bkdata.tihHn1 %}
+                    蠕呈ｭｩ {{bkdata.bkdata.tihHn1|floatformat}} 蛻�
+                    {% endif %}
+                    {% if bkdata.bkdata.tihM1 %}
+                    蠕呈ｭｩ {{bkdata.tihM1|floatformat}} �ｽ�
+                    {% endif %}
+                    {% if bkdata.bkdata.krmKm1 %}
+                    霆� {{bkdata.bkdata.krmKm1|floatformat}} km
+                    {% endif %}
+                  {% endif %}
+                  {% if bkdata.bkdat.bkdata.ekmi2 %}
+                    {{bkdata.bkdata.ensnmi2}}
+                    {{bkdata.bkvdata.ekmi2}}鬧�
+                    {% if bkdata.bkdata.thHn12 %}
+                    蠕呈ｭｩ邏к{bkdata.thHn12|floatformat}}蛻�
+                    {% endif %}
+                    {% if bkdata.thM22 %}
+                    蠕呈ｭｩ邏к{bkdata.thM22|floatformat}}�ｽ�
+                    {% endif %}
+                    {% if bkdata.bs2 %}
+                    {{bkdata.bs2}}
+                    {% endif %}
+                    {% if bkdata.bsRsnmi2 %}
+                    {{bkdata.bsRsnmi2}}
+                    {% endif %}
+                    {% if bkdata.bstiMishu2%}
+                    {{bkdata.bstiMishu2}}
+                    {% endif %}
+                    {% if bkdata.tihHn2 %}
+                    蠕呈ｭｩ {{bkdata.tihHn2|floatformat}} 蛻�
+                    {% endif %}
+                    {% if bkdata.tihM2 %}
+                    蠕呈ｭｩ {{bkdata.tihM2|floatformat}} �ｽ�
+                    {% endif %}
+                    {% if bkdata.krmKm2 %}
+                    霆� {{bkdata.krmKm2|floatformat}} km
+                    {% endif %}
+                  {% endif %}
+                  {% if bkdata.ekmi3 %} <br>
+縲�縲�縲�縲�縲�縲�縲�縲�縲�縲�縲�縲�{{bkdata.ensnmi3}}
+                    {{bkdata.ekmi3}}鬧�
+                    {% if bkdata.thHn13 %}
+                    蠕呈ｭｩ邏к{bkdata.thHn13|floatformat}}蛻�
+                    {% endif %}
+                    {% if bkdata.thM23 %}
+                    蠕呈ｭｩ邏к{bkdata.thM23|floatformat}}�ｽ�
+                    {% endif %}
+                    {% if bkdata.bs3 %}
+                    {{bkdata.bs3}}
+                    {% endif %}
+                    {% if bkdata.bsRsnmi3 %}
+                    {{bkdata.bsRsnmi3}}
+                    {% endif %}
+                    {% if bkdata.bstiMishu3%}
+                    {{bkdata.bstiMishu3}}
+                    {% endif %}
+                    {% if bkdata.tihHn3 %}
+                    蠕呈ｭｩ {{bkdata.tihHn3|floatformat}} 蛻�
+                    {% endif %}
+                    {% if bkdata.tihM3 %}
+                    蠕呈ｭｩ {{bkdata.tihM3|floatformat}} �ｽ�
+                    {% endif %}
+                    {% if bkdata.krmKm3 %}
+                    霆� {{bkdata.krmKm3|floatformat}} km
+                    {% endif %}
+                    {% endif %}
+                    {% if bkdata.sntKutuShdn %}
+                    {{bkdata.sntKutuShdn}}
+                    {% endif %}
+                    {% if bkdata.kutuHn %}
+                    {{bkdata.kutuHn|floatformat}}蛻�
+                    {% endif %}
+                    {% if bkdata.kutuM %}
+                    {{bkdata.kutuM|floatformat}}�ｽ�
+                    {% endif %}
+<p align="right"><a href="{{data.bkdataurl}}{{bkdata.bkdata.bkID}}" target="_blank"><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="隧ｳ縺励￥縺ｯ縺薙■繧�" width="107" height="19" border="0" vspace="3"></a></p>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<br>
+{% endfor %}
+<br>
+<br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#fff7e4" height="53">
+<tr>
+<td align="center" valign="bottom">
+<table width="100%" border="0" cellspacing="3" cellpadding="0" bgcolor="#ff8311">
+<tr>
+<td class="class10white" align="left"><font size="-2" color="#ffffee">譬ｪ蠑丈ｼ夂､ｾ S-Style縲�縲�464-0821 蜷榊商螻句ｸょ鴻遞ｮ蛹ｺ譛ｫ逶幃�壻ｸ�荳∫岼1逡ｪ蝨ｰ 蠑俶ｳ募ｱ区悽蠎励ン繝ｫ3�ｼ｢縲�TEL 052-751-5900縲�FAX 052-751-8100</font></td>
+<td class="class10white" align="right"><font size="-2" color="white">Copyright(C)2006 S-Style All rights reserved.</font></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</div>
+</body>
+
+</html>

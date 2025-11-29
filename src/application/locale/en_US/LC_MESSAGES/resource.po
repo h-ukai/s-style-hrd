@@ -1,0 +1,133 @@
+# -*- coding: utf-8 -*-
+# Another login utility sample on Google App Engine.
+# Copyright (C) 2009 OKAZAKI Hiroki
+# OKAZAKI Hiroki <okaz@teshigoto.net>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: $Id: en.po,v 1.2 2009/02/04 06:20:59 okaz Exp $\n"
+"POT-Creation-Date: 2009-01-30 18:02+JST\n"
+"PO-Revision-Date: $Date: 2009/02/04 06:20:59 $\n"
+"Last-Translator: OKAZAKI Hiroki <okaz@teshigoto.net>\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: regist.py:122
+msgid "confirm_mail_body"
+msgstr "Please complete registration clicking URL described in this mail. "
+
+#: view.py:71
+msgid "login_welcome"
+msgstr "It is a sample system that adds an original login facility for Google App Engine. "
+
+#: view.py:72
+msgid "login_id"
+msgstr "Login ID"
+
+#: view.py:73
+msgid "login_pwd"
+msgstr "Password"
+
+#: view.py:74
+msgid "login_submit"
+msgstr "Login"
+
+#: view.py:75 view.py:86
+msgid "new_regist"
+msgstr "New registration"
+
+#: view.py:76 view.py:101
+msgid "resign"
+msgstr "Resign"
+
+#: view.py:77
+msgid "not_found"
+msgstr "The login name or the password is wrong. "
+
+#: view.py:82
+msgid "regist_step"
+msgstr "Please push \"New Registration\" after inputting each item. Mail will be sent later, and complete the registration procedure according to the content, please. "
+
+#: view.py:83
+msgid "new_login_id"
+msgstr "Desired login ID"
+
+#: view.py:84
+msgid "new_login_pwd"
+msgstr "Desired password"
+
+#: view.py:85
+msgid "new_user_email"
+msgstr "Your email address"
+
+#: view.py:87
+msgid "return_top"
+msgstr "Return to Entry"
+
+#: view.py:88
+msgid "short_pwd"
+msgstr "The password is necessary by 8 characters or more. "
+
+#: view.py:89
+msgid "invalid_email_address"
+msgstr "Some mistakes are found in the mail address. "
+
+#: view.py:90
+msgid "duplicated_id"
+msgstr "A specified login name has already been registered. Please specify other names. "
+
+#: view.py:91
+msgid "regist_completed"
+msgstr "The account is not effective though the pre-register was completed yet. Please complete this registration according to the content of the transmitted mail. "
+
+#: view.py:92
+msgid "illegal_key"
+msgstr "Some mistakes are found in your url and the attestation key. "
+
+#: view.py:97
+msgid "resign_step"
+msgstr "Please input the login name and the password of the account that wants to release registration. "
+
+#: view.py:98
+msgid "resign_login_id"
+msgstr "Login ID"
+
+#: view.py:99
+msgid "resign_login_pwd"
+msgstr "Password"
+
+#: view.py:100
+msgid "resign_user_email"
+msgstr "Your email address"
+
+#: view.py:102
+msgid "resign_completed"
+msgstr "Your registration was released. "
+
+#: view.py:103
+msgid "login_id_not_found"
+msgstr "A specified account was not found."
+
+#: view.py:108
+msgid "lang_en"
+msgstr "English"
+
+#: view.py:109
+msgid "lang_ja"
+msgstr "Japanese"
+
+#: view.py:110
+msgid "auth_success"
+msgstr "Your login succeeded."
+
+#: view.py:111
+msgid "logout"
+msgstr "Logout"
+
+#:
+msgid "regist_confirm_completed"
+msgstr "All procedures of the new registration were completed. It is possible to log it in. "

@@ -1,0 +1,447 @@
+{% extends "followpagebase.html" %}
+
+{% block titile %}顧客フォロー状況{% endblock titile %}
+{% block titile2 %}顧客フォロー状況{% endblock titile2 %}
+
+{% block addheder %}
+{% endblock addheder %}
+
+{% block inready %}
+	if (set_action != "Search") {
+		// フォロー一覧を表示
+		FollowList (set_memberID);
+	}
+	else {
+		// 検索画面を表示
+		MemberList (set_tantoID,urlvar['action']);
+	}
+
+
+{% endblock inready %}
+
+
+{% block function %}
+function getExplicitOriginalTarget( _event ) {
+    return document.activeElement || _event.explicitOriginalTarget;
+}
+
+function ModalDisplayTextarea (com, key, spanId, id, app_list, act_list) {
+	$("#modalSpace").hide();
+	$("#glayLayer").show();
+	if (com == "addeditfol") {
+		$("#overTextareaLayer").show().html($("#" + id).html()).css({
+			top:($("#" + id).offset().top - $("#tblfbody").scrollTop() - $(window).scrollTop()),
+			left:($("#div_flist").offset().left + $("#div_flist").width) - $(this).width
+		});
+	}
+	else if (com == "addeditBKlist") {
+		$("#overTextareaLayer").show().html($("#modalTextarea").html()).css({
+			top:($("#" + id).offset().top - $("#tblsbody").scrollTop() - $(window).scrollTop()),
+			left:($("#div_slist").offset().left + $("#div_slist").width) - $(this).width
+		});
+	}
+	var objtoedit = document.getElementById(id);
+	$("#overTextareaLayer").val(objtoedit.innerHTML);
+	$("#overTextareaLayer").focus();
+	var registList = new Array();
+	var timeOut = 30;
+	var time_id;
+	
+	time_id = setTimeout(function() {
+		registList = ModalTextUpdate (com, key, $("#overTextareaLayer").val(), spanId, id, app_list, act_list, registList, time_id);
+	}, timeOut * 1000);
+	
+	$("#glayLayer").click(function(){
+		registList = ModalTextUpdate (com, key, $("#overTextareaLayer").val(), spanId, id, app_list, act_list, registList, time_id);
+	});
+	$("#overTextLayer").dblclick(function(){
+		registList = ModalTextUpdate (com, key, $("#overTextareaLayer").val(), spanId, id, app_list, act_list, registList, time_id);
+	});
+	$(window).keydown(function(e){
+		if (e.keyCode == 27) {
+			clearTimeout(time_id);
+			$("#glayLayer").hide();
+			$("#overTextareaLayer").hide();
+		}
+		else if (e.keyCode == 13 || e.keyCode == 108) {
+			registList = ModalTextUpdate (com, key, $("#overTextareaLayer").val(), spanId, id, app_list, act_list, registList, time_id);
+		}
+	});
+	return false;
+}
+
+function ModalTextUpdate (com, key, val, spanId, id, app_list, act_list, registListTemp, time_id) {
+	if (jQuery.inArray(id, registListTemp) < 0) {
+		if (document.getElementById(id).innerHTML != val) {
+			if (com == "addeditfol") {
+				if (key == "subject") {
+					FollowSubject (com, spanId, val, id, set_tantoID);
+				}
+				else if (key == "body") {
+				  FollowBody (com, spanId, val, id, set_tantoID);
+				}
+				else if (key == "reservation") {
+					FollowReservation (com, spanId, val, id, set_tantoID);
+				}
+				else if (key == "reservationend") {
+					FollowReservationend (com, spanId, val, id, set_tantoID);
+				}
+				else {
+					FollowKindname (com, val, spanId, id, set_tantoID, app_list, act_list);
+				}
+			}
+			else if (com == "addeditBKlist") {
+					BkMemo (com, key, spanId, val, id);
+			}
+		}
+		$("#glayLayer").hide();
+		$("#overTextLayer").hide();
+		$("#overTextareaLayer").hide();
+		registListTemp.push(id)
+		clearTimeout(time_id);
+	}
+	return (registListTemp);
+}
+
+
+function ModalDisplayText (com, key, spanId, id, app_list, act_list) {
+		
+	$("#modalSpace").hide();
+	$("#glayLayer").show();
+	if (com == "addeditfol") {
+		if (
+			key == "subject" ||
+			key == "reservation" ||
+			key == "reservationend"
+		) {
+			$("#overTextLayer").show().html($("#" + id).html()).css({
+				top:($("#"+id).offset().top - $("#tblfbody").scrollTop() - $(window).scrollTop()),
+				left:$("#"+id).offset().left
+			});
+		}
+		else {
+			$("#overTextLayer").show().html($("#" + id).html()).css({
+				top:($("#"+spanId).offset().top - $("#tblfbody").scrollTop() - $(window).scrollTop()),
+				left:$("#"+spanId).offset().left
+			});
+		}
+	}
+	else if (com == "addeditBKlist") {
+		$("#overTextLayer").show().html($("#" + id).html()).css({
+			top:($("#"+id).offset().top - $("#tblfbody").scrollTop() - $(window).scrollTop()),
+			left:$("#"+id).offset().left
+		});
+	}
+	var objtoedit = document.getElementById(id);
+	$("#overTextLayer").val(objtoedit.innerHTML);
+	$("#overTextLayer").focus();
+	var registList = new Array();
+	var timeOut = 30;
+	var time_id;
+	
+	time_id = setTimeout(function() {
+		registList = ModalTextUpdate (com, key, $("#overTextLayer").val(), spanId, id, app_list, act_list, registList, time_id);
+	}, timeOut * 1000);
+	
+	$("#glayLayer").click(function(){
+		registList = ModalTextUpdate (com, key, $("#overTextLayer").val(), spanId, id, app_list, act_list, registList, time_id);
+	});
+	$("#overTextLayer").dblclick(function(){
+		registList = ModalTextUpdate (com, key, $("#overTextLayer").val(), spanId, id, app_list, act_list, registList, time_id);
+	});
+	$(window).keydown(function(e){
+		if (e.keyCode == 27) {
+			clearTimeout(time_id);
+			$("#glayLayer").hide();
+			$("#overTextLayer").hide();
+		}
+		else if (e.keyCode == 13 || e.keyCode == 108) {
+			registList = ModalTextUpdate (com, key, $("#overTextLayer").val(), spanId, id, app_list, act_list, registList, time_id);
+		}
+	});
+	return false;
+}
+function ModalTextUpdate (com, key, val, spanId, id, app_list, act_list, registListTemp, time_id) {
+	if (jQuery.inArray(id, registListTemp) < 0) {
+		if (document.getElementById(id).innerHTML != val) {
+			if (com == "addeditfol") {
+				if (key == "subject") {
+					FollowSubject (com, spanId, val, id, set_tantoID);
+				}
+				else if (key == "body") {
+				  FollowBody (com, spanId, val, id, set_tantoID);
+				}
+				else if (key == "reservation") {
+					FollowReservation (com, spanId, val, id, set_tantoID);
+				}
+				else if (key == "reservationend") {
+					FollowReservationend (com, spanId, val, id, set_tantoID);
+				}
+				else {
+					FollowKindname (com, key, val, spanId, id, set_tantoID, app_list, act_list);
+				}
+			}
+			else if (com == "addeditBKlist") {
+					BkMemo (com, key, spanId, val, id);
+			}
+			else if (com == "editBKlistDate") {
+					BkSendDate (com, key, spanId, val, id);
+			}
+		}
+		$("#glayLayer").hide();
+		$("#overTextLayer").hide();
+		$("#overTextareaLayer").hide();
+		registListTemp.push(id)
+		clearTimeout(time_id);
+	}
+	return (registListTemp);
+}
+
+
+var complistopen = false;
+function makeOption(obj,lst){
+
+  $("#combobox",obj).remove()
+
+   //optionの中身を先に生成
+  var li = [];
+  c=0;
+  li.push("\n            \n            <select id='combobox'>")
+  li.push("<option id='opid_" + c + "' class='class_option' value=''>" + this + "</option>");
+  jQuery.each(lst, function() {
+      c++;
+      li.push("<option id='opid_" + c + "' class='class_option' value='"  + this + "'>" + this + "</option>");
+  });
+  li.push("  </select>\n")
+
+  obj.append(li.join(""));
+
+	// コンボボックスを拡張
+	$("#combobox").comboboxex();
+	if(complistopen){
+    $(".custom-combobox-toggle").click();
+  }
+  complistopen=true
+}
+
+function ModalFollowInput (key) {
+
+  complistopen = false;
+	// 初期化
+	$("#overFollowInputLayer").empty();
+		
+	$("#modalSpace").hide();
+	$("#glayLayer").show();
+	$("#overFollowInputLayer").show().append($("<table/>").attr("id","tblmf").attr("border","0").append($("<tr/>").attr("id","trmf0")));
+		$("#trmf0").append($("<td/>").attr("colspan","4").attr("id","tdmf0").attr("align","right"));
+		$("#tdmf0").append($("<img>").attr("id","imgmf0").attr("src","/img/close_mark.png").attr("height", "30").attr("width", "30").attr("border", "0"));
+		
+		$("#tblmf").append($("<tr/>").attr("id","trmf1"));
+		$("#trmf1").append($("<td/>").attr("align","right").text("済み").append("<input id=\"checkFollowDone\" type=\"checkbox\" value=\"1\">"));
+		
+		$("#trmf1").append($("<td/>").attr("id","tdact1").attr("align","right").text("アクション"));
+    $("#tdact1").append($("<a/>").css("padding","2px").css("cursor","pointer").append($("<img>").attr("id","foolowimgac0").attr("src","/img/iconright.gif").attr("border", "0").attr("valign", "top").attr("height", "16").attr("width", "16").attr("onClick", "makeOption($('.ui-widget'),act_list)")));
+    $("#tdact1").append($("<a/>").css("padding","2px").css("cursor","pointer").append($("<img>").attr("id","foolowimgac1").attr("src","/img/iconleft.gif").attr("border", "0").attr("valign", "top").attr("height", "16").attr("width", "16").attr("onClick", "makeOption($('.ui-widget'),app_list)")));
+//    $("#tdact1").append($("<img>").attr("id","foolowimgac0").attr("src","/img/iconright.gif").attr("border", "0").attr("valign", "top").attr("height", "16").attr("width", "16").attr("onClick", "makeOption($('.ui-widget'),act_list)"));
+//    $("#tdact1").append($("<img>").attr("id","foolowimgac1").attr("src","/img/iconleft.gif").attr("border", "0").attr("valign", "top").attr("height", "16").attr("width", "16").attr("onClick", "makeOption($('.ui-widget'),app_list)"));
+		
+		//$("#trmf2").append($("<td/>").append("<input id=\"inputFollowKindname\" type=\"text\" size=\"15\"><br />"));
+    $("#trmf1").append($("<td/>").append($("<div/>").attr("class","ui-widget")));
+
+		$("#tblmf").append($("<tr/>").attr("id","trmf2"));
+		
+		$("#trmf2").append($("<td/>").attr("align","right").text("表題"));
+		$("#trmf2").append($("<td/>").attr("colspan","3").append("<input id=\"inputFollowSubject\" type=\"text\" size=\"15\">"));
+		
+		$("#tblmf").append($("<tr/>").attr("id","trmf3"));
+		$("#trmf3").append($("<td/>").attr("align","right").text("メモ"));
+		$("#trmf3").append($("<td/>").attr("colspan","3").append("<textarea id=\"inputFollowBody\" size=\"20\" cols=\"30\" rows=\"10\"></textarea>"));
+		
+		$("#tblmf").append($("<tr/>").attr("id","trmf4"));
+		$("#trmf4").append($("<td/>").attr("align","right").text("予定日"));
+		$("#trmf4").append($("<td/>").attr("colspan","3").append("<input id=\"inputFollowReservation\" type=\"text\" size=\"20\">"));
+		
+		$("#tblmf").append($("<tr/>").attr("id","trmf5"));
+		$("#trmf5").append($("<td/>").attr("align","right").text("予定終了日"));
+		$("#trmf5").append($("<td/>").attr("colspan","3").append("<input id=\"inputFollowReservationend\" type=\"text\" size=\"20\">"));
+		
+		$("#tblmf").append($("<tr/>").attr("id","trmf6"));
+		$("#trmf6").append($("<td/>").attr("id","tdmf6").attr("colspan","4").attr("align","center"));
+		$("#tdmf6").append($("<button />").attr("type","button")
+			.attr("onClick", "FollowInsert(document.getElementById('checkFollowDone').checked, $('.custom-combobox input').val(), document.getElementById('inputFollowSubject').value, document.getElementById('inputFollowBody').value, document.getElementById('inputFollowReservation').value, document.getElementById('inputFollowReservationend').value,'');").text("保存"));
+		$("#tdmf6").append($("<button />").attr("type","button")
+		    .attr("onClick", "FollowInsert(document.getElementById('checkFollowDone').checked, $('.custom-combobox input').val(), document.getElementById('inputFollowSubject').value, document.getElementById('inputFollowBody').value, document.getElementById('inputFollowReservation').value, document.getElementById('inputFollowReservationend').value,'member');").text("メール送信"));
+		$("#tdmf6").append($("<button />").attr("type","button")
+		    .attr("onClick", "FollowInsert(document.getElementById('checkFollowDone').checked, $('.custom-combobox input').val(), document.getElementById('inputFollowSubject').value, document.getElementById('inputFollowBody').value, document.getElementById('inputFollowReservation').value, document.getElementById('inputFollowReservationend').value,'tanto');").text("担当者にメール送信"));
+
+	$("#overFollowInputLayer").css({
+		top:($("#div_flist").offset().top - $(window).scrollTop()),
+		left:($(window).width() - $("#overFollowInputLayer").width())/2
+	});
+	$("#inputFollowID").focus();
+	$("#imgmf0").hover(
+		function(){
+			$(this).css("cursor","pointer"); //---カーソルを指に
+		},
+		function(){
+			$(this).css("cursor","default"); //---カーソルを戻す
+		}
+	);
+	$("#imgmf0").click(function(){
+		$("#glayLayer").hide();
+		$("#overFollowInputLayer").hide();
+	});
+	$("#glayLayer").click(function(){
+		$("#glayLayer").hide();
+		$("#overFollowInputLayer").hide();
+	});
+	$(window).keydown(function(e){
+		if (e.keyCode == 27) {
+			$("#glayLayer").hide();
+			$("#overFollowInputLayer").hide();
+		}
+	});
+
+  makeOption($(".ui-widget"),act_list);
+	return false;
+}
+
+function ModalThingInput (key) {
+	// 初期化
+	$("#overThingInputLayer").empty();
+		
+	$("#modalSpace").hide();
+	$("#glayLayer").show();
+	$("#overThingInputLayer").show().append($("<table/>").attr("id","tblmt").attr("border","0").append($("<tr/>").attr("id","trmt0")));
+		$("#trmt0").append($("<td/>").attr("colspan","2").attr("id","tdmt0").attr("align","right"));
+		$("#tdmt0").append($("<img>").attr("id","imgmt0").attr("src","/img/close_mark.png").attr("height", "30").attr("width", "30").attr("border", "0"));
+		
+		$("#tblmt").append($("<tr/>").attr("id","trmt1"));
+		$("#trmt1").append($("<td/>").attr("align","right").text("物件番号"));
+		$("#trmt1").append($("<td/>").append("<input id=\"inputThingID\" type=\"text\" size=\"13\">").append("　済").append("<input id=\"inputThingSend\" type=\"checkbox\">"));
+		
+		$("#tblmt").append($("<tr/>").attr("id","trmt2"));
+		$("#trmt2").append($("<td/>").attr("align","right").text("メモ"));
+		$("#trmt2").append($("<td/>").append("<textarea id=\"inputThingMemo\" cols=\"25\" rows=\"3\"></textarea>"));
+		
+		$("#tblmt").append($("<tr/>").attr("id","trmt3"));
+		$("#trmt3").append($("<td/>").attr("id","tdmt3").attr("colspan","2").attr("align","center"));
+		$("#tdmt3").append($("<button />").attr("type","button").attr("onClick", "BkInsert(set_key, document.getElementById('inputThingID').value, document.getElementById('inputThingMemo').value, document.getElementById('inputThingSend').checked);").text("保存"));
+
+	$("#overThingInputLayer").css({
+		top:($("#div_slist").offset().top - $(window).scrollTop()),
+		left:($("#div_slist").offset().left + $("#div_slist").width) - $(this).width
+	});
+	$("#inputThingID").focus();
+	$("#imgmt0").hover(
+		function(){
+			$(this).css("cursor","pointer"); //---カーソルを指に
+		},
+		function(){
+			$(this).css("cursor","default"); //---カーソルを戻す
+		}
+	);
+	$("#imgmt0").click(function(){
+		$("#glayLayer").hide();
+		$("#overThingInputLayer").hide();
+	});
+	$("#glayLayer").click(function(){
+		$("#glayLayer").hide();
+		$("#overThingInputLayer").hide();
+	});
+	$(window).keydown(function(e){
+		if (e.keyCode == 27) {
+			$("#glayLayer").hide();
+			$("#overThingInputLayer").hide();
+		}
+	});
+
+
+	return false;
+
+}
+
+
+{% endblock function %}
+
+{% block inlinecss %}
+
+<style type="text/css">
+         #dialog {
+            width:375px; height:203px;
+            padding:10px;
+            background-color:#fff;
+         }
+		 .ui-dialog-titlebar {}
+</style>
+
+{% endblock inlinecss %}
+
+{% block maincontents %}
+
+<!--follow01-->
+
+
+<div id="div_flist" align="center" style="width: 97%; overflow-x: scroll;height:240px;margin:10px;padding:0px">
+
+    <table id="tblf" border="0" cellspacing="1" cellpadding="1" bgcolor="#8d8268" style="width: 1200px;overflow-x: hidden;">
+    	<thead id="tblfhead"></thead>
+    	<tbody id="tblfbody"></tbody>
+    	<tfoot class="nav"></tfoot>
+    </table>
+</div>
+
+<!--follow01 End-->
+
+<!--follow02-->
+<div id="div_slist" align="center" style="width: 97%; overflow-x: scroll;height:240px;margin:10px;padding:0px">
+    <table id="tbls" border="0" cellspacing="1" cellpadding="1" bgcolor="#8d8268">
+    <thead id="tblshead"></thead>
+    <tbody id="tblsbody"></tbody>
+    <tfoot class="nav"></tfoot>
+    </table>
+</div>
+<div id="btn_slist">
+    <button type="button" onclick="ModalThingInput(set_key);">新規入力</button>&nbsp;&nbsp;
+    <button type="button" onclick="ThingDelete(set_key);">チェックを削除</button>
+</div>
+<!--follow02 End-->
+
+<!--follow03-->
+<div id="div_mlist" class="follow03">
+    <table width="95%" border="0" cellpadding="1" cellspacing="1" bgcolor="#8d8268" id="tblm">
+    	<thead id="tblmhead">
+    	</thead>
+    	<tbody id="tblmbody"></tbody>
+    	<tfoot class="nav">
+		<tr>
+			<td colspan=8>
+				<div class="pagination"></div>
+				<div class="paginationTitle">Page</div>
+				<div class="selectPerPage"></div>
+				<div class="status"></div>
+			</td>
+		</tr>
+		</tfoot>
+    </table>
+</div>
+<!--follow03 End-->
+
+</div>
+
+<div id="modalSpace" style="display: none;">
+    <div id='modalFollowInputLayer'></div>
+    <div id='modalThingInputLayer'></div>
+    <textarea id="modalTextarea" cols=25 rows=6></textarea>
+
+</div>
+
+<div id='glayLayer'></div>
+<div id='overFollowInputLayer'></div>
+<div id='overThingInputLayer'></div>
+<textarea id='overTextareaLayer'>
+</textarea>
+<input type="text" id="overTextLayer" size="17">
+<!--contents END-->
+
+{% endblock maincontents %}

@@ -1,0 +1,75 @@
+font {
+	font-size: 12px;
+	font-family: "ＭＳ Ｐ明朝", "MS PMincho", "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", serif;
+	color: #000;
+}
+ul {
+	padding: 0px;
+		margin: 0%;
+
+}
+
+li {
+	list-style-type: none;
+}
+
+#B4PrintAria {
+	//display: block;
+	width: 100%;
+	overflow: hidden;
+	text-align: center;
+	padding: 0%;
+	margin: 0%;
+	margin-top: 40px;
+	margin-bottom: 40px;
+}
+
+#B4PrintAria .AtenaBox {
+	height: 148px;
+	width: 100%;
+  display: table;
+  /display:inline-block;
+  /display:inline;
+  /zoom:1;
+ 	padding: 0px;
+	overflow: hidden;
+	margin: 0px;
+	text-align: center;
+	/border: 1px dotted #999;
+}
+
+.wrap {
+  display: table-cell;
+	width: 30%;
+  vertical-align:middle;
+}
+.wrap li{
+  //vertical-align: baseline;
+}
+#B4PrintAria .AtenaBox .Yuubin1 {
+	padding: 0px;
+	text-align: left;
+	font-size: 70%;
+	line-height: 1.3em;
+	margin-top: 1%;
+	margin-bottom: 0px;
+	margin-left: 5%;
+}
+#B4PrintAria .AtenaBox .Address1 {
+	padding: 0px;
+	text-align: left;
+	font-size: 70%;
+	line-height: 1.3em;
+	margin-top: 1%;
+	margin-bottom: 0%;
+	margin-left: 5%;
+	margin-right: 5%;
+}
+#B4PrintAria .AtenaBox .Name1 {
+	padding: 0px;
+	text-align: left;
+	font-size: 100%;
+	line-height: 1.3em;
+	margin-top: 1%;
+	margin-left: 5%;
+}

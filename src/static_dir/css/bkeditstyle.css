@@ -1,0 +1,1335 @@
+@charset "utf-8";
+
+* {
+	font-family: "ＭＳ Ｐゴシック", "Osaka";
+}
+
+/* 
+ * body属性のCSSです。
+ */
+body { color: #333333; font-size: 12px; background-color: #ffffff; margin-top:0; }
+/* 
+ * ヘッダの線です。
+ */
+.headerDivideline {
+	font-size: x-small;
+	height: 1px;
+}
+/* 
+ * フッタの線です。
+ */
+.footerDivideline {
+background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/footer_bg.gif) repeat-x;
+height:30px;
+	color: #bd001e;
+	font-size: 12px;
+	border-bottom:2px solid #bd001e;
+	padding-right:5px;
+	margin:0;
+}
+/* 
+ * ヘッダに存在する会員コード、会員名のフォントです。
+ * それ以外には使用しないで下さい。
+ */
+.kiinFont { color: #fff; font-size: 10px; }
+/* 
+ * ヘッダに存在する各種メニュー項目のフォントです。
+ * それ以外には使用しないで下さい。
+ */
+.headerMenuFont { color: #fff; font-size: 12px; }
+/* 
+ * ヘッダに存在するログアウト項目のフォントです。
+ * それ以外には使用しないで下さい。
+ */
+.headerLogoutFont {
+	font-size: large;
+	font-weight: bold;
+}
+/* 
+ * メインメニューのタイトルです。
+ * メインメニューのタイトルのみに使用されます。
+ */
+.systemTitle {
+	font-size: 15pt;
+	font-weight: bold;
+	color: #333333;
+}
+/* 
+ * 各画面のタイトルです。
+ * 全ての画面のタイトルに使用しています。
+ */
+.viewTitle { font-size: x-large; font-weight: bold; color: #333333; background-position: 0 0; }
+/* 
+ * フォント色指定無しメッセージ用フォントです。
+ * フォントサイズmidiumのメッセージに使用します。
+ */
+.redMsg {
+	font-size: medium;
+}
+/* 
+ * フォント色が赤のメッセージ用フォントです。
+ * 再配布禁止の文言等、赤で出力する必要のあるメッセージに使用します。
+ * エラーメッセージには使用しないで下さい。
+ */
+.redWordMsg {
+	color: #FF0000;
+	font-size: medium;
+}
+/* フォント色が赤のメッセージ用フォントです。
+ * 会員の状態を出力する際に使用しています。
+ */
+.statusViewMsg {
+    color: #FF0000;
+}
+
+/* フォント色がグレーのメッセージようフォントです。
+ * 物件番号の表示・会員番号の表示の際にしようしています。
+ */
+.numberViewMsg {
+    color: #999999;    
+}
+
+/* 
+ * 背景色を赤にするスタイルです。
+ * エラーのエリアに使用して下さい。
+ */
+.errArea {
+	background-color: #FF702C;
+}
+
+/* 
+ * 背景色が赤のエラー項目用です。
+ * 各入力項目のerrorStyleClassに使用して下さい。
+ * （errAreaとどちらを利用しても構いません）
+ * （変更時はどちらも変更すること）
+ */
+.errInput {
+	background-color:#FF702C;
+}
+
+/*
+ * 背景色を赤にするスタイルです。
+ * エラーの"checkbox"、"radio"に使用して下さい。
+ */
+.errInput2 {
+ background-color: #FF702C;
+ outline: 2px solid #FF702C;
+}
+
+/* 
+ * フォント色が赤のエラーメッセージ用フォントです。
+ * エラーメッセージに使用して下さい。
+ */
+.errMsg {
+	color: #FF0000;
+	font-size: medium;
+}
+/* 
+ * フォント色が黒のメッセージ用フォントです。
+ * ヘッダ部分のユーザの操作を促すメッセージに使用します。
+ */
+.msg{
+	color: #333333;
+	font-size: medium;
+}
+/* 
+ * フォント色が黒のメッセージ用フォントです。
+ * 著作権の文言等、黒で出力する必要のあるメッセージに使用します。
+ */
+.normalMsg{
+	color: #000000;
+	font-weight: bold;
+	font-size: small;
+}
+/* 
+ * 注釈用のフォントです。
+ * 
+ */
+.annotationMsg{
+	color: #000000;
+	font-size: small;
+}
+/* 
+ * 項目中に注釈をする場合に使用するフォントです。
+ * 
+ */
+.informationMsg{
+	font-size: x-small;
+}
+/* 
+ * フォント色が黒・極小フォントです。
+ */
+.xsmallFont{
+	color: #000000;
+	font-size: small;
+}
+/* 
+ * 背景色が白、極小フォントです。
+ * 一覧画面のテーブルの値に利用しています。
+ */
+.listTableColorA {
+	background-color: #FFFFFF;
+	font-size: small;
+}
+/* 
+ * 背景色が白、小フォントです。
+ * 一覧画面のテーブルの値に利用しています。
+ */
+.listTableColorB {
+	background-color: #FFFFFF;
+	font-size: medium;
+}
+/* 
+ * 背景色がクリーム色、小フォントです。
+ * テーブルのインデックスに使用します。
+ */
+.indexTableColorA {
+	background-color: #efebe1;
+	font-size: small;
+}
+/* 
+ * 背景色がクリーム色、フォント色が赤、小フォントです。
+ * テーブルの必須項目インデックスに使用します。
+ */
+.indexTableColorB {
+	background-color: #efebe1;
+	color: #ff0000;
+	font-size: small;
+}
+/* 
+ * 背景色がクリーム色、フォント色が緑、小フォントです。
+ * テーブルの全角項目インデックスに使用します。
+ */
+.indexTableColorC {
+	background-color: #efebe1;
+	color: #009900;
+	font-size: small;
+}
+/* 
+ * 背景色が赤、フォントが黒、小フォントです。
+ * テーブルの必須項目の値に使用します。
+ */
+.valueTableColorA {
+	background-color: #FFE4E1;
+	font-size: small;
+}
+/* 
+ * 背景色がグレー、フォントが黒、小フォントです。
+ * テーブルの項目の値に使用します。
+ */
+.valueTableColorB {
+	background-color: WhiteSmoke;
+	font-size: small;
+}
+/* 
+ * 背景色が緑、フォントが白、太字、中フォントです。
+ * テーブルの大分類インデックスに使用します。
+ */
+.indexStyleA {
+	font-size: large;
+	font-weight: bold;
+	color: #6b5e56;
+	background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/td_tit_bg.gif) repeat-x;
+	border:solid 1px #c0d9d9;
+}
+/* 
+ * 背景色がオリーブ、フォントが白、太字、小フォントです。
+ * テーブルの中分類インデックスに使用します。
+ */
+.indexStyleB {
+	font-size: medium;
+	font-weight: bold;
+	color: white;
+	background-color : #bd001e;
+
+}
+/* 
+ * 背景色が緑、フォントが白、太字、極小フォントです。
+ * テーブルの小分類インデックスに使用します。
+ */
+.indexStyleC {
+	font-size: small;
+	font-weight: bold;
+	background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/td_sub_bg.gif) repeat-x;
+}
+/* 上のもののクラスと基本は同じ、背景の画像が見切れる
+ * 為に画像を変更して別クラスを設けたもの。
+ * 物件の一覧表示画面で使用。
+ */
+.indexStyleHightC {
+    font-size: small;
+	font-weight: bold;
+	background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/td_sub_bg2.gif) repeat-x;
+}
+/* 
+ * 赤、極小フォントです。
+ * 凡例に使用しています。
+ */
+.hanreiColorRequired {
+	color: #FF0000;
+	font-size: small;
+}
+/* 
+ * 緑、極小フォントです。
+ * 凡例に使用しています。
+ */
+.hanreiColor2byte {
+	color: #009900;
+	font-size: small;
+}
+/* 
+ * 黒、極小フォントです。
+ * 凡例に使用しています。
+ */
+.hanreiColorNormal {
+	color: #000000;
+	font-size: small;
+}
+/* 
+ * リンクの色を青にします。
+ * 未訪問リンクの色の定義です。
+ */
+A:link { text-decoration: underline; }
+/* 
+ * 画像のリンクの枠線を削除します。
+ */
+a img{
+border:none;
+}
+/* 
+ * リンクの色を青にします。
+ * 訪問済リンクの色の定義です。
+ */
+A:visited { color: #d1cec9; text-decoration: underline; }
+/* 
+ * リンクの色を青にします。
+ * カーソルが重なった際のリンクの色の定義です。
+ */
+A:hover {
+	}
+/* 
+ * 初期表示にて画面項目を非表示にする際に使用します。
+ */
+.hidetub {
+	display: none;
+}
+/* 
+ * ＩＭＥモードを全角にします。 
+ */
+.imeActive {
+	ime-mode: active;
+}
+/* 
+ * ＩＭＥモードを半角にします。 
+ */
+.imeDisabled {
+	ime-mode: disabled;
+}
+/* 
+ * 横幅を定めないボタンです。
+ * ボタンの横幅を定めなくて良い画面で使用してください。
+ */
+.freeWidthButton{
+	height:20pt;
+	font-size:10pt;
+}
+/* 
+ * 横幅が50pxのボタンです。
+ */
+.width50Height20Button {
+	width: 50px;
+	height:20pt;
+	font-size: 10pt;
+}
+/* 
+ * 横幅が80pxのボタンです。
+ */
+.width80Height20Button {
+	width: 80px;
+	height:20pt;
+	font-size: 10pt;
+}
+/* 
+ * 横幅が100pxのボタンです。
+ */
+.width100Height20Button {
+	width: 100px;
+	height:20pt;
+	font-size: 10pt;
+}
+/* 
+ * 横幅が125pxのボタンです。
+ */
+.width125Height20Button {
+	width:125px;
+	height:20pt;
+	font-size: 10pt;
+}
+/* 
+ * 横幅が160pxのボタンです。
+ */
+.width160Height20Button {
+	width:160px;
+	height:20pt;
+	font-size: 10pt;
+}
+/* 
+ * 横幅が240pxのボタンです。
+ */
+.width240Height20Button {
+	width:240px;
+	height:20pt;
+	font-size: 10pt;
+}
+/* 
+ * 横幅が160px、縦幅が28pxのボタンです。
+ * 自社登録物件一覧画面にのみ使用してください。
+ */
+.width160Height28Button {
+	width:160px;
+	height:28pt;
+	font-size: 10pt;
+}
+/* 
+ * 横幅が60px、縦幅が15pxのボタンです。。
+ */
+.width60Height15Button {
+	width: 60px;
+	height:15pt;
+	font-size: 10pt;
+}
+/* 
+ * 横幅が80px、縦幅が15pxのボタンです。
+ */
+.width80Height15Button {
+	width: 80px;
+	height:15pt;
+	font-size: 10pt;
+}
+/* 
+ * 横幅が100px、縦幅が15pxのボタンです。
+ */
+.width100Height15Button {
+	width: 100px;
+	height:15pt;
+	font-size: 10pt;
+}
+/* 
+ * 横幅が160px、縦幅が15pxのボタンです。
+ */
+.width160Height15Button {
+	width:160px;
+	height:15pt;
+	font-size: 10pt;
+}
+/* 
+ * ヘッダ、フッタのtableです。
+ */
+table.headerTable {
+	width:100%;
+	border:0 #ffffff;
+	background:#bd001e url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/header_bg.gif) repeat-x;
+}
+table.footerTable {
+	width:100%;
+	border:none #FFFFFF 0px;
+	border-collapse: collapse;
+}
+/* 
+ * タイトルのtableです
+ * 
+ */
+table.titleTable { font-size: 100%; background-color: #efebe1; background-repeat: repeat-x; background-attachment: scroll; background-position: 0 10px; width:100%; text-align:center; border-top: 1px solid #bd001e; border-bottom: 1px dotted #bd001e; }
+/* 
+ * 標準的な横幅100％のテーブルです。
+ */
+table.normalTable { width:100%; }
+/* 
+ * 標準的な枠のある、横幅100％のテーブルです。
+ */
+table.normalTableBorder {
+	width:100%;
+	border:solid #000000 1px;
+}
+/* 
+ * 表の外周のテーブルです。
+ */
+table.outerTable { width:99%; border:0 #ffffff; margin-left:auto; margin-right:auto; text-align:center; outline: solid 1px #c0c0c0; }
+/* 
+ * 表の内週のテーブルです。
+ */
+table.innerTable {
+	width:100%;
+	background-color:#f7f7f7;
+	margin-left:auto;
+ 	margin-right:auto;
+	text-align:center;
+}
+/* 
+ * 実際に値が格納されるテーブルです。
+ */
+table.indexAndElementTable { width:100%; margin-left:auto; margin-right:auto; text-align:center; }
+/* 
+ * テーブル内の標準的なフォントサイズを指定します。
+ */
+td { font-size: large; }
+/* 
+ * 中央揃えのTDです。
+ */
+td.centerTd ,div.centerTd,teble.centerTd { text-align:center; }
+/* 
+ * 左揃えのTDです。
+ */
+td.leftTd,div.leftTd { text-align:left; }
+/* 
+ * 右揃えのTDです。
+ */
+td.rightTd,div.rightTd { text-align:right; }
+/* 
+ * 20%の幅のTDです。
+ * テーブルのインデックスのタイトルカラムに使用します。
+ */
+td.indexWidth { width:100%; }
+/* 
+ * 80%の幅のTDです。
+ * テーブルのインデックスのタイトルカラムの右側列に使用します。
+ */
+td.indexRightWidth {
+	width:80%;
+}
+td.tdWidthA {
+	width: 15%;
+}
+td.tdWidthB {
+	width: 85%;
+}
+td.tdWidthC {
+	width: 35%;
+}
+td.tdWidthD {
+	width: 25%;
+}
+td.tdWidthE {
+	width: 12%;
+}
+td.tdWidthF {
+	width: 13%;
+}
+td.tdWidthG {
+	width: 50%;
+}
+td.tdWidthH {
+	width: 50%;
+}
+td.tdWidthI {
+	width: 20%;
+}
+td.tdWidthJ {
+	width: 45%;
+}
+td.tdWidthK {
+	width: 55%;
+}
+td.tdWidthL {
+	width: 65%;
+}
+td.tdWidthM {
+	width: 48%;
+}
+td.tdWidthN {
+	width: 4%;
+}
+td.tdWidthO {
+	width: 60%;
+}
+td.tdWidthP {
+	width: 30%;
+}
+td.tdWidthQ {
+	width: 70%;
+}
+
+td.tdWidthR {
+	width: 5%;
+}
+td.tdWidthS {
+	width: 6%;
+}
+td.tdWidthT {
+	width: 7%;
+}
+td.tdWidthU {
+	width: 8%;
+}
+td.tdWidthV {
+	width: 9%;
+}
+td.tdWidthW {
+	width: 19%;
+}
+td.tdWidthX {
+	width: 16%;
+}
+td.tdWidthY {
+	width: 75%;
+}
+
+/* 会員管理のシステム情報欄
+ * ユーザー設定欄・FAX設定欄
+ * にて使用。
+ */
+ 
+td.tdWidthAA {
+    width: 33%;
+}
+/* 会員管理のシステム情報欄
+ * ユーザー設定欄・FAX設定欄
+ * にて使用。
+ */
+ 
+td.tdWidthAB {
+    width: 34%;
+}
+/* 館員管理の日報選択・日報選択２にて
+ * 下部の物件種別の選択欄にて使用。
+ */
+
+td.tdWidthAC {
+    width: 18%;
+}
+/* 館員管理の日報選択・日報選択２にて
+ * 下部の物件種別の選択欄にて使用。
+ */
+
+td.tdWidthAD {
+    width: 28%;
+}
+
+/*
+ * 会員利用実績の画面の一覧にて使用
+ * 
+ */
+td.tdWidthAE {
+    width: 6%;
+}
+
+/*
+ * 会員利用実績の画面の一覧にて使用
+ * 
+ */
+td.tdWidthAF {
+    width: 8%;
+}
+
+/* 
+ * 物件検索のタイトルに使用します。
+ */
+.menuColorKensaku {
+	background-color: #2e8b57
+}
+/* 
+ * センタ、サブセンタ向けメニューのタイトルに使用します。
+ */
+.menuColorSenta {
+	background-color: #0099CC
+}
+/* 
+ * 物件管理のタイトルに使用します。
+ */
+.menuColorKanri {
+	background-color: #6b8e23
+}
+/* 
+ * 日報のタイトルに使用します。
+ */
+.menuColorNippou {
+	background-color: #a0522d
+}
+/* 
+ * 会員管理のタイトルに使用します。
+ */
+.menuColorKaiinkannri {
+	background-color: #191970
+}
+/* 
+ * 運用管理ワークのタイトルに使用します。
+ */
+.menuUnkanWork {
+	background-color: #FFFF66
+}
+/* 
+ * 運用管理ワークの中タイトルに使用します。
+ * 文字の色を灰色に変更します。
+ */
+.menuFontUnkanWorkChu {
+	color: #696969;
+	font-size: medium;
+}
+/* 
+ * お知らせのタイトルに使用します。
+ */
+.menuColorOsirase {
+	background-color: #7080b6
+}
+/* 
+ * 登録系画面の適用年月日の左隣に表示する、
+ * 会員番号、物件番号に使用します。
+ */
+.shirotoMsg{
+	text-align:left;
+	font-weight: bold;
+	font-size: large;
+}
+
+
+/* 
+ * inputタグtext属性のsize指定に使用します
+ * ※入力文字数が1～4文字まで
+ */
+.inputType1to4{
+	width:3em;
+}
+/* 
+ * inputタグtext属性のsize指定に使用します
+ * ※入力文字数が5～10文字まで
+ */
+.inputType5to10{
+	width:5em;
+}
+/* 
+ * inputタグtext属性のsize指定に使用します
+ * ※入力文字数が11～20文字まで
+ */
+.inputType11to20{
+	width:10em;
+}
+/* 
+ * inputタグtext属性のsize指定に使用します
+ * ※入力文字数が21～50文字まで
+ */
+.inputType21to50{
+	width:25em;
+}
+/* 
+ * inputタグtext属性のsize指定に使用します
+ * ※入力文字数が51～100文字まで
+ */
+.inputType51to100{
+	width:50em;
+}
+/* 
+ * inputタグtext属性のsize指定に使用します
+ * ※入力文字数が101～150文字まで
+ */
+.inputType101to150{
+	width:50em;
+}
+
+/* 
+ * inputタグtext属性のsize指定に使用します(2byte文字)
+ * ※入力文字数が1～4文字まで
+ */
+.inputType2byte1to4{
+	width:5em;
+}
+/* 
+ * inputタグtext属性のsize指定に使用します(2byte文字)
+ * ※入力文字数が5～10文字まで
+ */
+.inputType2byte5to10{
+	width:8em;
+}
+/* 
+ * inputタグtext属性のsize指定に使用します(2byte文字)
+ * ※入力文字数が11～20文字まで
+ */
+.inputType2byte11to20{
+	width:15em;
+}
+/* 
+ * inputタグtext属性のsize指定に使用します(2byte文字)
+ * ※物件画像、図面の画像
+ */
+.inputType2forGzuFileName{
+	width:25em;
+}
+/* 
+ * inputタグtext属性のsize指定に使用します(2byte文字)
+ * ※入力文字数が21～50文字まで
+ */
+.inputType2byte21to50{
+	width:35em;
+}
+/* 
+ * inputタグtext属性のsize指定に使用します(2byte文字)
+ * ※入力文字数が51～100文字まで
+ */
+.inputType2byte51to100{
+	width:50em;
+}
+/* 
+ * inputタグtext属性のsize指定に使用します(2byte文字)
+ * ※入力文字数が101～150文字まで
+ */
+.inputType2byte101to150{
+	width:60em;
+}
+
+/* 2008.03.23   Y.Natsume marge */
+
+/* 3/17 業務運用Ｇ独自で追加したスタイル*/
+
+
+/*境界線が灰色(innerTableの背景色と同じ）テーブル*/
+table.normalTableBorder2 {
+    width:100%;
+    border:solid #999999 1px;
+}
+/* 大分類 */
+.tableIndex1_b {
+    font-size: large;
+    font-weight: bold;
+    color: white;
+    background-color : #008833;
+}
+/* 中分類 */
+.tableIndex2_b {
+    font-size: medium;
+    font-weight: bold;
+    color: white;
+    background-color : #668800;
+}
+/* フォント仕様 */
+.fontmini {
+    font-size: small;
+}
+
+/* 取り出し画面作成中 */
+.listColorForProgress {
+	background-color: #FFFFFF;
+    color: red;
+	font-size:medium;
+}
+
+/* 2008.04.15   Design */
+
+/* デザイン追加時のスタイル */
+
+/* ヘッダー下部のサブメニューの背景画像 */
+.headbg2{ font-size: 12px; border-top:2px solid #bd001e; background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/header_bg2.gif) repeat-x; height:32px; padding-right:10px; }
+
+/* パスワード変更の設定 */
+
+#passchange{
+float:right;
+	width:175px;
+	height:22px;
+	padding-top:7px;
+	margin-top:2px;
+	text-align:left;
+	padding-bottom:7px;
+	background-image: url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/btn_pass_change.gif);
+	background-repeat: no-repeat;
+}
+
+#passchange a{
+	font-size:medium;
+	padding-left:19px;
+}
+
+/* ログアウトボタンの設定 */
+
+#logout{
+float:right;
+	background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/btn_logout_bg.gif) no-repeat;
+	width:124px;
+	height:22px;
+	padding-top:7px;
+	margin-top:2px;
+	text-align:left;
+	padding-bottom:7px;
+	margin-left:10px;
+}
+
+#logout a{
+	color:#FFFFFF;
+	font-size:medium;
+	padding-left:35px;
+}
+
+/* 01_02_01_会員メニュー.htmの設定 */
+
+.k_menu_tit_bg{
+background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/k_menu_tit_bg.jpg) repeat-x;
+}
+
+.k_menu_tit_1{
+border-bottom:#339966 3px solid;
+}
+
+.k_menu_tit_2{
+border-bottom:#999933 3px solid;
+}
+
+.k_menu_tit_3{
+border-bottom:#999933 3px solid;
+}
+
+.k_menu_tit_4{
+border-bottom:#666699 3px solid;
+}
+
+.k_menu_tit_5{
+border-bottom:#FFCC00 3px solid;
+}
+
+
+.k_menu_tit_myreins{
+	background-image: url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/k_menu_tit_myreins_bg.jpg);
+	background-repeat: repeat-x;
+	height:41px;
+	width:482px;
+}
+
+.k_menu_tit_myreins_bg{
+border:#C0D9F2 1px solid;
+padding:1px;
+background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/k_menu_tit_myreins_bgc.gif);
+}
+
+.k_menu_tit_myreins_info_box{
+width:472px;
+}
+
+.k_menu_tit_myreins_info_bg{
+border:#C0D9F2 1px solid;
+background:#FFFFFF;
+}
+
+.k_menu_info_bg{
+border:#CCCCCC 1px solid;
+background:#FFFFFF;
+}
+
+.k_border_white{
+border:#FFFFFF 1px solid;
+}
+
+/* ページタイトル　賃貸アイコンの設定 */
+#pagetit_chintai{
+background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/icon_chintai.gif) no-repeat;
+padding-top:7px;
+padding-left:35px;
+padding-bottom:5px;
+}
+
+/* 物件管理Gにて追加項目 */
+/* ページタイトル　物件管理 */
+#pagetit_bkknknr{
+background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/icon_article.gif) no-repeat;
+padding-top:7px;
+padding-left:35px;
+padding-bottom:5px;
+}
+
+/* ページタイトル　その他検索 */
+#pagetit_sntknsk{
+background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/icon_othersearch.gif) no-repeat;
+padding-top:7px;
+padding-left:35px;
+padding-bottom:5px;
+}
+
+/* ページタイトル　運用管理 */
+#pagetit_unyuknr{
+background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/icon_operation.gif) no-repeat;
+padding-top:7px;
+padding-left:35px;
+padding-bottom:5px;
+}
+
+/* ページタイトル　証明書管理 */
+#pagetit_syumisyknr{
+background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/icon_certificate.gif) no-repeat;
+padding-top:7px;
+padding-left:35px;
+padding-bottom:5px;
+}
+
+/* ページタイトル　会員管理 */
+#pagetit_kiinknr{
+background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/icon_member.gif) no-repeat;
+padding-top:7px;
+padding-left:35px;
+padding-bottom:5px;
+}
+
+
+/* ページタイトル　日報・お知らせ管理 */
+#pagetit_nppuosrsknr{
+background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/icon_information.gif) no-repeat;
+padding-top:7px;
+padding-left:35px;
+padding-bottom:5px;
+}
+
+/* 縦マージン調整 */
+
+.mt5{
+margin-top:5px;
+}
+
+.mt10{
+margin-top:10px;
+}
+
+.mt20{
+margin-top:20px;
+}
+
+.mb03{
+margin-bottom:3px;
+}
+
+.mb10{
+margin-bottom:10px;
+}
+
+.pt10{
+padding-top:10px;
+}
+
+
+/* テーブルのボタン幅 */
+.td_btm{
+width:130px;
+}
+
+.table_cell{
+border-collapse: collapse;
+	border: none;
+	}
+
+/* ボタン「検索結果一覧へ戻る」「印刷画面へ」のレイアウト設定 */
+.fleft{
+float:left;
+}
+
+.fright{
+float:right;
+}
+
+.fclr{
+clear:both;
+}
+
+.w50{
+width:50%;
+}
+
+/* ボタン「前の画面へ」「次の画面へ」のレイアウト設定 */
+.movebtn{
+text-align:right;
+padding-top:20px;
+}
+
+*html .movebtn{
+padding-top:0px;
+}
+
+*:first-child+html .movebtn{
+padding-top:0px;
+}
+
+/* テーブルボーダーの設定 */
+.table_index{
+border:#CCCCCC 1px solid;
+}
+
+.td_border_w{
+border:#FFFFFF;
+}
+
+/* テーブル内タイトル背景の設定 */
+.tdtition{ background:#e7e7e7 url(img/td_tit_icon.gif) no-repeat 1px 0; height:22px; padding-top:6px; padding-left:12px; }
+
+/* テーブル内サブタイトル背景の設定 */
+.tdbg{
+background:#e7e7e7;
+color:#ffffff;
+padding:4px;
+}
+
+/* 「物件画像」内フォントサイズの設定 */
+.tdfsize_s{
+font-size:medium;
+}
+
+/* フッターのコピーライトの設定 */
+.copyright{
+background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/footer_bg2.gif) repeat-x;
+font-size:10px;
+color:#666666;
+text-align:center;
+line-height:2;
+padding:15px 0;
+margin:0;
+}
+
+/* フッターのコピーライトの赤文字の設定 */
+.attention{
+color:#CC0000;
+}
+
+/* 画像の縦設定 */
+.img_vbtm{
+vertical-align:bottom;
+}
+
+
+
+/* indexページの設定 */
+.index_head{
+padding-top:26px;
+color:#006666;
+padding-right:10px;
+}
+
+.index_head .t_bold{
+font-weight:bold;
+}
+
+.index_head_t{
+font-size:medium;
+}
+
+.index_bg{
+background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/index_bg.jpg) top center no-repeat;
+height:222px;
+}
+
+.index_tit{
+color:#0066CC;
+font-size: medium;
+font-weight:bold;
+padding:5px;
+}
+
+.index_tit2{
+color:#CC0000;
+font-size: medium;
+font-weight:bold;
+padding:5px;
+}
+.index_tit_bd{
+border:#CCCCCC 1px solid;
+}
+
+.index_tit_1{
+border-top:#7080B6 3px solid;
+background:#E6F0FA;
+}
+
+.index_tit_2{
+border-top:#D94141 3px solid;
+background:#FCF1F1;
+}
+
+.index_tbox{
+padding:5px 0;
+}
+
+.table_blue{
+width:100%;
+margin:0 auto;
+padding-left:5px;
+padding-right:5px;
+}
+
+*html .table_blue{
+width:100%;
+margin:0 auto;
+padding-left:20px;
+padding-right:20px;
+}
+
+.blue{
+font-size: small;
+padding:7px;
+background:#F1F7FC;
+}
+
+.index_tbox .square{
+list-style:square;
+font-size: small;
+margin:0 10px 7px -15px;
+padding:0;
+}
+
+.ichiran{
+font-size: small;
+}
+
+.copyright2{
+background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/footer_bg2.gif) repeat-x;
+height:60px;
+font-size:medium;
+color:#666666;
+text-align:center;
+line-height:1.0;
+padding:15px 0;
+margin:0;
+}
+
+.copyright2 .bold{
+font-weight:bold;
+}
+
+.index_tbox2{
+padding:10px;
+font-size: small;
+}
+
+.index_tbox3{
+padding:0 0 5px 10px;
+font-size: small;
+}
+
+.icon_green{
+background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/icon_green.gif) no-repeat 0px 4px;
+padding-left:15px;
+font-size: small;
+list-style:none;
+margin-left:-30px;
+line-height:1.5;
+}
+
+/* inputタグtext属性のテキストボックス内文字右揃に使用 */
+.inputTextRight{
+text-align:right
+}
+
+/*
+ * 改行しない。
+ */
+.noLnBr {
+ white-space: nowrap;
+}
+
+.spanLink{
+color:#fff;
+cursor:pointer;
+text-decoration:underline;
+}
+
+/* 環境表示 */
+.viewEnv{
+	color:#FF6600;
+	font-size: 32pt;
+}
+
+.envMsgTable {
+	margin-left:auto;
+	margin-right:auto;
+	text-align:justify;
+}
+
+/*
+ * テキストボックス用の位置指定です。
+ * 同じセルにテキストボックスとボタンが存在する際に使用します。
+ * MARGIN-TOP: 2px;
+ */
+.textBoxPositionA{
+MARGIN-TOP: 2px;
+VERTICAL-ALIGN: top;
+PADDING-TOP: 1px;
+PADDING-RIGHT: 0px;
+PADDING-LEFT: 1px;
+PADDING-BOTTOM: 1px;
+}
+
+/*
+ * テキストボックス用の位置指定です。
+ * 同じセルにテキストボックスとボタンが存在する際に使用します。
+ * MARGIN-TOP: 0px;
+ */
+.textBoxPositionB{
+MARGIN-TOP: 0px;
+VERTICAL-ALIGN: top;
+PADDING-TOP: 1px;
+PADDING-RIGHT: 0px;
+PADDING-LEFT: 1px;
+PADDING-BOTTOM: 1px;
+}
+
+/*
+ * テキストボックス用の位置指定です。
+ * 同じセルにテキストボックスとボタンが存在する際に使用します。
+ * MARGIN-TOP: 1px;
+ */
+.textBoxPositionC{
+MARGIN-TOP: 1px;
+VERTICAL-ALIGN: top;
+PADDING-TOP: 1px;
+PADDING-RIGHT: 0px;
+PADDING-LEFT: 1px;
+PADDING-BOTTOM: 1px;
+}
+
+/* 
+ * 背景色が緑、フォントが白、太字、極小フォントです。
+ * テーブルの小分類インデックスに使用します。
+ * 背景の繰り返しを、縦横方向に繰り返します。
+ */
+.indexStyleHightFreeC {
+	font-size: small;
+	font-weight: bold;
+	background:url(file:///C|/Users/casper/AppData/Local/Microsoft/Windows/Temporary%20Internet%20Files/Content.IE5/img/td_sub_bg.gif) repeat;
+}
+
+/* 
+ * 背景色がクリーム色、中フォントです。
+ * テーブルのインデックスに使用します。
+ */
+.indexTableColorD {
+	background-color: #FFFFCC;
+	font-size: medium;
+}
+
+/* 
+ * ログイン画面上のインプットに使用します。
+ */
+.loginInput {
+	width:125px;
+}
+
+/* 
+ * パスワードのインプットに使用します。
+ */
+.passwordInput {
+	font-family:tahoma,sans-serif,osaka;
+}
+
+/* 
+ *フォントサイズを太字にする
+ */
+.fontBoldLarge{
+    font-size:larger;
+    font-weight:bold;
+}
+
+ /* 
+ * イタリックにする
+ */
+.fontStyleItalic{
+    font-style: italic;
+}
+/* 
+ * 背景色が白、Largeフォントです。
+ * 一覧画面のテーブルの値に利用しています。
+ */
+.listTableColorLarge {
+	background-color: #FFFFFF;
+	font-size:larger;
+    font-weight:bold;
+}

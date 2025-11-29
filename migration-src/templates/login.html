@@ -1,0 +1,76 @@
+{% extends "applicationpagebase.html" %}
+
+{#
+Another login utility sample on Google App Engine
+
+Author    : OKAZAKI Hiroki (okaz@teshigoto.net, https://www.teshigoto.net/)
+Version   : $Id: login.html,v 1.4 2009/02/05 02:02:28 okaz Exp $
+Copyright : Copyright (c) 2009 OKAZAKI Hiroki
+License   : Python
+#}
+
+{% block revision %}$Revision: 1.4 ${% endblock %}
+{% block date %}$Date: 2009/02/05 02:02:28 ${% endblock %}
+
+{% block title %}ログイン{% endblock %}
+
+{% block content %}
+
+</br>
+<h2>ログイン</h2>
+<p>
+この先にアクセスするにはログインが必要です。
+</p>
+<br />
+{% if error_msg %}
+<p class="error_msg">
+{{ error_msg|escape }}
+</p>
+{% endif %}
+<br />
+{% if completed_msg %}
+<p>
+{{ completed_msg|safe }}
+</p>
+{% else %}
+<br />
+<form name="myform"
+      action=""
+      method="post">
+<br />
+<p>
+ログインID : <input type="text"
+                              id="login_id"
+                              name="login_id"
+		       value="" />
+</p>
+<br />
+<p>
+パスワード : <input type="password"
+			id="login_pwd"
+			name="login_pwd"
+			value="" />
+</p>
+<br />
+<p>
+<input type="hidden" id="corp_name" name="corp_name" value="{{corp_name}}" />
+<input type="hidden" id="sitename" name="sitename" value="{{sitename}}" />
+<input type="hidden" id="branch_name" name="branch_name" value="{{branch_name}}" />
+<input type="hidden" id="togo" name="togo" value="{{togo}}" />
+<input type="hidden" id="userpagebase" name="userpagebase" value="{{userpagebase}}" />
+<input type="submit"
+       id="login_submit"
+       name="login_submit"
+       value="ログインする" />
+</p>
+
+</form>
+{% endif %}
+
+<iframe src="https://{{sitename}}/auth/setsid?sid={{sid}}" width="0" height="0" onload="{{onloadsclipt}}"></iframe>
+<br />
+<p>
+<a href="/regist?{{query_string}}">新規登録はこちら</a>
+</p>
+
+{% endblock %}

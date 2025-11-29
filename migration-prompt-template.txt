@@ -1,0 +1,346 @@
+あなたは Google App Engine Python 2.7 から Python 3.11 へのマイグレーションを実行するエキスパートです。
+
+### 実行環境の前提
+
+- **プロジェクトルート**: `C:\Users\hrsuk\prj\s-style-hrd`
+- **実際のソースコード**: `C:\Users\hrsuk\prj\s-style-hrd\src\` 配下
+- **マイグレーションルール**: `C:\Users\hrsuk\prj\s-style-hrd\GAE_MIGRATION_STATE.md` に記載
+
+### やってほしいこと
+
+1. **対象ファイルの読み込み**
+   - 対象ファイルのパスは末尾で指定されます
+   - 実際のファイルは `C:\Users\hrsuk\prj\s-style-hrd\src\{対象ファイルパス}` にあります
+   - Read ツールで対象ファイルを読み込む
+
+2. **マイグレーション実行**
+   - 下記のマイグレーションルールに従って、対象ファイルを Python 3.11 + Flask + NDB に移行する
+   - Edit ツールを使用してファイルを直接編集する
+   - 以下の順序で変更を適用:
+     1. インポート文の修正（`google.appengine.ext` → `google.cloud.ndb` 等）
+     2. モデル定義の修正（`db.Model` → `ndb.Model` 等）
+     3. webapp2 → Flask の変更（ハンドラークラス → ルート関数）
+     4. リクエスト/レスポンス処理の変更
+     5. Python 2→3 構文の修正（`print`, `except as`, `.iteritems()` → `.items()` 等）
+
+3. **依存関係の確認**
+   - 対象ファイルがインポートしている他のモジュールを確認
+   - まだマイグレーションされていないモジュールがあれば、その旨を報告
+
+4. **セキュリティチェック**
+   - XSS, SQLインジェクション, コマンドインジェクション等の脆弱性がないか確認
+   - 脆弱性を見つけた場合は修正する
+
+### 重要な制約
+
+- **必ず Edit ツールを使用**してファイルを直接編集する
+- **完全なファイル内容を出力しない**（Edit ツールで編集済みのため不要）
+- GAE_MIGRATION_STATE.md は**読み込みのみ**、編集しない
+- マイグレーションルールに記載されていない独自の判断が必要な場合は、その旨を報告
+
+### マイグレーションの重要ポイント
+
+**webapp2 → Flask の基本パターン:**
+```python
+# 変更前（webapp2）
+class MyHandler(webapp2.RequestHandler):
+    def get(self):
+        param = self.request.get('param')
+        self.response.out.write('Hello')
+
+# 変更後（Flask）
+@app.route('/my-path')
+def my_handler():
+    param = request.args.get('param')
+    return 'Hello'
+```
+
+**db.Model → ndb.Model の基本パターン:**
+```python
+# 変更前
+from google.appengine.ext import db
+
+class MyModel(db.Model):
+    name = db.StringProperty()
+    ref = db.ReferenceProperty(OtherModel)
+
+# 変更後
+from google.cloud import ndb
+
+class MyModel(ndb.Model):
+    name = ndb.StringProperty()
+    ref = ndb.KeyProperty(kind='OtherModel')
+```
+
+---
+
+## マイグレーションルール詳細
+
+### 1. インポート文の変更
+
+```python
+# 変更前
+from google.appengine.ext import db, webapp
+from google.appengine.ext.webapp import template
+import webapp2
+
+# 変更後
+from google.cloud import ndb
+from flask import Flask, request, session, redirect, render_template, make_response
+```
+
+### 2. モデル定義の変更
+
+**基本的なプロパティ:**
+```python
+# db.Model → ndb.Model
+db.StringProperty() → ndb.StringProperty()
+db.IntegerProperty() → ndb.IntegerProperty()
+db.FloatProperty() → ndb.FloatProperty()
+db.BooleanProperty() → ndb.BooleanProperty()
+db.DateTimeProperty() → ndb.DateTimeProperty()
+db.TextProperty() → ndb.TextProperty()
+db.BlobProperty() → ndb.BlobProperty()
+db.GeoPtProperty() → ndb.GeoPtProperty()
+```
+
+**リレーション:**
+```python
+# ReferenceProperty → KeyProperty
+db.ReferenceProperty(OtherModel) → ndb.KeyProperty(kind='OtherModel')
+db.SelfReferenceProperty() → ndb.KeyProperty(kind='ModelName')
+
+# 取得方法
+entity.ref_property → entity.ref_property.get()
+```
+
+**リストプロパティ:**
+```python
+db.StringListProperty() → ndb.StringProperty(repeated=True)
+db.ListProperty(int) → ndb.IntegerProperty(repeated=True)
+```
+
+### 3. Datastoreクエリの変更
+
+```python
+# 変更前
+Model.all() → Model.query()
+Model.get_by_key_name(name) → ndb.Key(Model, name).get()
+Model.get(key) → key.get()
+Model.gql("SELECT * FROM Model WHERE prop = :1", value) → Model.query(Model.prop == value)
+
+# フィルタ
+query.filter('prop =', value) → query.filter(Model.prop == value)
+query.filter('prop >', value) → query.filter(Model.prop > value)
+query.filter('prop IN', [v1, v2]) → query.filter(Model.prop.IN([v1, v2]))
+
+# ソート
+query.order('prop') → query.order(Model.prop)
+query.order('-prop') → query.order(-Model.prop)
+
+# 取得
+query.fetch(limit) → query.fetch(limit)
+query.get() → query.get()
+query.count() → query.count()
+```
+
+**Key操作:**
+```python
+# Key文字列化
+entity.key().name() → entity.key.id()
+str(entity.key()) → entity.key.urlsafe().decode()
+
+# Key復元
+db.Key(encoded=key_str) → ndb.Key(urlsafe=key_str)
+```
+
+### 4. webapp2 → Flask の変更
+
+**ルーティング:**
+```python
+# 変更前（webapp2）
+app = webapp2.WSGIApplication([
+    ('/', MainHandler),
+    ('/login', LoginHandler),
+], debug=True)
+
+# 変更後（Flask）
+app = Flask(__name__)
+
+@app.route('/')
+def main_handler():
+    return render_template('index.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login_handler():
+    if request.method == 'POST':
+        # POST処理
+    return render_template('login.html')
+```
+
+**リクエスト処理:**
+```python
+# webapp2
+self.request.get('param')
+self.request.get('param', default_value='')
+self.request.POST.get('param')
+self.request.cookies.get('cookie_name')
+
+# Flask
+request.args.get('param')  # GET
+request.form.get('param')  # POST
+request.values.get('param')  # GET or POST
+request.cookies.get('cookie_name')
+```
+
+**レスポンス:**
+```python
+# webapp2
+self.response.out.write('Hello')
+self.response.headers['Content-Type'] = 'application/json'
+self.response.set_status(404)
+self.redirect('/path')
+
+# Flask
+return 'Hello'
+response = make_response('Hello')
+response.headers['Content-Type'] = 'application/json'
+return 'Not Found', 404
+return redirect('/path')
+```
+
+**セッション:**
+```python
+# webapp2（gaesessions等）
+from gaesessions import get_current_session
+session = get_current_session()
+session['key'] = value
+
+# Flask
+from flask import session
+session['key'] = value
+```
+
+**テンプレート:**
+```python
+# webapp2
+from google.appengine.ext.webapp import template
+template.render('path/to/template.html', {'key': value})
+
+# Flask
+from flask import render_template
+render_template('template.html', key=value)
+```
+
+### 5. その他のGAE API置き換え
+
+**Blobstore → GCS:**
+```python
+# 変更前
+from google.appengine.ext import blobstore
+from google.appengine.ext.webapp import blobstore_handlers
+
+upload_url = blobstore.create_upload_url('/upload')
+blob_key = blobstore.BlobKey(key_str)
+blobstore.delete(blob_key)
+
+# 変更後
+from google.cloud import storage
+# Signed URL生成、GCS client操作に変更
+# 具体的な実装は個別に対応
+```
+
+**Memcache → Redis:**
+```python
+# 変更前
+from google.appengine.api import memcache
+memcache.set('key', value, time=3600)
+memcache.get('key')
+memcache.delete('key')
+
+# 変更後
+import redis
+redis_client = redis.Redis(host='...', port=6379)
+redis_client.setex('key', 3600, value)
+redis_client.get('key')
+redis_client.delete('key')
+```
+
+**Task Queue → Cloud Tasks:**
+```python
+# 変更前
+from google.appengine.api import taskqueue
+taskqueue.add(url='/task', params={'key': value}, queue_name='default')
+
+# 変更後
+from google.cloud import tasks_v2
+# Cloud Tasks API実装に変更
+# 具体的な実装は個別に対応
+```
+
+**Mail API → smtplib:**
+```python
+# 変更前
+from google.appengine.api import mail
+mail.send_mail(sender='...', to='...', subject='...', body='...')
+
+# 変更後
+import smtplib
+from email.message import EmailMessage
+# SMTP実装に変更
+# 具体的な実装は個別に対応
+```
+
+### 6. Python 2→3 構文変更
+
+```python
+# print文 → print関数
+print "Hello" → print("Hello")
+
+# except構文
+except Exception, e: → except Exception as e:
+
+# 辞書メソッド
+dict.iteritems() → dict.items()
+dict.iterkeys() → dict.keys()
+dict.itervalues() → dict.values()
+dict.has_key(key) → key in dict
+
+# 文字列/バイト
+unicode() → str()
+basestring → str
+string.encode('utf-8') # バイト化が必要な場合
+
+# 比較関数
+cmp(a, b) → (a > b) - (a < b) または functools.cmp_to_key()
+
+# reduce
+reduce(func, iterable) → from functools import reduce; reduce(func, iterable)
+
+# urllib
+import urllib → import urllib.parse
+urllib.urlencode() → urllib.parse.urlencode()
+urllib.quote() → urllib.parse.quote()
+```
+
+### 7. プロジェクト固有ルール
+
+**Key文字列化統一:**
+- `entity.key.urlsafe().decode()` を使用
+
+**JSON処理:**
+- 標準 `json` ライブラリ使用
+- `json.dumps(data, ensure_ascii=False)` 必須
+
+**CSV処理:**
+- 入力エンコーディング: `cp932`
+- 処理: `io.StringIO(rawfile.decode('cp932'))`
+
+**トランザクション:**
+- `db.run_in_transaction(func)` → `ndb.transaction(func)` または `@ndb.transactional` デコレータ
+
+**認証:**
+- SHA256ハッシュ維持（bcrypt移行なし）
+- `hashlib.sha256(password.encode('utf-8')).hexdigest()`
+
+---

@@ -1,0 +1,34 @@
+mapreduce:
+- name: bkdataput
+  mapper:
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: application.mapreducemapper.bkdataput
+    params:
+    - name: entity_kind
+      default: application.models.bkdata.BKdata
+
+- name: bklist
+  mapper:
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: application.mapreducemapper.bkdlistupdate
+    params:
+    - name: entity_kind
+      default: application.models.bklist
+
+
+- name: bloburlschange
+  mapper:
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: application.mapreducemapper.bloburlschange
+    params:
+    - name: entity_kind
+      default: application.models.blob.Blob
+
+- name: message
+  mapper:
+    input_reader: mapreduce.input_readers.DatastoreInputReader
+    handler: application.mapreducemapper.messageupdate
+    params:
+    - name: entity_kind
+      default: application.models.
+

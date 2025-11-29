@@ -1,0 +1,13 @@
+{% if data.bkdata.dtsyuri == '物件' %} 
+{% if data.webkkkk %} 
+	{% include "article-koukai-sp.html" %}
+{% else %}
+	{% if auth %}
+		{% include "article-member-login-sp.html" %}
+	{% else %}
+		{% include "article-member-sp.html" %}
+	{% endif %} 
+{% endif %} 
+{% else %}
+	{% include "article-soldout-sp.html" %}
+{% endif %} 

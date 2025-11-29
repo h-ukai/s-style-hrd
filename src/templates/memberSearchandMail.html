@@ -1,0 +1,405 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html lang="ja" xml:lang="ja" xmlns="https://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<title>メール送信リスト</title>
+<link href="/css/styles.css" type="text/css" rel="stylesheet" media="all" />
+<link href="/css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script><!-- jquery　本体-->
+<script type="text/javascript"  src="/js/jquery-ui-1.8.16.custom.min.js"></script><!-- jquery-UI　本体-->
+<script language="JavaScript" type="text/javascript" src="/js/jTPS.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/jTPS.css">
+
+<style>
+
+body {
+	font-family: Tahoma;
+	font-size: 9pt;
+}
+#tbl thead th {
+	white-space: nowrap;
+	overflow-x:hidden;
+	padding: 3px;
+}
+#tbl tbody td {
+	padding: 3px;
+}
+
+#appended{
+	white-space: nowrap;
+}
+</style>
+
+<script type="text/javascript">
+
+var flist = new Array("メンバーID","ステータス","会社ID","支店ID","サイト名","氏名","読み仮名","郵便番号","住所","所在地１",
+"所在地２","電話","FAX","携帯電話","メールアドレス","ネットID","パスワード","登録年月日","担当","MNo","MR","売","買","貸","借",
+"媒介","成約","成約年月日","成約アンケート","年齢","勤続年数","同居大人","同居子供","勤め先","送信方法","自己資金 ",
+"返済予定額月々","返済予定額ボーナス","購入時期","年","区分","サービス","獲得媒体","初回アクセス","紹介業者","備考");
+
+
+$(document).ready(function(){
+    if( $("select#service").val() || $("select#status").val() || $("select#seiyaku").val() || $("select#rireki").val() || $("input#followsubject").val() || $("input#bkID").val() || $("input#tourokunengappiL").val() || $("input#tourokunengappiU").val() || $("input#filter").val() || $("input#filtervalue").val()    ){
+            maketbl();
+    }
+    $('#msg').bind('change', function() {
+        $.ajax({
+            //url: "https://localhost:8080/jsonservice",
+            url: "/jsonservice",
+            dataType: "jsonp",
+            data: {
+                com: "getfolbyID",
+                id:$("select#msg").val()
+            },
+            success: function(rows) {
+                $("#subject").val(rows['表題']);
+                $("#body").val(rows['本文']);
+            }
+        });
+    });
+	$("input#dosearch").click(function(){
+        maketbl();
+       });
+	$('#tbl').jTPS( {perPages:[20,50,'ALL'],scrollStep:1,scrollDelay:30,
+		clickCallback:function () {	
+			// target table selector
+			var table = '#tbl';
+			// store pagination + sort in cookie 
+			document.cookie = 'jTPS=sortasc:' + $(table + ' .sortableHeader').index($(table + ' .sortAsc')) + ',' +
+				'sortdesc:' + $(table + ' .sortableHeader').index($(table + ' .sortDesc')) + ',' +
+				'page:' + $(table + ' .pageSelector').index($(table + ' .hilightPageSelector')) + ';';
+		}
+	});
+	// reinstate sort and pagination if cookie exists
+	// bind mouseover for each tbody row and change cell (td) hover style
+	$('#tbl tbody tr:not(.stubCell)').live('mouseover',
+		function (e) {
+			// hilight the row
+			$(this).children('td').addClass('hilightRow') ;
+		}
+	);
+
+	$('#tbl tbody tr:not(.stubCell)').live('mouseout',
+		function (e) {
+			// hilight the row
+			$(this).children('td').removeClass('hilightRow');
+		}
+	);
+
+});
+function maketbl(){
+	$("#tbl tbody").empty();
+	$(".sortableHeader").removeClass('sortDesc').removeClass('sortAsc');
+    $.ajax({
+        //url: "https://localhost:8080/jsonservice",
+        url: "/jsonservice",
+        dataType: "jsonp",
+        data: {
+            com: "memberservice",
+            service:$("select#service").val(),
+            status:$("select#status").val(),
+            seiyaku:$("select#seiyaku").val(),
+            rireki:$("select#rireki").val(),
+            followsubject:$("input#followsubject").val(),
+            bkID:$("input#bkID").val(),
+            tourokunengappiL:$("input#tourokunengappiL").val(),
+            tourokunengappiU:$("input#tourokunengappiU").val(),
+            filter:$("input#filter").val(),
+            filtervalue:$("input#filtervalue").val()
+        },
+        success: function(rows) {
+            //テーブルとして表示するため、htmlを構築
+					for (var i=0;i<rows.length;i++) {
+						$("#tbl tbody").append($("<tr/>").attr("id","tr" + i));
+						var row = rows[i];
+						for (var j=0;j<flist.length;j++) {
+							if(row[flist[j]]!=null){
+								if (flist[j] == "メンバーID"){
+									$("#tr" + i).append(
+										$("<td/>").append(
+											$("<a/>").attr("href","/memberedit/{{CorpOrg_key_name}}/{{Branch_Key_name}}/{{sitename}}/memberedit.html?memberID=" + row[flist[j]]).text(row[flist[j]]).attr("target","_blank")
+										)
+									);
+								}
+								else {
+									$("#tr" + i).append($("<td/>").attr("id","appended").text(row[flist[j]].toString())) ;
+								}
+							}else{
+									$("#tr" + i).append($("<td/>").attr("id","appended")) ;
+							}
+						}
+					}
+
+
+					$('#tbl').jTPS( {perPages:[20,50,'ALL'],scrollStep:1,scrollDelay:30,
+						clickCallback:function () {	
+							// target table selector
+							var table = '#tbl';
+							// store pagination + sort in cookie 
+							//document.cookie = 'jTPS=sortasc:' + $(table + ' .sortableHeader').index($(table + ' .sortAsc')) + ',' +
+							//	'sortdesc:' + $(table + ' .sortableHeader').index($(table + ' .sortDesc')) + ',' +
+							//	'page:' + $(table + ' .pageSelector').index($(table + ' .hilightPageSelector')) + ';';
+						}
+					});
+        }
+    });
+
+}
+function sousin(){
+$('#com').val('メール送信');
+$("#mainform").submit();
+}
+function hozon(){
+$('#com').val('メール保存');
+$("#mainform").submit();
+}
+function listhozon(){
+$('#com').val('リスト保存');
+$("#mainform").submit();
+}
+function preview(){
+$('#com').val('プレビュー');
+$("#mainform").submit();
+}
+
+function hagaki(){
+$('#com').val('はがき');
+var params = $('#mainform').serialize();
+$('#ahagaki').attr("href","/tasks/mailinglistsend?" + params);
+}
+
+function atena(){
+$('#com').val('タックシール');
+var params = $('#mainform').serialize();
+$('#aatena').attr("href","/tasks/mailinglistsend?" + params);
+}
+
+
+
+
+</script>
+
+</head>
+
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0">
+<div align="center">
+<form name="mainform" id="mainform" action="" method="post">
+<br />
+<table width="900" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td align="left">
+<h2>顧客検索・顧客グループ・メール一斉送信</h2>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td align="left">
+<table width="100%" border="0" cellspacing="1" cellpadding="5">
+ {% if error_msg %}
+<tr>
+<td>
+<span class='class14red'>{{error_msg|escape|linebreaks}}</span>
+</td>
+</tr>
+{% endif %}
+
+
+<tr>
+<td>
+送信先履歴　
+<select id="rireki" name="rireki" size="1">
+<option value=""></option>
+{% for m in msglist %}
+ <option value="{{m.key.id}}" {% ifequal rireki m.key.id %} selected {% endifequal %}>{{m.key.id}} {{ m.subject }} {% if m.done %}済{% else %}未{% endif %} {{m.reservation|default_if_none:""|date:"Y/m/d H:i:s"}} </option>
+{% endfor %}
+</select>
+</td>
+<td>サービス　<select id="service" name="service" size="1">
+            <option value="" selected></option>
+            {% for s in servicelist %}
+            <option value="{{s}}" {% ifequal s service %} selected {% endifequal %}>{{s}}</option>
+            {% endfor %}
+            </select>
+</td>
+<td>区分　<select id="status" name="status" size="1">
+<option value=""></option>
+<option value="顧客" {% ifequal status "顧客" %} selected {% endifequal %}>顧客</option>
+<option value="管理者" {% ifequal status "管理者" %} selected {% endifequal %}>管理者</option>
+<option value="業者" {% ifequal status "業者" %} selected {% endifequal %}>業者</option>
+<option value="建築業者" {% ifequal status "建築業者" %} selected {% endifequal %}>建築業者</option>
+<option value="紹介者" {% ifequal status "紹介者" %} selected {% endifequal %}>紹介者</option>
+<option value="担当" {% ifequal status "担当" %} selected {% endifequal %}>担当</option>
+<option value="その他" {% ifequal status "その他" %} selected {% endifequal %}>その他</option>
+</select>
+</td>
+<td>成約　<select id="seiyaku" name="seiyaku" size="1">
+<option value=""></option>
+<option value="未成約" {% ifequal seiyaku "未成約" %} selected {% endifequal %}>未成約</option>
+<option value="成約" {% ifequal seiyaku "成約" %} selected {% endifequal %}>成約</option>
+<option value="契予" {% ifequal seiyaku "契予" %} selected {% endifequal %}>契予</option>
+<option value="決予" {% ifequal seiyaku "決予" %} selected {% endifequal %}>決予</option>
+<option value="辞退" {% ifequal seiyaku "辞退" %} selected {% endifequal %}>辞退</option>
+<option value="休止" {% ifequal seiyaku "休止" %} selected {% endifequal %}>休止</option>
+<option value="ブラック" {% ifequal seiyaku "ブラック" %} selected {% endifequal %}>ブラック</option>
+<option value="仮" {% ifequal seiyaku "仮" %} selected {% endifequal %}>仮</option>
+<option value="その他" {% ifequal seiyaku "その他" %} selected {% endifequal %}>その他</option>
+</select>
+</td>
+</tr>
+
+<tr>
+<td>
+フォロー表題：<input type="txet" id="followsubject" name="followsubject" value="{{followsubject|default_if_none:""}}" size="16">
+</td>
+<td>
+物件番号：<input type="txet" id="bkID" name="bkID" value="{{bkID|default_if_none:""}}" size="16">
+</td>
+<td>
+登録年月日：<input type="txet" id="tourokunengappiL" name="tourokunengappiL" value="{{tourokunengappiL|default_if_none:""}}" size="16">
+</td>
+<td>
+～<input type="txet" id="tourokunengappiU" name="tourokunengappiU" value="{{tourokunengappiU|default_if_none:""}}" size="16">
+</td>
+</tr>
+
+<tr>
+<td>
+フィルタ：<input type="txet" id="filter" name="filter" value="{{filter|default_if_none:""}}" size="16">　　　　
+</td>
+<td>
+値：<input type="txet" id="filtervalue" name="filtervalue" value="{{filtervalue|default_if_none:""}}" size="16">
+</td>
+<td>
+</td>
+<td>
+　<input type="button" id="dosearch" name="dosearch" value="　　　　　検　　索　　　　　">
+</td>
+</tr>
+
+
+</table>
+</td>
+</tr>
+</table>
+
+<div style="width:900px; overflow-x:scroll;">
+<table name="tbl" id ="tbl" style="border: 1px solid #ccc;" cellspacing="0" >
+	<thead id="tblthead">
+		<tr>
+		<th sort=メンバーID>memberID<br />メンバーID</th>
+		<th sort=ステータス>status<br />ステータス</th>
+		<th sort=会社ID>CorpOrg_key_name<br />会社ID</th>
+		<th sort=支店ID>Branch_Key_name<br />支店ID</th>
+		<th sort=サイト名>sitename<br />サイト名</th>
+		<th sort=氏名>name<br />氏名</th>
+		<th sort=読み仮名>yomi<br />読み仮名</th>
+		<th sort=郵便番号>zip<br />郵便番号</th>
+		<th sort=住所>address<br />住所</th>
+		<th sort=所在地１>address1<br />所在地１</th>
+		<th sort=所在地２>address2<br />所在地２</th>
+		<th sort=電話>phone<br />電話</th>
+		<th sort=FAX>fax<br />FAX</th>
+		<th sort=携帯電話>mobilephone<br />携帯電話</th>
+		<th sort=メールアドレス>mail<br />メールアドレス</th>
+		<th sort=ネットID>netID<br />ネットID</th>
+		<th sort=パスワード>netPass<br />パスワード</th>
+		<th sort=登録年月日>tourokunengappi<br />登録年月日</th>
+		<th sort=担当>tanto<br />担当</th>
+		<th sort=MNo>mno<br />MNo</th>
+		<th sort=MR>mr<br />MR</th>
+		<th sort=売>uri<br />売</th>
+		<th sort=買>kai<br />買</th>
+		<th sort=貸>kashi<br />貸</th>
+		<th sort=借>kari<br />借</th>
+		<th sort=媒介>baikai<br />媒介</th>
+		<th sort=成約>seiyaku<br />成約</th>
+		<th sort=成約年月日>seiyakunengappi<br />成約年月日</th>
+		<th sort=成約アンケート>seiyakuankeito<br />成約アンケート</th>
+		<th sort=年齢>age<br />年齢</th>
+		<th sort=勤続年数>kinzoku<br />勤続年数</th>
+		<th sort=同居大人>otona<br />同居大人</th>
+		<th sort=同居子供>kodomo<br />同居子供</th>
+		<th sort=勤め先>tutomesaki<br />勤め先</th>
+		<th sort=送信方法>access<br />送信方法</th>
+		<th sort=自己資金 >zikoshikin<br />自己資金 </th>
+		<th sort=返済予定額月々>heisaituki<br />返済予定額月々</th>
+		<th sort=返済予定額ボーナス>heisaibonasu<br />返済予定額ボーナス</th>
+		<th sort=購入時期>kounyuziki<br />購入時期</th>
+		<th sort=年>kounyunen<br />年</th>
+		<th sort=区分>rank<br />区分</th>
+		<th sort=サービス>service<br />サービス</th>
+		<th sort=獲得媒体>baitai<br />獲得媒体</th>
+		<th sort=初回アクセス>syokai<br />初回アクセス</th>
+		<th sort=紹介業者>gyosya<br />紹介業者</th>
+		<th sort=備考>bikou<br />備考</th></tr>
+	</thead>
+	<tbody id="tbltbody">
+	</tbody>
+	<tfoot class="nav">
+		<tr>
+			<td colspan=8>
+				<div class="pagination"></div>
+				<div class="paginationTitle">Page</div>
+				<div class="selectPerPage"></div>
+				<div class="status"></div>
+			</td>
+		</tr>
+	</tfoot>
+
+</table>
+</div>
+</td>
+</tr>
+
+<tr>
+<td>
+　　　<button onClick="listhozon();" type="button" value="リスト保存">リストを保存</button>
+　　　<a id="ahagaki" target="_blank"><button onClick="hagaki();" type="button" value="はがき">はがき印刷</button></a>
+　　　<a id="aatena" target="_blank"><button onClick="atena();" type="button" value="タックシール">タックシール印刷</button></a>
+</td>
+</tr>
+
+
+
+<td>
+<br />
+メール内容履歴　
+<select id="msg" name="msg" size="1">
+<option value="" ></option>
+{% for m in msglist %}
+ <option value="{{m.key.id}}" {% ifequal m.key.id msg %} selected {% endifequal %}> {{m.key.id}} {{ m.subject }} {% if m.done %}済{% else %}未{% endif %} {{m.reservation|default_if_none:""|date:"Y/m/d H:i:s"}} </option>
+{% endfor %}
+</select>
+<br />
+
+タイトル：
+<br />
+
+<input type="text" id="subject" name="subject" size="60" value="{{subject|default_if_none:""}}">
+　　物件リストを加えるメッセージID：　<input type="text" id="msID" name="msID" size="20" value="{{msID|default_if_none:""}}">
+<br />
+本文：
+<br />
+<textarea name="body" id="body" rows="25" cols="125">
+{{body}}
+</textarea>
+<br />
+　　　<button onClick="sousin();" type="button" value="メール送信">メール送信</button>
+　　　<button onClick="hozon();" type="button" value="メール保存">メール保存</button>
+　　　<label>htmlメール<input type="checkbox" name="htmlmail" id="htmlmail" value="1" {% if htmlmail %}checked{% endif %} > </label><button onClick="preview();" type="button" value="プレビュー">プレビュー</button>
+<input type="text" id="com" name="com" style="position:absolute;visibility:hidden">
+<input type="text" id="corp_name" name="corp_name" style="position:absolute;visibility:hidden" value="{{CorpOrg_key_name}}">
+<input type="text" id="branch_name" name="branch_name" style="position:absolute;visibility:hidden" value="{{Branch_Key_name}}">
+</td>
+</table>
+</form>
+</div>
+<br />
+<br />
+<div name=preview id=preview style="width;900px font-size:; font-color:;">
+{{preview|default_if_none:""}}
+</div>
+</body>
+
+</html>

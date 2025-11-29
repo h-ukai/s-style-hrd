@@ -1,0 +1,2340 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="ja" xml:lang="ja" xmlns="https://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>顧客フォロー物件検索</title>
+<link href="../css/baselayout.css" type="text/css" rel="stylesheet" media="all" />
+<link href="../css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css"/>
+<!-- jquery UI のcss-->
+<script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script><!-- jquery　本体-->
+<script type="text/javascript"  src="../js/jquery-ui-1.8.16.custom.min.js"></script><!-- jquery-UI　本体-->
+
+<script type="text/javascript" src="../js/jQueryMultiCheckbox.js"></script>
+<link rel="stylesheet" href="../css/thickbox.css" type="text/css" media="all" />
+<script type="text/javascript" src="../js/thickbox.js"></script>
+<script type="text/javascript">
+
+var d   = document;
+var ajaxURL = "https://s-style-hrd.appspot.com/jsonservice";
+var ajaxareaURL = "https://localhost:8080/jsonservice";
+$(document).ready(function(){
+
+    //adresslistsetautocomp($(".addresslist"));
+	// オートコンプリート　https://jqueryui.com/demos/autocomplete/#remote-jsonp
+	//リファレンス　https://semooh.jp/jquery/api/ajax/jQuery.ajax/options/
+
+
+    $(".addresslist").each(function () {
+        adresslistsetautocomp($(this));
+    });
+    $(".linelist").each(function () {
+        linelistautocomp($(this));
+        if ($(".station",this).val()){
+            var temp = $(".station",this).val();
+            $(".station",this).val("")
+            addstationlist(this,$(".line",this).val());
+            $(".station",this).val(temp)
+        }
+    });
+    $(document).on('keyup mouseup', '.mdrHysu,.mdrTyp', function(){
+        addroomtype($(this).parent())
+    });
+
+});
+
+function openadresslist(pos){
+    var opstr;
+    var anc = $("a",pos).attr('href').replace(/^.+#/,'#');
+    if($(".listid",pos).val()){
+        opstr = "?listid=" + $(".listid",pos).val();
+    }
+    else{
+        opstr = "?listid=" + $(".listid",pos).val() + "&name=個別指定&division=" + $("#memID").val();
+    }
+    $("a",pos).attr("href",anc + opstr + "&keepThis=true&TB_iframe=true&height=500&width=600" );//
+    $(".listid",pos).removeClass( "listid" ).addClass( "editinglistid" );
+    $(".listname",pos).removeClass( "listname" ).addClass( "editinglistname" );
+    $(".division",pos).removeClass( "division" ).addClass( "editingdivision" );
+}
+function setadlist(listid,listname,division){
+        var p = $(".editinglistid").removeClass( "editinglistid" ).addClass( "listid" ).val(listid);
+        $(".editinglistname").removeClass( "editinglistname" ).addClass( "listname" ).val(listname);
+        $(".editingdivision").removeClass( "editingdivision" ).addClass( "division" ).val(division);
+        addadresslist(p.parent().parent().parent());
+}
+
+function removeadresslist(pos){
+    if (pos.next().length==0){
+        $(".listname",pos).val("");
+        $(".listid",pos).val("");
+        $(".division",pos).val("");
+    }
+    else {
+        pos.remove();
+    }
+}
+
+function removelist(pos){
+    if (pos.next().length==0){
+        $("input[type!='button'],textarea",pos).each(function(){
+            $(this).val("");
+        });
+    }
+    else {
+        pos.remove();
+    }
+}
+
+
+function addadresslist(pos){
+    if (pos.next().length==0){
+        pos.after(pos.clone());
+        p2=pos.next();
+        tb_init($('a.thickbox, area.thickbox, input.thickbox',p2));
+        $(".listname",p2).val("");
+        $(".listid",p2).val("");
+        $(".division",p2).val("");
+        adresslistsetautocomp(p2);
+    }
+}
+function addadresslist2(pos){
+    if ($(".addresslist",pos).next().length==0){
+        $(".addresslist",pos).after($(".addresslist",pos).clone());
+        p2=$(".addresslist",pos).next();
+        $(".listname",p2).val("");
+        $(".listid",p2).val("");
+        adresslistsetautocomp(p2);
+    }
+}
+
+function adresslistsetautocomp(pos){
+    $(".listname",pos).autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: ajaxareaURL ,
+                dataType: "jsonp",
+                data: {
+                    com: "area",
+                    division:$(".division",pos).val(),
+                    search_key: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label:  item['名前'] + ' (' + item['区分'] + ')',
+                            value: item['名前'],
+                            id: item['key'],
+                            division: item['区分']
+                        }
+                    }));
+                 }
+             });
+         },
+        width: 200,
+		minChars: 0,
+		delay: 500,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+		select: function(ev, ui) {
+		    $(".listid",$(this).parent()).val(ui.item.id);
+		    $(".division",$(this).parent()).val(ui.item.division);
+		    addadresslist($(this).parent().parent().parent());
+		}
+    });
+}
+
+function linelistautocomp(pos){
+    $(".line",pos).autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: ajaxURL ,
+                dataType: "jsonp",
+                data: {
+                    com: "line",
+                    pref:$(".pref",pos).val(),
+                    search_key: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label:  item['line_name'] + ' (' + item['rr_name'] + ')' ,
+                            value: item['line_name']
+                        }
+                    }));
+                 }
+                 
+             });
+         },
+        width: 200,
+		minChars: 0,
+		delay: 500,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+		select: function(ev, ui) {
+		    addstationlist($(this).parent().parent().parent(),ui.item.value)
+		    addlinelist($(this).parent().parent().parent(),ui.item);
+		}
+    });
+}
+function addlinelist(pos,data){
+    if (pos.next().length==0){
+        pos.after(pos.clone());
+        p2=pos.next();
+        $(".pref",p2).val("");
+        $(".line",p2).val("");
+        $(".thHnU",p2).val("");
+        $(".thMU",p2).val("");
+        linelistautocomp(p2);
+    }
+}
+
+function removestationlist(obj){
+    $(".station",obj).attr("title","");
+    $(".station",obj).val("");
+    $("li>span",obj).remove();
+}
+
+
+function addstationlist(obj,line){
+    removestationlist(obj);
+    $.ajax({
+        url: ajaxURL ,
+        dataType: "jsonp",
+//        async:false,
+        data: {
+            com: "station",
+            pref:$(".pref",obj).val(),
+            line:line,
+        },
+        success: function(rows) {
+            for (var i=0;i<rows.length;i++) {
+                var row = rows[i];
+                if (i==0){
+                    $(".station",obj).attr("title",row['station_name']);
+                }
+                else{
+                    $(".station",obj).attr("title",$(".station",obj).attr("title") + ',' + row['station_name']);
+                }
+            }
+            $(".station",obj).multicheckbox({show:'show'});
+        }
+    });
+}
+
+function addroomtype(pos){
+    if (pos.next().length==0){
+        pos.after(pos.clone());
+        p2=pos.next();
+        $(".mdrHysu",p2).val("");
+        $(".mdrTyp",p2).val("");
+    }
+}
+function removeroomtype(pos){
+    if (pos.next().length!=0){
+        pos.remove();
+    }
+    $(".mdrHysu",pos).val("");
+    $(".mdrTyp",pos).val("");
+}
+
+$(function(){
+    // 日本語入力モードONにするname属性
+    var activeName = {
+        search:1,
+        name:1,
+        yomi:1,
+        tutomesaki:1,
+        address:1,
+        address1:1,
+        address2:1,
+        service:1,
+        bikou:1
+    };
+
+    $("input:visible[type!='password'],textarea").each(function(){
+        if(activeName[$(this).attr("name")] != undefined) {
+            $(this).css("ime-mode", "active");
+        } else {
+            $(this).css("ime-mode", "inactive");
+        }
+    });
+
+//==============================
+// キー項入力 イベント
+//==============================
+	$(document).keydown(function(e){
+		//入力キーコード
+		var	keyCode		=	e.keyCode;	
+		//shift alt ctrl 押下フラグ
+		var	altKey		=	e.altKey;
+		var	shiftKey	=	e.shiftKey;
+		var	ctrlKey		=	e.ctrlKey;
+		//Keyイベント伝播フラグ
+		//	true:ブラウザで処理	false:ユーザで処理
+		var	blKey		=	true;
+		//キーが押された時のオブジェクト
+		var	srcObj		=	e.target;
+
+		//Keyメッセージ表示用
+		var	Key		=	"keyCode:"+keyCode+":";
+
+		if (keyCode == 13 ||keyCode == 9){
+		//Enter tabによるフォーカス移動
+			switch(srcObj.tagName){
+			case "TEXTAREA":
+				if (keyCode!=13) blKey = false;
+				break;
+			case "INPUT":	case "SELECT":
+				//fileは巧く動かないので除外
+				if (srcObj.type!="file")	blKey = false;
+				break;
+			default:
+			}
+			//keyイベントを処理するもののみ抽出
+			if (!blKey){
+				//フォームオブジェクトが何番目か探す
+				var df = d.forms[0];
+				var ln = df.length;
+				var i;
+				for (i=0;i<ln;i++){
+					if (df[i]==srcObj) break;
+				}
+				//次のフォームオブジェクト探す
+				srcObj = Focus_Move(df,i,ln,shiftKey);
+			}
+		}
+
+		if (!blKey){
+			//イベントを伝播しない
+			if (srcObj.type!="file"){
+				srcObj.focus();
+				if (srcObj.select && srcObj.type!="button")
+					srcObj.select();
+			}else{
+				blKey = true;
+			}
+		}
+
+		if(shiftKey)	Key += "+[Shift]";
+		if(ctrlKey)	Key += "+[Ctrl]";
+		if(altKey)	Key += "+[Alt]";
+
+		$("#lb_msg").text(Key);
+		
+		//blKey true:ブラウザで処理 false:
+		return blKey;
+	});
+
+	//==============================
+	// フォーカス移動　https://d.hatena.ne.jp/Hidepyon/20090903/1251988911
+	//==============================
+	var Focus_Move = function(df,i,ln,shift){
+		//フォーカスを取得できないものは飛ばします
+
+		var FcsObj;
+		if (shift){
+			//Shiftが押されていると当然フォーカスが前へ戻る
+			while (--i >= 0){
+			
+				FcsObj	=	df[i];
+				if	(FcsObj.type!="hidden" && 
+					!FcsObj.disabled && 
+					FcsObj.style.visibility!="hidden" && 
+					FcsObj.tabIndex!=-1){
+					//対象のオブジェクトを戻す
+					return FcsObj;
+				}
+			}
+			//Hitしない場合
+			return Focus_Move(df,ln,ln,shift);
+		}else{
+			//フォーカス進む
+			while (++i < ln){
+			
+				FcsObj	=	df[i];
+				if	(FcsObj.type!="hidden" && 
+					!FcsObj.disabled && 
+					FcsObj.style.visibility!="hidden" && 
+					FcsObj.tabIndex!=-1){
+					return FcsObj;
+				}
+			}
+			//Hitしない場合
+			return Focus_Move(df,-1,ln,shift);
+		}
+	}
+	
+	
+	
+	//初期Focus設定
+	d.forms[0][0].focus();
+
+});
+//n日後、n日前の日付を求める
+/**
+ * 年月日と加算日からn日後、n日前を求める関数
+ * year 年
+ * month 月
+ * day 日
+ * addDays 加算日。マイナス指定でn日前も設定可能
+ */
+function computeDate(year, month, day, addDays) {
+    var dt = new Date(year, month - 1, day);
+    var baseSec = dt.getTime();
+    var addSec = addDays * 86400000;//日数 * 1日のミリ秒数
+    var targetSec = baseSec + addSec;
+    dt.setTime(targetSec);
+    return dt;
+}
+/**
+ * 年月を指定して月末日を求める関数
+ * year 年
+ * month 月
+ */
+function getMonthEndDay(year, month) {
+    //日付を0にすると前月の末日を指定したことになります
+    //指定月の翌月の0日を取得して末日を求めます
+    //そのため、ここでは month - 1 は行いません
+    var dt = new Date(year, month, 0);
+    return dt.getDate();
+}
+/**
+ * 年月日と加算月からnヶ月後、nヶ月前の日付を求める
+ * year 年
+ * month 月
+ * day 日
+ * addMonths 加算月。マイナス指定でnヶ月前も設定可能
+ */
+function computeMonth(year, month, day, addMonths) {
+    month += addMonths;
+    var endDay = getMonthEndDay(year, month);//ここで、前述した月末日を求める関数を使用します
+    if(day > endDay) day = endDay;
+    var dt = new Date(year, month - 1, day);
+    return dt;
+}
+
+function DateDiff(n,s,p){
+    var now = new Date();
+    $(".upper",p).val(now.getFullYear()  + "/" + (now.getMonth() + 1) + "/" + now.getDate());
+    var up;
+    if (s=="W"){
+        up = computeDate(now.getFullYear(), now.getMonth()+1, now.getDate(), n*(-7));
+    }
+    else if (s=="M"){
+        up = computeMonth(now.getFullYear(), now.getMonth()+1, now.getDate(), n*(-1));
+    }
+    $(".low",p).val(up.getFullYear()  + "/" + (up.getMonth() + 1) + "/" + up.getDate());
+}
+
+function clr(p){
+    p.find(':input').each(function(){
+        if ( $(this).attr('name') == 'mtngflg'  || $(this).attr('name') == "webknskflg" ) {
+            $(this).val("1");
+        }
+        else if (( $(this).attr('type') == 'button'  || $(this).attr('type') == "submit" ) ){
+        }
+        else {
+            if($(this).attr('type') == 'checkbox'){
+                $(this).removeAttr('checked');
+            }
+            else{
+                $(this).val("");
+            }
+        }
+    });
+}
+
+</script>
+</head>
+
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0">
+<div class="wrapper">
+
+<!--header-->
+<div class="header">
+  <select name="selectName" size="1">
+    <option selected="selected" value="one">メニュー</option>
+    <option value="one">物件登録</option>
+    <option value="two">レインズアップロード</option>
+    <option value="three">アドレスリスト（小学校区）アップロード</option>
+    <option value="one">重複チェック</option>
+    <option value="two">顧客メール一斉送信</option>
+    <option value="three">顧客検索</option>
+    <option value="three">顧客グループ管理</option>
+    <option value="three">顧客新規登録</option>
+    <option value="three">資料作成状況</option>
+  </select>
+</div>
+<!--header End-->
+
+<form action="./bksearch.html" method="post" name="frmbksearch" id="frmbksearch">
+<input type="text" name="memID" id="memID" value="{{memberID}}"/>
+<input type="text" name="key" id="key"value="{{key}}"/>
+<input type="text" name="page" id="page" value="{{page}}"/>
+<div class="container">
+  <div class="contents"> 
+    <!-- ここから本文記入 --> 
+    <!--contents-head01-->
+    <li class="contents-head01">
+      <input type="text" name="textfieldName" value="00000000" size="13" />
+      <input type="text" name="textfieldName" value="aa業者" size="25" />
+      <input type="text" name="textfieldName" size="25" />
+    </li>
+    <!--contents-head01 END--> 
+    <!--contents-head02-->
+    <li class="contents-head02">
+      <button name="buttonName" type="button">フォロー状況</button>
+      <button name="buttonName" type="button">顧客台帳</button>
+      <button name="buttonName" type="button">検索条件</button>
+      <button name="buttonName" type="button">新規登録</button>
+    </li>
+    <!--contents-head02 END-->
+    <div class="contents-page"> page: 
+      {% for p in pages%}
+      {% if p.page == page %} <span class="current">{{ p.page }}</span> {% else %} <a href="{{p.path}}">{{ p.page }}</a> {% endif %}
+      {% endfor %} </div>
+    <!--contents-input-->
+    <div class="contents-input">
+      <ul class="left">
+        <li> 売買賃貸区分
+          <select name="bbchntikbn" size="1">
+            <option {{data.bbchntikbn|default_if_none:" selected"}} value=""></option>
+            <option value="売買" {% if data.bbchntikbn == "売買" %} selected{% endif %}>
+            
+            
+            売買
+            
+            
+            </option>
+            <option value="賃貸" {% if data.bbchntikbn == "賃貸" %} selected{% endif %}>
+            
+            
+            賃貸
+            
+            
+            </option>
+          </select>
+          取扱い種類
+          <select name="dtsyuri" size="1">
+            <option {{data.dtsyuri|default_if_none:" selected"}} value=""></option>
+            <option value="物件" {% if data.dtsyuri == "物件" %} selected{% endif %}>
+            
+            
+            物件
+            
+            
+            </option>
+            <option value="事例" {% if data.dtsyuri == "事例" %} selected{% endif %}>
+            
+            
+            事例
+            
+            
+            </option>
+            <option value="予約" {% if data.dtsyuri == "予約" %} selected{% endif %}>
+            
+            
+            予約
+            
+            
+            </option>
+            <option value="商談中" {% if data.dtsyuri == "商談中" %} selected{% endif %}>
+            
+            
+            商談中
+            
+            
+            </option>
+            <option value="査定中" {% if data.dtsyuri == "査定中" %} selected{% endif %}>
+            
+            
+            査定中
+            
+            
+            </option>
+            <option value="重複" {% if data.dtsyuri == "重複" %} selected{% endif %}>
+            
+            
+            重複
+            
+            
+            </option>
+            <option value="停止" {% if data.dtsyuri == "停止" %} selected{% endif %}>
+            
+            
+            停止
+            
+            
+            </option>
+            <option value="競売" {% if data.dtsyuri == "競売" %} selected{% endif %}>
+            
+            
+            競売
+            
+            
+            </option>
+          </select>
+        </li>
+        <li> 物件種別
+          <select name="bkknShbt" size="1">
+            <option {{data.bkknShbt|default_if_none:" selected"}} value=""></option>
+            <option value="土地" {% if data.bkknShbt == "土地" %} selected{% endif %}>
+            
+            
+            土地
+            
+            
+            </option>
+            <option value="戸建住宅等" {% if data.bkknShbt == "戸建住宅等" %} selected{% endif %}>
+            
+            
+            戸建住宅等
+            
+            
+            </option>
+            <option value="マンション等" {% if data.bkknShbt == "マンション等" %} selected{% endif %}>
+            
+            
+            マンション等
+            
+            
+            </option>
+            <option value="住宅以外の建物全部" {% if data.bkknShbt == "住宅以外の建物全部" %} selected{% endif %}>
+            
+            
+            住宅以外の建物全部
+            
+            
+            </option>
+            <option value="住宅以外の建物一部" {% if data.bkknShbt == "住宅以外の建物一部" %} selected{% endif %}>
+            
+            
+            住宅以外の建物一部
+            
+            
+            </option>
+          </select>
+          物件種目
+          <select name="bkknShmk" size="1">
+            <option {{data.bkknShmk|default_if_none:" selected"}} value=""></option>
+            <option value="売地" {% if data.bkknShmk == "売地" %} selected{% endif %}>
+            
+            
+            売地
+            
+            
+            </option>
+            <option value="借地権" {% if data.bkknShmk == "借地権" %} selected{% endif %}>
+            
+            
+            借地権
+            
+            
+            </option>
+            <option value="底地権" {% if data.bkknShmk == "底地権" %} selected{% endif %}>
+            
+            
+            底地権
+            
+            
+            </option>
+            <option value="新築戸建" {% if data.bkknShmk == "新築戸建" %} selected{% endif %}>
+            
+            
+            新築戸建
+            
+            
+            </option>
+            <option value="中古戸建" {% if data.bkknShmk == "中古戸建" %} selected{% endif %}>
+            
+            
+            中古戸建
+            
+            
+            </option>
+            <option value="新築テラス" {% if data.bkknShmk == "新築テラス" %} selected{% endif %}>
+            
+            
+            新築テラス
+            
+            
+            </option>
+            <option value="中古テラス" {% if data.bkknShmk == "中古テラス" %} selected{% endif %}>
+            
+            
+            中古テラス
+            
+            
+            </option>
+            <option value="店舗" {% if data.bkknShmk == "店舗" %} selected{% endif %}>
+            
+            
+            店舗
+            
+            
+            </option>
+            <option value="店舗付住宅" {% if data.bkknShmk == "店舗付住宅" %} selected{% endif %}>
+            
+            
+            店舗付住宅
+            
+            
+            </option>
+            <option value="住宅付店舗" {% if data.bkknShmk == "住宅付店舗" %} selected{% endif %}>
+            
+            
+            住宅付店舗
+            
+            
+            </option>
+            <option value="新築マンション" {% if data.bkknShmk == "新築マンション" %} selected{% endif %}>
+            
+            
+            新築マンション
+            
+            
+            </option>
+            <option value="中古マンション" {% if data.bkknShmk == "中古マンション" %} selected{% endif %}>
+            
+            
+            中古マンション
+            
+            
+            </option>
+            <option value="新築タウン" {% if data.bkknShmk == "新築タウン" %} selected{% endif %}>
+            
+            
+            新築タウン
+            
+            
+            </option>
+            <option value="中古タウン" {% if data.bkknShmk == "中古タウン" %} selected{% endif %}>
+            
+            
+            中古タウン
+            
+            
+            </option>
+            <option value="新築リゾート" {% if data.bkknShmk == "新築リゾート" %} selected{% endif %}>
+            
+            
+            新築リゾート
+            
+            
+            </option>
+            <option value="中古リゾート" {% if data.bkknShmk == "中古リゾート" %} selected{% endif %}>
+            
+            
+            中古リゾート
+            
+            
+            </option>
+            <option value="事務所" {% if data.bkknShmk == "事務所" %} selected{% endif %}>
+            
+            
+            事務所
+            
+            
+            </option>
+            <option value="店舗事務所" {% if data.bkknShmk == "店舗事務所" %} selected{% endif %}>
+            
+            
+            店舗事務所
+            
+            
+            </option>
+            <option value="ビル" {% if data.bkknShmk == "ビル" %} selected{% endif %}>
+            
+            
+            ビル
+            
+            
+            </option>
+            <option value="工場" {% if data.bkknShmk == "工場" %} selected{% endif %}>
+            
+            
+            工場
+            
+            
+            </option>
+            <option value="マンション" {% if data.bkknShmk == "マンション" %} selected{% endif %}>
+            
+            
+            マンション
+            
+            
+            </option>
+            <option value="倉庫" {% if data.bkknShmk == "倉庫" %} selected{% endif %}>
+            
+            
+            倉庫
+            
+            
+            </option>
+            <option value="アパート" {% if data.bkknShmk == "アパート" %} selected{% endif %}>
+            
+            
+            アパート
+            
+            
+            </option>
+            <option value="寮" {% if data.bkknShmk == "寮" %} selected{% endif %}>
+            
+            
+            寮
+            
+            
+            </option>
+            <option value="旅館" {% if data.bkknShmk == "旅館" %} selected{% endif %}>
+            
+            
+            旅館
+            
+            
+            </option>
+            <option value="ホテル" {% if data.bkknShmk == "ホテル" %} selected{% endif %}>
+            
+            
+            ホテル
+            
+            
+            </option>
+            <option value="別荘" {% if data.bkknShmk == "別荘" %} selected{% endif %}>
+            
+            
+            別荘
+            
+            
+            </option>
+            <option value="リゾート" {% if data.bkknShmk == "リゾート" %} selected{% endif %}>
+            
+            
+            リゾート
+            
+            
+            </option>
+            <option value="文化住宅" {% if data.bkknShmk == "文化住宅" %} selected{% endif %}>
+            
+            
+            文化住宅
+            
+            
+            </option>
+            <option value="その他" {% if data.bkknShmk == "その他" %} selected{% endif %}>
+            
+            
+            その他
+            
+            
+            </option>
+          </select>
+        </li>
+      </ul>
+      <div class="right">
+        <input type="button" name="submitButtonName" value="取り消し" onclick="clr($(this).parent().parent())" />
+      </div>
+    </div>
+    <!--contents-input End--> 
+    
+    <!--contents-input-->
+    <div class="contents-input"> 対象所在地
+      {% for al in adlist %}
+      <div class="addresslist">
+        <div class="left">
+          <ul>
+            <li> 区分
+              <input type="text" class="division" name="division"  size="25" value="{{al.division}}" />
+              地名一覧名
+              <input type="text" class="listname" name="listname" size="25" value="{{al.name}}" />
+              <input type="text" class="listid" size="25" value="{{al.key}}" />
+              <input type="hidden" class="listid" name="listid" size="25" value="{{al.key}}" />
+            </li>
+          </ul>
+          <div class="right"> <a href="addresslist.html" class="thickbox" title="" target="_blank">
+            <input type="button"  value="編集" onclick="openadresslist($(this).parent().parent().parent())" />
+            </a>
+            <input type="button"  value="削除" onclick="removeadresslist($(this).parent().parent().parent())" />
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      <div class="addresslist">
+        <ul class="left">
+          <li> 区分
+            <input type="text" class="division" name="division" size="25" value="" />
+            地名一覧名
+            <input type="text" class="listname" name="listname" size="25" value="" />
+            <input type="text" class="listid" size="25" value="" />
+            <input type="hidden" class="listid" name="listid" size="25" value="" />
+          </li>
+        </ul>
+        <div class="right"> <a href="addresslist.html" class="thickbox" title="" target="_blank">
+          <input type="button"  value="編集" onclick="openadresslist($(this).parent().parent().parent())" />
+          </a>
+          <input type="button"  value="削除" onclick="removeadresslist($(this).parent().parent())" />
+        </div>
+      </div>
+    </div>
+    
+    <!--
+--> 
+    
+    <!--contents-input End--> 
+    
+    <!--contents-input-->
+    <div class="contents-input">
+    {% for l in line %}
+      <div class="linelist" width="100%">
+        <ul class="left">
+          <li> 都道府県
+            <select name="pref" class ="pref" size="1">
+              <option value=""></option>
+              <option value="北海道" {% if l.tdufknmi == "北海道" %} selected{% endif %}>
+              
+              北海道
+              
+              
+              </option>
+              <option value="青森県" {% if l.tdufknmi == "青森県" %} selected{% endif %}>
+              
+              
+              青森県
+              
+              
+              </option>
+              <option value="岩手県" {% if l.tdufknmi == "岩手県" %} selected{% endif %}>
+              
+              
+              岩手県
+              
+              
+              </option>
+              <option value="宮城県" {% if l.tdufknmi == "宮城県" %} selected{% endif %}>
+              
+              
+              宮城県
+              
+              
+              </option>
+              <option value="秋田県" {% if l.tdufknmi == "秋田県" %} selected{% endif %}>
+              
+              
+              秋田県
+              
+              
+              </option>
+              <option value="山形県" {% if l.tdufknmi == "山形県" %} selected{% endif %}>
+              
+              
+              山形県
+              
+              
+              </option>
+              <option value="福島県" {% if l.tdufknmi == "福島県" %} selected{% endif %}>
+              
+              
+              福島県
+              
+              
+              </option>
+              <option value="茨城県" {% if l.tdufknmi == "茨城県" %} selected{% endif %}>
+              
+              
+              茨城県
+              
+              
+              </option>
+              <option value="栃木県" {% if l.tdufknmi == "栃木県" %} selected{% endif %}>
+              
+              
+              栃木県
+              
+              
+              </option>
+              <option value="群馬県" {% if l.tdufknmi == "群馬県" %} selected{% endif %}>
+              
+              
+              群馬県
+              
+              
+              </option>
+              <option value="埼玉県" {% if l.tdufknmi == "埼玉県" %} selected{% endif %}>
+              
+              
+              埼玉県
+              
+              
+              </option>
+              <option value="千葉県" {% if l.tdufknmi == "千葉県" %} selected{% endif %}>
+              
+              
+              千葉県
+              
+              
+              </option>
+              <option value="東京都" {% if l.tdufknmi == "東京都" %} selected{% endif %}>
+              
+              
+              東京都
+              
+              
+              </option>
+              <option value="神奈川県" {% if l.tdufknmi == "神奈川県" %} selected{% endif %}>
+              
+              
+              神奈川県
+              
+              
+              </option>
+              <option value="新潟県" {% if l.tdufknmi == "新潟県" %} selected{% endif %}>
+              
+              
+              新潟県
+              
+              
+              </option>
+              <option value="富山県" {% if l.tdufknmi == "富山県" %} selected{% endif %}>
+              
+              
+              富山県
+              
+              
+              </option>
+              <option value="石川県" {% if l.tdufknmi == "石川県" %} selected{% endif %}>
+              
+              
+              石川県
+              
+              
+              </option>
+              <option value="福井県" {% if l.tdufknmi == "福井県" %} selected{% endif %}>
+              
+              
+              福井県
+              
+              
+              </option>
+              <option value="山梨県" {% if l.tdufknmi == "山梨県" %} selected{% endif %}>
+              
+              
+              山梨県
+              
+              
+              </option>
+              <option value="長野県" {% if l.tdufknmi == "長野県" %} selected{% endif %}>
+              
+              
+              長野県
+              
+              
+              </option>
+              <option value="岐阜県" {% if l.tdufknmi == "岐阜県" %} selected{% endif %}>
+              
+              
+              岐阜県
+              
+              
+              </option>
+              <option value="静岡県" {% if l.tdufknmi == "静岡県" %} selected{% endif %}>
+              
+              
+              静岡県
+              
+              
+              </option>
+              <option value="愛知県" {% if l.tdufknmi == "愛知県" %} selected{% endif %}>
+              
+              
+              愛知県
+              
+              
+              </option>
+              <option value="三重県" {% if l.tdufknmi == "三重県" %} selected{% endif %}>
+              
+              
+              三重県
+              
+              
+              </option>
+              <option value="滋賀県" {% if l.tdufknmi == "滋賀県" %} selected{% endif %}>
+              
+              
+              滋賀県
+              
+              
+              </option>
+              <option value="京都府" {% if l.tdufknmi == "京都府" %} selected{% endif %}>
+              
+              
+              京都府
+              
+              
+              </option>
+              <option value="大阪府" {% if l.tdufknmi == "大阪府" %} selected{% endif %}>
+              
+              
+              大阪府
+              
+              
+              </option>
+              <option value="兵庫県" {% if l.tdufknmi == "兵庫県" %} selected{% endif %}>
+              
+              
+              兵庫県
+              
+              
+              </option>
+              <option value="奈良県" {% if l.tdufknmi == "奈良県" %} selected{% endif %}>
+              
+              
+              奈良県
+              
+              
+              </option>
+              <option value="和歌山県" {% if l.tdufknmi == "和歌山県" %} selected{% endif %}>
+              
+              
+              和歌山県
+              
+              
+              </option>
+              <option value="鳥取県" {% if l.tdufknmi == "鳥取県" %} selected{% endif %}>
+              
+              
+              鳥取県
+              
+              
+              </option>
+              <option value="島根県" {% if l.tdufknmi == "島根県" %} selected{% endif %}>
+              
+              
+              島根県
+              
+              
+              </option>
+              <option value="岡山県" {% if l.tdufknmi == "岡山県" %} selected{% endif %}>
+              
+              
+              岡山県
+              
+              
+              </option>
+              <option value="広島県" {% if l.tdufknmi == "広島県" %} selected{% endif %}>
+              
+              
+              広島県
+              
+              
+              </option>
+              <option value="山口県" {% if l.tdufknmi == "山口県" %} selected{% endif %}>
+              
+              
+              山口県
+              
+              
+              </option>
+              <option value="徳島県" {% if l.tdufknmi == "徳島県" %} selected{% endif %}>
+              
+              
+              徳島県
+              
+              
+              </option>
+              <option value="香川県" {% if l.tdufknmi == "香川県" %} selected{% endif %}>
+              
+              
+              香川県
+              
+              
+              </option>
+              <option value="愛媛県" {% if l.tdufknmi == "愛媛県" %} selected{% endif %}>
+              
+              
+              愛媛県
+              
+              
+              </option>
+              <option value="高知県" {% if l.tdufknmi == "高知県" %} selected{% endif %}>
+              
+              
+              高知県
+              
+              
+              </option>
+              <option value="福岡県" {% if l.tdufknmi == "福岡県" %} selected{% endif %}>
+              
+              
+              福岡県
+              
+              
+              </option>
+              <option value="佐賀県" {% if l.tdufknmi == "佐賀県" %} selected{% endif %}>
+              
+              
+              佐賀県
+              
+              
+              </option>
+              <option value="長崎県" {% if l.tdufknmi == "長崎県" %} selected{% endif %}>
+              
+              
+              長崎県
+              
+              
+              </option>
+              <option value="熊本県" {% if l.tdufknmi == "熊本県" %} selected{% endif %}>
+              
+              
+              熊本県
+              
+              
+              </option>
+              <option value="大分県" {% if l.tdufknmi == "大分県" %} selected{% endif %}>
+              
+              
+              大分県
+              
+              
+              </option>
+              <option value="宮崎県" {% if l.tdufknmi == "宮崎県" %} selected{% endif %}>
+              
+              
+              宮崎県
+              
+              
+              </option>
+              <option value="鹿児島県" {% if l.tdufknmi == "鹿児島県" %} selected{% endif %}>
+              
+              
+              鹿児島県
+              
+              
+              </option>
+              <option value="沖縄県" {% if l.tdufknmi == "沖縄県" %} selected{% endif %}>
+              
+              
+              沖縄県
+              
+              
+              </option>
+            </select>
+            沿線
+            <input type="text" name="line" class="line" value="{{l.ensenmei|default_if_none:""}}" size="11" />
+          </li>
+          <li>徒歩
+            <select name="thHnU" class="thHnU" size="1">
+              <option value=""></option>
+              <option value="10" {% if l.thHnU == 10.0 %} selected{% endif %}>
+              
+              
+              10
+              
+              
+              </option>
+              <option value="20" {% if l.thHnU == 20.0 %} selected{% endif %}>
+              
+              
+              20
+              
+              
+              </option>
+              <option value="30" {% if l.thHnU == 30.0 %} selected{% endif %}>
+              
+              
+              30
+              
+              
+              </option>
+              <option value="40" {% if l.thHnU == 40.0 %} selected{% endif %}>
+              
+              
+              40
+              
+              
+              </option>
+              <option value="50" {% if l.thHnU == 50.0 %} selected{% endif %}>
+              
+              
+              50
+              
+              
+              </option>
+              <option value="60" {% if l.thHnU == 60.0 %} selected{% endif %}>
+              
+              
+              60
+              
+              
+              </option>
+            </select>
+            分　　距離
+            <select name="thMU" class="thMU" size="1">
+              <option value=""></option>
+              <option value="100" {% if l.thMU == 100.0 %} selected{% endif %}>
+              
+              
+              100
+              
+              
+              </option>
+              <option value="500" {% if l.thMU == 500.0 %} selected{% endif %}>
+              
+              
+              500
+              
+              
+              </option>
+              <option value="1500" {% if l.thMU == 1500.0 %} selected{% endif %}>
+              
+              
+              1500
+              
+              
+              </option>
+              <option value="2000" {% if l.thMU == 2000.0 %} selected{% endif %}>
+              
+              
+              2000
+              
+              
+              </option>
+              <option value="5000" {% if l.thMU == 5000.0 %} selected{% endif %}>
+              
+              
+              5000
+              
+              
+              </option>
+              <option value="10000" {% if l.thMU == 10000.0 %} selected{% endif %}>
+              
+              
+              10000
+              
+              
+              </option>
+            </select>
+            ｍ<br />
+            <input type="text" name="station" class="station" title="" value="{{ l.station|join:"," }}" size="11" />
+          </li>
+        </ul>
+        <div class="right">
+          <input type="button"  value="削除" onclick="removelist($(this).parent().parent())" 
+        </div>
+      </div>
+      </div>
+      {% endfor %}
+
+      <div class="linelist" width="100%">
+        <ul class="left">
+          <li> 都道府県{{l.tdufknmi}}
+            <select name="pref" class ="pref" size="1">
+              <option value=""></option>
+              <option value="北海道" >
+              
+              北海道
+              
+              
+              </option>
+              <option value="青森県" >
+              
+              
+              青森県
+              
+              
+              </option>
+              <option value="岩手県" >
+              
+              
+              岩手県
+              
+              
+              </option>
+              <option value="宮城県" >
+              
+              
+              宮城県
+              
+              
+              </option>
+              <option value="秋田県" >
+              
+              
+              秋田県
+              
+              
+              </option>
+              <option value="山形県" >
+              
+              
+              山形県
+              
+              
+              </option>
+              <option value="福島県" >
+              
+              
+              福島県
+              
+              
+              </option>
+              <option value="茨城県" >
+              
+              
+              茨城県
+              
+              
+              </option>
+              <option value="栃木県" >
+              
+              
+              栃木県
+              
+              
+              </option>
+              <option value="群馬県" >
+              
+              
+              群馬県
+              
+              
+              </option>
+              <option value="埼玉県" >
+              
+              
+              埼玉県
+              
+              
+              </option>
+              <option value="千葉県" >
+              
+              
+              千葉県
+              
+              
+              </option>
+              <option value="東京都" >
+              
+              
+              東京都
+              
+              
+              </option>
+              <option value="神奈川県" >
+              
+              
+              神奈川県
+              
+              
+              </option>
+              <option value="新潟県" >
+              
+              
+              新潟県
+              
+              
+              </option>
+              <option value="富山県" >
+              
+              
+              富山県
+              
+              
+              </option>
+              <option value="石川県" >
+              
+              
+              石川県
+              
+              
+              </option>
+              <option value="福井県" >
+              
+              
+              福井県
+              
+              
+              </option>
+              <option value="山梨県" >
+              
+              
+              山梨県
+              
+              
+              </option>
+              <option value="長野県" >
+              
+              
+              長野県
+              
+              
+              </option>
+              <option value="岐阜県" >
+              
+              
+              岐阜県
+              
+              
+              </option>
+              <option value="静岡県" >
+              
+              
+              静岡県
+              
+              
+              </option>
+              <option value="愛知県" >
+              
+              
+              愛知県
+              
+              
+              </option>
+              <option value="三重県" >
+              
+              
+              三重県
+              
+              
+              </option>
+              <option value="滋賀県" >
+              
+              
+              滋賀県
+              
+              
+              </option>
+              <option value="京都府" >
+              
+              
+              京都府
+              
+              
+              </option>
+              <option value="大阪府" >
+              
+              
+              大阪府
+              
+              
+              </option>
+              <option value="兵庫県" >
+              
+              
+              兵庫県
+              
+              
+              </option>
+              <option value="奈良県" >
+              
+              
+              奈良県
+              
+              
+              </option>
+              <option value="和歌山県" >
+              
+              
+              和歌山県
+              
+              
+              </option>
+              <option value="鳥取県" >
+              
+              
+              鳥取県
+              
+              
+              </option>
+              <option value="島根県" >
+              
+              
+              島根県
+              
+              
+              </option>
+              <option value="岡山県" >
+              
+              
+              岡山県
+              
+              
+              </option>
+              <option value="広島県" >
+              
+              
+              広島県
+              
+              
+              </option>
+              <option value="山口県" >
+              
+              
+              山口県
+              
+              
+              </option>
+              <option value="徳島県" >
+              
+              
+              徳島県
+              
+              
+              </option>
+              <option value="香川県" >
+              
+              
+              香川県
+              
+              
+              </option>
+              <option value="愛媛県" >
+              
+              
+              愛媛県
+              
+              
+              </option>
+              <option value="高知県" >
+              
+              
+              高知県
+              
+              
+              </option>
+              <option value="福岡県" >
+              
+              
+              福岡県
+              
+              
+              </option>
+              <option value="佐賀県" >
+              
+              
+              佐賀県
+              
+              
+              </option>
+              <option value="長崎県" >
+              
+              
+              長崎県
+              
+              
+              </option>
+              <option value="熊本県" >
+              
+              
+              熊本県
+              
+              
+              </option>
+              <option value="大分県" >
+              
+              
+              大分県
+              
+              
+              </option>
+              <option value="宮崎県" >
+              
+              
+              宮崎県
+              
+              
+              </option>
+              <option value="鹿児島県" >
+              
+              
+              鹿児島県
+              
+              
+              </option>
+              <option value="沖縄県" >
+              
+              
+              沖縄県
+              
+              
+              </option>
+            </select>
+            沿線
+            <input type="text" name="line" class="line" value="" size="11" />
+          </li>
+          <li>徒歩
+            <select name="thHnU" class="thHnU" size="1">
+              <option value=""></option>
+              <option value="10" >
+              
+              
+              10
+              
+              
+              </option>
+              <option value="20" >
+              
+              
+              20
+              
+              
+              </option>
+              <option value="30" >
+              
+              
+              30
+              
+              
+              </option>
+              <option value="40" >
+              
+              
+              40
+              
+              
+              </option>
+              <option value="50" >
+              
+              
+              50
+              
+              
+              </option>
+              <option value="60" >
+              
+              
+              60
+              
+              
+              </option>
+            </select>
+            分　　距離
+            <select name="thMU" class="thMU" size="1">
+              <option value=""></option>
+              <option value="100" >
+              
+              
+              100
+              
+              
+              </option>
+              <option value="500" >
+              
+              
+              500
+              
+              
+              </option>
+              <option value="1500" >
+              
+              
+              1500
+              
+              
+              </option>
+              <option value="2000" >
+              
+              
+              2000
+              
+              
+              </option>
+              <option value="5000" >
+              
+              
+              5000
+              
+              
+              </option>
+              <option value="10000" >
+              
+              
+              10000
+              
+              
+              </option>
+            </select>ｍ
+            <input type="text" name="station" class="station" title="" value="" size="11" />
+          </li>
+        </ul>
+        <div class="right">
+          <input type="button"  value="削除" onclick="removelist($(this).parent().parent())" 
+        </div>
+      </div>
+      </div>
+
+
+      
+    </div>
+    <!--contents-input End--> 
+    <div class="contents-input">
+      <ul class="left">
+        <li>交通
+            <select name="kutuHnU" class="kutuHnU" size="1">
+              <option value=""></option>
+              <option value="10" {% if data.kutuHnU == 10.0 %} selected{% endif %}>
+              
+              
+              10
+              
+              
+              </option>
+              <option value="20" {% if data.kutuHnU == 20.0 %} selected{% endif %}>
+              
+              
+              20
+              
+              
+              </option>
+              <option value="30" {% if data.kutuHnU == 30.0 %} selected{% endif %}>
+              
+              
+              30
+              
+              
+              </option>
+              <option value="40" {% if data.kutuHnU == 40.0 %} selected{% endif %}>
+              
+              
+              40
+              
+              
+              </option>
+              <option value="50" {% if data.kutuHnU == 50.0 %} selected{% endif %}>
+              
+              
+              50
+              
+              
+              </option>
+              <option value="60" {% if data.kutuHnU == 60.0 %} selected{% endif %}>
+              
+              
+              60
+              
+              
+              </option>
+            </select> 分
+      </ul>
+      <div class="right">
+        <input type="button" name="submitButtonName" value="取り消し" onclick="clr($(this).parent().parent())" />
+      </div>
+    </div>
+    <!--contents-input End--> 
+
+    
+    <!--contents-input-->
+    <div class="contents-input">
+      <ul class="left">
+        <li>価格　　　　　　　
+          <input type="text" name="kkkuCnryuL" id="kkkuCnryuL" value="{{data.kkkuCnryuL|floatformat:"-2"|default_if_none:""}}" size="11" />
+          万円 ～
+          <input type="text" name="kkkuCnryuU" id="kkkuCnryuU" value="{{data.kkkuCnryuU|floatformat:"-2"|default_if_none:""}}" size="11" />
+          万円</li>
+        <li>坪単価　　　　　　
+          <input type="text" name="tbTnkL" id="tbTnkL" value="{{data.tbTnkL|floatformat:"-2"|default_if_none:""}}" size="11" />
+          万円 ～
+          <input type="text" name="tbTnkU" id="tbTnkU" value="{{data.tbTnkU|floatformat:"-2"|default_if_none:""}}" size="11" />
+          万円</li>
+        <li>㎡単価　　　　　　　
+          <input type="text" name="m2TnkL" id="m2TnkL" value="{{data.m2TnkL|floatformat:"-2"|default_if_none:""}}" size="11" />
+          万円 ～
+          <input type="text" name="m2TnkU" id="m2TnkU" value="{{data.m2TnkU|floatformat:"-2"|default_if_none:""}}" size="11" />
+          万円</li>
+        <li>想定利回り(％)　　
+          <input type="text" name="sutiRmwrPrcntL" id="sutiRmwrPrcntL"value="{{data.sutiRmwrPrcntL|floatformat:"-2"|default_if_none:""}}" size="11" />
+          ％ ～
+          <input type="text" name="sutiRmwrPrcntU" id="sutiRmwrPrcntU" value="{{data.sutiRmwrPrcntU|floatformat:"-2"|default_if_none:""}}" size="11" />
+          ％</li>
+      </ul>
+      <div class="right">
+        <input type="button" name="submitButtonName" value="取り消し" onclick="clr($(this).parent().parent())" />
+      </div>
+    </div>
+    <!--contents-input End--> 
+    
+    <!--contents-input-->
+    <div class="contents-input">
+      <ul class="left">
+        <li>土地面積　　　　　
+          <input type="text" name="tcMnsk2L" id="tcMnsk2L" value="{{data.tcMnsk2L|floatformat:"-2"|default_if_none:""}}" size="11" />
+          ～
+          <input type="text" name="tcMnsk2U" id="tcMnsk2U" value="{{data.tcMnsk2U|floatformat:"-2"|default_if_none:""}}" size="11" />
+          m<sup>2</sup></li>
+        <li>接道方向　　　　　
+          <select name="stduHuku" size="1">
+            <option {{data.stduHuku|default_if_none:" selected"}} value=""></option>
+            <option value="北" {% if data.stduHuku == "北" %} selected{% endif %}>
+            
+            
+            北
+            
+            
+            </option>
+            <option value="東" {% if data.stduHuku == "東" %} selected{% endif %}>
+            
+            
+            東
+            
+            
+            </option>
+            <option value="南" {% if data.stduHuku == "南" %} selected{% endif %}>
+            
+            
+            南
+            
+            
+            </option>
+            <option value="西" {% if data.stduHuku == "西" %} selected{% endif %}>
+            
+            
+            西
+            
+            
+            </option>
+          </select>
+        </li>
+        <li>接道接面　　　　　
+          <input type="text" name="stduStmnL" id="stduStmnL"value="{{data.stduStmnL|floatformat:"-2"|default_if_none:""}}" size="11" />
+          ～
+          <input type="text" name="stduStmnU" id="stduStmnU" value="{{data.stduStmnU|floatformat:"-2"|default_if_none:""}}" size="11" />
+          m</li>
+        <li>接道幅員　　　　　
+          <input type="text" name="stduFkinL" id="stduFkinL" value="{{data.stduFkinL|floatformat:"-2"|default_if_none:""}}" size="11" />
+          m </li>
+      </ul>
+      <div class="right">
+        <input type="button" name="submitButtonName" value="取り消し" onclick="clr($(this).parent().parent())" />
+      </div>
+    </div>
+    <!--contents-input End--> 
+    
+    <!--contents-input-->
+    <div class="contents-input">
+      <ul class="left">
+        <li>建物面積　　　　　
+          <input type="text" name="ttmnMnsk1L" id="ttmnMnsk1L" value="{{data.ttmnMnsk1L|floatformat:"-2"|default_if_none:""}}" size="11" />
+          ～
+          <input type="text" name="ttmnMnsk1U" id="ttmnMnsk1U" value="{{data.ttmnMnsk1U|floatformat:"-2"|default_if_none:""}}" size="11" />
+          m<sup>2</sup></li>
+        <li>専有面積　　　　　
+          <input type="text" name="snyuMnskSyuBbnMnsk2L" id="snyuMnskSyuBbnMnsk2L" value="{{data.snyuMnskSyuBbnMnsk2L|floatformat:"-2"|default_if_none:""}}" size="11" />
+          ～
+          <input type="text" name="snyuMnskSyuBbnMnsk2U" id="snyuMnskSyuBbnMnsk2U" value="{{data.snyuMnskSyuBbnMnsk2U|floatformat:"-2"|default_if_none:""}}" size="11" />
+          m<sup>2</sup></li>
+        <li>築年月(西暦)　　　
+          <input type="text" name="cknngtSirkL" id="cknngtSirkL" value="{{data.cknngtSirkL|default_if_none:""|date:"Y/m/d H:i:s"}}" size="11" />
+          ～
+          <input type="text" name="cknngtSirkU" id="cknngtSirkU" value="{{data.cknngtSirkU|default_if_none:""|date:"Y/m/d H:i:s"}}" size="11" />
+          年</li>
+        <li>
+{% for r in room %}
+        <p>間取部屋数　　　　
+          <input type="text" name="mdrHysu" class="mdrHysu" value="{{r.mdrHysu|floatformat:"-2"|default_if_none:""}}" size="11" />
+          間取タイプ
+          <select name="mdrTyp" class="mdrTyp" size="1">
+            <option value=""></option>
+            <option value="ワンルーム" {% if r.mdrTyp == "ワンルーム" %} selected{% endif %}>
+            
+            
+            ワンルーム
+            
+            
+            </option>
+            <option value="K" {% if r.mdrTyp == "K" %} selected{% endif %}>
+            
+            
+            K
+            
+            
+            </option>
+            <option value="DK" {% if r.mdrTyp == "DK" %} selected{% endif %}>
+            
+            
+            DK
+            
+            
+            </option>
+            <option value="LK" {% if r.mdrTyp == "LK" %} selected{% endif %}>
+            
+            
+            LK
+            
+            
+            </option>
+            <option value="LDK" {% if r.mdrTyp == "LDK" %} selected{% endif %}>
+            
+            
+            LDK
+            
+            
+            </option>
+            <option value="SK" {% if r.mdrTyp == "SK" %} selected{% endif %}>
+            
+            
+            SK
+            
+            
+            </option>
+            <option value="SDK" {% if r.mdrTyp == "SDK" %} selected{% endif %}>
+            
+            
+            SDK
+            
+            
+            </option>
+            <option value="SLK" {% if r.mdrTyp == "SLK" %} selected{% endif %}>
+            
+            
+            SLK
+            
+            
+            </option>
+            <option value="SLDK" {% if r.mdrTyp == "SLDK" %} selected{% endif %}>
+            
+            
+            SLDK
+            
+            
+            </option>
+          </select>
+          <input type="button" value="削除" onclick="removeroomtype($(this).parent())">
+        </p>
+{% endfor %}
+
+        <p>間取部屋数　　　　
+          <input type="text" name="mdrHysu" class="mdrHysu" value="" size="11" />
+          間取タイプ
+          <select name="mdrTyp" class="mdrTyp" size="1">
+            <option value=""></option>
+            <option value="ワンルーム" >
+            
+            
+            ワンルーム
+            
+            
+            </option>
+            <option value="K" >
+            
+            
+            K
+            
+            
+            </option>
+            <option value="DK" >
+            
+            
+            DK
+            
+            
+            </option>
+            <option value="LK" >
+            
+            
+            LK
+            
+            
+            </option>
+            <option value="LDK" >
+            
+            
+            LDK
+            
+            
+            </option>
+            <option value="SK" >
+            
+            
+            SK
+            
+            
+            </option>
+            <option value="SDK" >
+            
+            
+            SDK
+            
+            
+            </option>
+            <option value="SLK" >
+            
+            
+            SLK
+            
+            
+            </option>
+            <option value="SLDK">
+            
+            
+            SLDK
+            
+            
+            </option>
+          </select>
+          <input type="button" value="削除" onclick="removeroomtype($(this).parent())">
+        </p>
+        </li>
+
+        <li>バルコニー方向　　
+          <select name="blcnyHuku" size="1">
+            <option {{data.blcnyHuku|default_if_none:" selected"}} value=""></option>
+            <option value="北" {% if data.blcnyHuku == "北" %} selected{% endif %}>
+            
+            
+            北
+            
+            
+            </option>
+            <option value="東" {% if data.blcnyHuku == "東" %} selected{% endif %}>
+            
+            
+            東
+            
+            
+            </option>
+            <option value="南" {% if data.blcnyHuku == "南" %} selected{% endif %}>
+            
+            
+            南
+            
+            
+            </option>
+            <option value="西" {% if data.blcnyHuku == "西" %} selected{% endif %}>
+            
+            
+            西
+            
+            
+            </option>
+          </select>
+          ペット可
+          <input type="checkbox" name="ptflg" value="1" {% if data.ptflg %} checked {% endif %}/>
+          オーナーチェンジ
+          <input type="checkbox" name="ornrChng" value="1" {% if data.ornrChng %} checked {% endif %}/>
+        </li>
+      </ul>
+      <div class="right">
+        <input type="button" name="submitButtonName" value="取り消し" onclick="clr($(this).parent().parent())" />
+      </div>
+    </div>
+    <!--contents-input End--> 
+    
+    <!--contents-input-->
+    <div class="contents-input">
+      <ul class="left">
+        <li>データ元　　　
+          <input type="text" name="dataSource" id="dataSource" value="{{data.dataSource|default_if_none:""}}" size="11" />
+        </li>
+        <li>業者名　　　　
+          <input type="text" name="kiinni" id="kiinni" value="{{data.kiinni|default_if_none:""}}" size="11" />
+        </li>
+        <li>広告転載区分　
+          <select name="kukkTnsiKbn" size="1">
+            <option {{data.kukkTnsiKbn|default_if_none:" selected"}} value=""></option>
+            <option value="広告可" {% if data.kukkTnsiKbn == "広告可" %} selected{% endif %}>
+            
+            
+            広告可
+            
+            
+            </option>
+            <option value="一部可（インターネット）" {% if data.kukkTnsiKbn == "一部可（インターネット）" %} selected{% endif %}>
+            
+            
+            一部可（インターネット）
+            
+            
+            </option>
+            <option value="一部可（チラシ・新聞広告）" {% if data.kukkTnsiKbn == "一部可（チラシ・新聞広告）" %} selected{% endif %}>
+            
+            
+            一部可（チラシ・新聞広告）
+            
+            
+            </option>
+            <option value="広告可（但し要連絡）" {% if data.kukkTnsiKbn == "広告可（但し要連絡）" %} selected{% endif %}>
+            
+            
+            広告可（但し要連絡）
+            
+            
+            </option>
+            <option value="不可" {% if data.kukkTnsiKbn == "不可" %} selected{% endif %}>
+            
+            
+            不可
+            
+            
+            </option>
+            <option value="未確認" {% if data.kukkTnsiKbn == "未確認" %} selected{% endif %}>
+            
+            
+            未確認
+            
+            
+            </option>
+          </select>
+          <font size="1">広告可は広告可能なものすべて、一部可はそれを許可されるすべて</font> </li>
+        <li>web検索許可
+          <input type="checkbox" name="webknskflg" value="1" {% if data.webknskflg %} checked {% endif %}/>
+          マッチング可
+          <input type="checkbox" name="mtngflg" value="1" {% if data.mtngflg %} checked {% endif %}/>
+        </li>
+        <li>告知事項なし
+          <input type="checkbox" name="kktjkuflg" value="1" id="kktjkuflg" value="1" {% if data.kktjkuflg %} checked {% endif %} />
+          建築条件なし
+          <input type="checkbox" name="knckJyukn" value="1" id="knckJyukn" {% if data.kktjkuflg %} checked {% endif %}/>
+        </li>
+        <li>アイコン名　
+          <input type="text" name="icons" id="icons" value="{{data.icons|default_if_none:""}}" size="11" />
+        </li>
+        <li>確認年月日（西暦/月/日）
+          <input type="text" name="kknnngpL" id="kknnngpL" class="low" value="{{data.kknnngpL|default_if_none:""|date:"Y/m/d"}}" size="11" />
+          ～
+          <input type="text" name="kknnngpU" id="kknnngpU" class="upper" value="{{data.kknnngpU|default_if_none:""|date:"Y/m/d"}}" size="11" />
+          年
+          <input type="button" name="" id="" value="2W" onclick="DateDiff(2,'W',$(this).parent())" />
+          <input type="button" name="" id="" value="1M" onclick="DateDiff(1,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="3M" onclick="DateDiff(3,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="6M" onclick="DateDiff(6,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="1Y" onclick="DateDiff(12,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="2Y" onclick="DateDiff(24,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="3Y" onclick="DateDiff(36,'M',$(this).parent())" />
+        </li>
+        <li>更新年月日（西暦/月/日）
+          <input type="text" name="ksnnngpL" id="ksnnngpL" class="low" value="{{data.ksnnngpL|default_if_none:""|date:"Y/m/d"}}" size="11" />
+          ～
+          <input type="text" name="ksnnngpU" id="ksnnngpU" class="upper" value="{{data.ksnnngpU|default_if_none:""|date:"Y/m/d"}}" size="11" />
+          年
+          <input type="button" name="" id="" value="2W" onclick="DateDiff(2,'W',$(this).parent())" />
+          <input type="button" name="" id="" value="1M" onclick="DateDiff(1,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="3M" onclick="DateDiff(3,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="6M" onclick="DateDiff(6,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="1Y" onclick="DateDiff(12,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="2Y" onclick="DateDiff(24,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="3Y" onclick="DateDiff(36,'M',$(this).parent())" />
+        </li>
+        <li>変更年月日（西暦/月/日）
+          <input type="text" name="hnknngpL" id="hnknngpL" class="low" value="{{data.hnknngpL|default_if_none:""|date:"Y/m/d"}}" size="11" />
+          ～
+          <input type="text" name="hnknngpU" id="hnknngpU" class="upper" value="{{data.hnknngpU|default_if_none:""|date:"Y/m/d"}}" size="11" />
+          年
+          <input type="button" name="" id="" value="2W" onclick="DateDiff(2,'W',$(this).parent())" />
+          <input type="button" name="" id="" value="1M" onclick="DateDiff(1,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="3M" onclick="DateDiff(3,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="6M" onclick="DateDiff(6,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="1Y" onclick="DateDiff(12,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="2Y" onclick="DateDiff(24,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="3Y" onclick="DateDiff(36,'M',$(this).parent())" />
+        </li>
+        <li>登録年月日（西暦/月/日）
+          <input type="text" name="turknngpL" id="turknngpL" class="low" value="{{data.turknngpL|default_if_none:""|date:"Y/m/d"}}" size="11" />
+          ～
+          <input type="text" name="turknngpU" id="turknngpU" class="upper" value="{{data.turknngpU|default_if_none:""|date:"Y/m/d"}}" size="11" />
+          年
+          <input type="button" name="" id="" value="2W" onclick="DateDiff(2,'W',$(this).parent())" />
+          <input type="button" name="" id="" value="1M" onclick="DateDiff(1,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="3M" onclick="DateDiff(3,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="6M" onclick="DateDiff(6,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="1Y" onclick="DateDiff(12,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="2Y" onclick="DateDiff(24,'M',$(this).parent())" />
+          <input type="button" name="" id="" value="3Y" onclick="DateDiff(36,'M',$(this).parent())" />
+        </li>
+      </ul>
+      <div class="right">
+        <input type="button" name="submitButtonName" value="取り消し" onclick="clr($(this).parent().parent())" />
+      </div>
+    </div>
+    <!--contents-input End--> 
+    
+    <!--contents-input-->
+    <div class="contents-input">
+      <ul class="left">
+        <li>検索条件名　
+          <input type="text" name="name" id="name" value="{{data.name|default_if_none:""}}" size="11" />
+        </li>
+        <li>担当　
+          <select name="tanto" size="1">
+            <option {{data.tanto|default_if_none:" selected"}} value=""></option>
+            <option value="山田太郎" {% if data.tanto == "山田太郎" %} selected{% endif %}>
+            
+            
+            山田太郎
+            
+            
+            </option>
+            <option value="second" {% if data.tanto == "second" %} selected{% endif %}>
+            
+            
+            second
+            
+            
+            </option>
+            <option value="third" {% if data.tanto == "third" %} selected{% endif %}>
+            
+            
+            third
+            
+            
+            </option>
+          </select>
+        </li>
+      </ul>
+      <div class="right">
+        <input type="submit" name="submit" value="全ページ一括検索" style="width: 130px; height: 25px" />
+        <input type="submit" name="submit" value="検索" style="width: 130px; height: 25px"/>
+        <br />
+        <input type="submit" name="submit" value="新規ページへ保存" style="width: 130px; height: 25px" />
+        <input type="submit" name="submit" value="保存" style="width: 130px; height: 25px" />
+      </div>
+    </div>
+    <div class="contents-page"> page: 
+      {% for p in pages%}
+      {% if p.page == page %} <span class="current">{{ p.page }}</span> {% else %} <a href="{{p.path}}">{{ p.page }}</a> {% endif %}
+      {% endfor %} <span class="right">
+      <input type="submit" name="submit" value="ページ削除" />
+      </span> </div>
+    
+    <!--contents-input End--> 
+    
+  
+  <!--leftcontent-->
+  <div class="leftcontent">
+    <div class="calendar">
+      <p>カレンダー</p>
+    </div>
+  </div>
+  <!--leftcontent End-->
+  
+  <p class="container-clear">&nbsp;</p>
+</div>
+<!-- // container END --> 
+
+<!--rightcontent-->
+<div class="rightcontent">
+  <div class="title"> 未フォロー </div>
+  <div class="content">
+    </li>
+    <li><a href="#">二世帯住宅</a></li>
+    <li><a href="#">TEL有り</a></li>
+    <li><a href="#">シャッターの鍵について</a></li>
+    <li><a href="#">決済について</a></li>
+    <li><a href="#">見学希望</a></li>
+    <li><a href="#">収益物件</a> </li>
+  </div>
+</div>
+<!--rightcontent End-->
+
+<div class="footer">Database</div>
+</div>
+<!--wrapper End-->
+
+</body>
+</html>

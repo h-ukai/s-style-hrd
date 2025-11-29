@@ -1,0 +1,659 @@
+{% extends "mypagebase.html" %}
+
+{% block title %}物件検索・登録{% endblock %}
+
+
+{% block head %}
+
+<script type="text/javascript" src="/js/jQueryMultiCheckbox.js"></script>
+<link rel="stylesheet" href="/css/thickbox.css" type="text/css" media="all" />
+<script type="text/javascript" src="/js/thickbox.js"></script>
+
+$(document).ready(function(){
+
+    $("#icons").multicheckbox({show:'show'});
+
+
+    $(".addresslist").each(function () {
+        adresslistsetautocomp($(this));
+    });
+    $(".linelist").each(function () {
+        linelistautocomp($(this));
+        if ($(".station",this).val()){
+            var temp = $(".station",this).val();
+            $(".station",this).val("")
+            addstationlist(this,$(".line",this).val());
+            $(".station",this).val(temp)
+        }
+    });
+    $(".mdrHysu,.mdrTyp").live("keyup mouseup", function(){
+        addroomtype($(this).parent())
+    });
+
+});
+
+function openadresslist(pos){
+    var opstr;
+    var anc = $("a",pos).attr('href').replace(/^.+#/,'#');
+    if($("#listid",pos).val()){
+        opstr = "?listid=" + $("#listid",pos).val();
+    }
+    else{
+        opstr = "?listid=" + $("#listid",pos).val() + "&listname=個別指定&division=" + $("#trader_id").val();
+    }
+    $("a",pos).attr("href",anc + opstr + "&keepThis=true&TB_iframe=true&height=500&width=700" );//
+    $(".listid",pos).removeClass( "listid" ).addClass( "editinglistid" );
+    $(".listname",pos).removeClass( "listname" ).addClass( "editinglistname" );
+    $(".division",pos).removeClass( "division" ).addClass( "editingdivision" );
+}
+
+function setadlist(listid,listname,division){
+        var p = $(".editinglistid").removeClass( "editinglistid" ).addClass( "listid" ).val(listid);
+        $(".editinglistname").removeClass( "editinglistname" ).addClass( "listname" ).val(listname);
+        $(".editingdivision").removeClass( "editingdivision" ).addClass( "division" ).val(division);
+        addadresslist(p.parent().parent().parent());
+}
+
+function removeadresslist(pos){
+    if (pos.next().length==0){
+        $(".listname",pos).val("");
+        $(".listid",pos).val("");
+        $(".division",pos).val("");
+    }
+    else {
+        pos.remove();
+    }
+}
+
+function removelist(pos){
+    if (pos.next().length==0){
+        $("input[type!='button'],textarea",pos).each(function(){
+            $(this).val("");
+        });
+    }
+    else {
+        pos.remove();
+    }
+}
+
+
+function addadresslist(pos){
+    if (pos.next().length==0){
+        pos.after(pos.clone());
+        p2=pos.next();
+        tb_init($('a.thickbox, area.thickbox, input.thickbox',p2));
+        $(".listname",p2).val("");
+        $(".listid",p2).val("");
+        $(".division",p2).val("");
+        adresslistsetautocomp(p2);
+    }
+}
+function addadresslist2(pos){
+    if ($(".addresslist",pos).next().length==0){
+        $(".addresslist",pos).after($(".addresslist",pos).clone());
+        p2=$(".addresslist",pos).next();
+        $(".listname",p2).val("");
+        $(".listid",p2).val("");
+        adresslistsetautocomp(p2);
+    }
+}
+
+function adresslistsetautocomp(pos){
+    $(".listname",pos).autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: ajaxareaURL ,
+                dataType: "jsonp",
+                data: {
+                    com: "area",
+                    division:$(".division",pos).val(),
+                    search_key: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label:  item['名前'] + ' (' + item['区分'] + ')',
+                            value: item['名前'],
+                            id: item['key'],
+                            division: item['区分']
+                        }
+                    }));
+                 }
+             });
+         },
+        width: 200,
+		minLength: 0,
+		delay: 1000,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+		select: function(ev, ui) {
+		    $(".listid",$(this).parent()).val(ui.item.id);
+		    $(".division",$(this).parent()).val(ui.item.division);
+		    addadresslist($(this).parent().parent().parent());
+		}
+    });
+}
+
+function linelistautocomp(pos){
+    $(".line",pos).autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: ajaxURL ,
+                dataType: "jsonp",
+                data: {
+                    com: "line",
+                    pref:$(".pref",pos).val(),
+                    search_key: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label:  item['line_name'] + ' (' + item['rr_name'] + ')' ,
+                            value: item['line_name']
+                        }
+                    }));
+                 }
+                 
+             });
+         },
+        width: 200,
+		minLength: 0,
+		delay: 1000,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+		select: function(ev, ui) {
+		    addstationlist($(this).parent().parent().parent(),ui.item.value)
+		    addlinelist($(this).parent().parent().parent(),ui.item);
+		}
+    });
+}
+function addlinelist(pos,data){
+    if (pos.next().length==0){
+        pos.after(pos.clone());
+        p2=pos.next();
+        $(".pref",p2).val("");
+        $(".line",p2).val("");
+        $(".thHnU",p2).val("");
+        $(".thMU",p2).val("");
+        linelistautocomp(p2);
+    }
+}
+
+function removestationlist(obj){
+    $(".station",obj).attr("title","");
+    $(".station",obj).val("");
+    $("li>span",obj).remove();
+}
+
+
+function addstationlist(obj,line){
+    removestationlist(obj);
+    $.ajax({
+        url: ajaxURL ,
+        dataType: "jsonp",
+//        async:false,
+        data: {
+            com: "station",
+            pref:$(".pref",obj).val(),
+            line:line,
+        },
+        success: function(rows) {
+            for (var i=0;i<rows.length;i++) {
+                var row = rows[i];
+                if (i==0){
+                    $(".station",obj).attr("title",row['station_name']);
+                }
+                else{
+                    $(".station",obj).attr("title",$(".station",obj).attr("title") + ',' + row['station_name']);
+                }
+            }
+            $(".station",obj).multicheckbox({show:'show'});
+        }
+    });
+}
+
+function addroomtype(pos){
+    if (pos.next().length==0){
+        pos.after(pos.clone());
+        p2=pos.next();
+        $(".mdrHysu",p2).val("");
+        $(".mdrTyp",p2).val("");
+    }
+}
+function removeroomtype(pos){
+    if (pos.next().length!=0){
+        pos.remove();
+    }
+    $(".mdrHysu",pos).val("");
+    $(".mdrTyp",pos).val("");
+}
+
+$(function(){
+    // 日本語入力モードONにするname属性
+    var activeName = {
+        search:1,
+        name:1,
+        yomi:1,
+        tutomesaki:1,
+        address:1,
+        address1:1,
+        address2:1,
+        service:1,
+        bikou:1
+    };
+
+    $("input:visible[type!='password'],textarea").each(function(){
+        if(activeName[$(this).attr("name")] != undefined) {
+            $(this).css("ime-mode", "active");
+        } else {
+            $(this).css("ime-mode", "inactive");
+        }
+    });
+
+//==============================
+// キー項入力 イベント
+//==============================
+	$(document).keydown(function(e){
+		//入力キーコード
+		var	keyCode		=	e.keyCode;	
+		//shift alt ctrl 押下フラグ
+		var	altKey		=	e.altKey;
+		var	shiftKey	=	e.shiftKey;
+		var	ctrlKey		=	e.ctrlKey;
+		//Keyイベント伝播フラグ
+		//	true:ブラウザで処理	false:ユーザで処理
+		var	blKey		=	true;
+		//キーが押された時のオブジェクト
+		var	srcObj		=	e.target;
+
+		//Keyメッセージ表示用
+		var	Key		=	"keyCode:"+keyCode+":";
+
+		if (keyCode == 13 ||keyCode == 9){
+		//Enter tabによるフォーカス移動
+			switch(srcObj.tagName){
+			case "TEXTAREA":
+				if (keyCode!=13) blKey = false;
+				break;
+			case "INPUT":	case "SELECT":
+				//fileは巧く動かないので除外
+				if (srcObj.type!="file")	blKey = false;
+				break;
+			default:
+			}
+			//keyイベントを処理するもののみ抽出
+			if (!blKey){
+				//フォームオブジェクトが何番目か探す
+				var df = d.forms[0];
+				var ln = df.length;
+				var i;
+				for (i=0;i<ln;i++){
+					if (df[i]==srcObj) break;
+				}
+				//次のフォームオブジェクト探す
+				srcObj = Focus_Move(df,i,ln,shiftKey);
+			}
+		}
+
+		if (!blKey){
+			//イベントを伝播しない
+			if (srcObj.type!="file"){
+				//IE規定の動作キャンセル
+				if(d.all) window.event.keyCode = 0;
+				srcObj.focus();
+				if (srcObj.select && srcObj.type!="button")
+					srcObj.select();
+			}else{
+				blKey = true;
+			}
+		}
+
+		if(shiftKey)	Key += "+[Shift]";
+		if(ctrlKey)	Key += "+[Ctrl]";
+		if(altKey)	Key += "+[Alt]";
+
+		$("#lb_msg").text(Key);
+		
+		//blKey true:ブラウザで処理 false:
+		return blKey;
+	});
+
+	//==============================
+	// フォーカス移動　https://d.hatena.ne.jp/Hidepyon/20090903/1251988911
+	//==============================
+	var Focus_Move = function(df,i,ln,shift){
+		//フォーカスを取得できないものは飛ばします
+
+		var FcsObj;
+		if (shift){
+			//Shiftが押されていると当然フォーカスが前へ戻る
+			while (--i >= 0){
+			
+				FcsObj	=	df[i];
+				if	(FcsObj.type!="hidden" && 
+					!FcsObj.disabled && 
+					FcsObj.style.visibility!="hidden" && 
+					FcsObj.tabIndex!=-1){
+					//対象のオブジェクトを戻す
+					return FcsObj;
+				}
+			}
+			//Hitしない場合
+			return Focus_Move(df,ln,ln,shift);
+		}else{
+			//フォーカス進む
+			while (++i < ln){
+			
+				FcsObj	=	df[i];
+				if	(FcsObj.type!="hidden" && 
+					!FcsObj.disabled && 
+					FcsObj.style.visibility!="hidden" && 
+					FcsObj.tabIndex!=-1){
+					return FcsObj;
+				}
+			}
+			//Hitしない場合
+			return Focus_Move(df,-1,ln,shift);
+		}
+	}
+	
+	
+	
+	//初期Focus設定
+	d.forms[0][0].focus();
+
+});
+//n日後、n日前の日付を求める
+/**
+ * 年月日と加算日からn日後、n日前を求める関数
+ * year 年
+ * month 月
+ * day 日
+ * addDays 加算日。マイナス指定でn日前も設定可能
+ */
+function computeDate(year, month, day, addDays) {
+    var dt = new Date(year, month - 1, day);
+    var baseSec = dt.getTime();
+    var addSec = addDays * 86400000;//日数 * 1日のミリ秒数
+    var targetSec = baseSec + addSec;
+    dt.setTime(targetSec);
+    return dt;
+}
+/**
+ * 年月を指定して月末日を求める関数
+ * year 年
+ * month 月
+ */
+function getMonthEndDay(year, month) {
+    //日付を0にすると前月の末日を指定したことになります
+    //指定月の翌月の0日を取得して末日を求めます
+    //そのため、ここでは month - 1 は行いません
+    var dt = new Date(year, month, 0);
+    return dt.getDate();
+}
+/**
+ * 年月日と加算月からnヶ月後、nヶ月前の日付を求める
+ * year 年
+ * month 月
+ * day 日
+ * addMonths 加算月。マイナス指定でnヶ月前も設定可能
+ */
+function computeMonth(year, month, day, addMonths) {
+    month += addMonths;
+    var endDay = getMonthEndDay(year, month);//ここで、前述した月末日を求める関数を使用します
+    if(day > endDay) day = endDay;
+    var dt = new Date(year, month - 1, day);
+    return dt;
+}
+
+function DateDiff(n,s,p){
+    var now = new Date();
+    $(".upper",p).val(now.getFullYear()  + "/" + (now.getMonth() + 1) + "/" + now.getDate());
+    var up;
+    if (s=="W"){
+        up = computeDate(now.getFullYear(), now.getMonth()+1, now.getDate(), n*(-7));
+    }
+    else if (s=="M"){
+        up = computeMonth(now.getFullYear(), now.getMonth()+1, now.getDate(), n*(-1));
+    }
+    $(".low",p).val(up.getFullYear()  + "/" + (up.getMonth() + 1) + "/" + up.getDate());
+}
+
+function clr(p){
+    p.find(':input').each(function(){
+        if ( $(this).attr('name') == 'mtngflg'  || $(this).attr('name') == "webknskflg" ) {
+            $(this).val("1");
+        }
+        else if (( $(this).attr('type') == 'button'  || $(this).attr('type') == "submit" ) ){
+        }
+        else {
+            if($(this).attr('type') == 'checkbox'){
+                $(this).removeAttr('checked');
+            }
+            else{
+                $(this).val("");
+            }
+        }
+    });
+}
+
+
+
+
+{% endblock %}
+
+
+{% block container %}
+
+<input type="hidden" name="bbchntikbn" id = "bbchntikbn" value="売買"/>
+<input type="hidden" name="dtsyuri" id ="dtsyuri" value="物件"/>
+<input type="hidden" name="bkknShbt" id = "bkknShbt" value="マンション等"/>
+<input type="hidden" name="page" id= "page" value="{{page|default_if_none:""}}"/>
+
+<img src="img/t-kensaku2.jpg" alt="" width="795" height="43" border="0">
+
+<!-- ここから本文記入 -->
+
+<!--contents-input-->
+<div class="contents-input">
+<div class="added">
+<ul class="left">
+<li><input type="text" name="addresslistname" id="addresslistname" size="25" />
+<input type="text" name="listid" id="listid" size="25" />
+<input type="hidden" name="listid" id="listid" size="25" />
+</li>
+</ul>
+<div class="right">
+<input type="submit" name="submitButtonName" value="編集" />
+<input type="submit" name="submitButtonName" value="削除" />
+</div>
+</div>
+</div>
+
+
+<!--
+<script type="text/javascript">
+    $("#addresslistname").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: ajaxareaURL ,
+                dataType: "jsonp",
+                data: {
+                    com: "area",
+                    search_key: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label:  item['名前'] + ' (' + item['区分'] + ')',
+                            value: item['名前'],
+                            id: item['key'],
+                            division: item['区分']
+                        }
+                    }));
+                 }
+                 
+             });
+         },
+        
+        width: 200,
+		minChars: 0,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+		select: function(ev, ui) {
+		    $("#listid").val(ui.item.id);
+		}
+    });
+
+</script>
+-->
+
+
+<!--contents-input End-->
+
+<!--contents-input-->
+<div class="contents-input">
+<div class="added">
+<ul class="left">
+<li>沿線 <input type="text" name="ensn" id="ensn" value="{{data.ensn.ensenmei|default_if_none:""}}" size="11" /></li>
+<li>徒歩 <select name="thHnU" size="1">
+<option {{data.thHnU|default_if_none:" selected"}} value=""></option>
+<option value="10" {% ifequal data.thHnU "10" %} selected{% endifequal %}>10</option>
+<option value="20" {% ifequal data.thHnU "20" %} selected{% endifequal %}>20</option>
+<option value="30" {% ifequal data.thHnU "30" %} selected{% endifequal %}>30</option>
+<option value="40" {% ifequal data.thHnU "40" %} selected{% endifequal %}>40</option>
+<option value="50" {% ifequal data.thHnU "50" %} selected{% endifequal %}>50</option>
+<option value="60" {% ifequal data.thHnU "60" %} selected{% endifequal %}>60</option>
+</select> 分　　徒歩 <select name="thMU" size="1">
+<option {{data.thMU|default_if_none:" selected"}} value=""></option>
+<option value="10" {% ifequal data.thHnU "10" %} selected{% endifequal %}>10</option>
+<option value="20" {% ifequal data.thHnU "20" %} selected{% endifequal %}>20</option>
+<option value="30" {% ifequal data.thHnU "30" %} selected{% endifequal %}>30</option>
+<option value="40" {% ifequal data.thHnU "40" %} selected{% endifequal %}>40</option>
+<option value="50" {% ifequal data.thHnU "50" %} selected{% endifequal %}>50</option>
+<option value="60" {% ifequal data.thHnU "60" %} selected{% endifequal %}>60</option>
+</select> 分　　交通 <select name="kutuHnU" size="1">
+<option {{data.kutuHnU|default_if_none:" selected"}} value=""></option>
+<option value="10" {% ifequal data.thHnU "10" %} selected{% endifequal %}>10</option>
+<option value="20" {% ifequal data.thHnU "20" %} selected{% endifequal %}>20</option>
+<option value="30" {% ifequal data.thHnU "30" %} selected{% endifequal %}>30</option>
+<option value="40" {% ifequal data.thHnU "40" %} selected{% endifequal %}>40</option>
+<option value="50" {% ifequal data.thHnU "50" %} selected{% endifequal %}>50</option>
+<option value="60" {% ifequal data.thHnU "60" %} selected{% endifequal %}>60</option>
+</select> 分
+
+</ul>
+<div class="right">
+<input type="submit" name="submitButtonName" value="削除" />
+</div>
+</div>
+</div>
+<!--contents-input End-->
+
+<!--contents-input-->
+<div class="contents-input">
+<ul class="left">
+<li>価格　　　　　　　<input type="text" name="kkkuCnryuL" id="kkkuCnryuL" value="{{data.kkkuCnryuL|floatformat|default_if_none:""}}" size="11" /> 万円 ～ <input type="text" name="kkkuCnryuU" id="kkkuCnryuU" value="{{data.kkkuCnryuU|floatformat|default_if_none:""}}" size="11" /> 万円</li>
+</ul>
+<div class="right">
+<input type="submit" name="submitButtonName" value="取り消し" />
+</div>
+
+</div>
+<!--contents-input End-->
+
+
+<!--contents-input-->
+<div class="contents-input">
+<ul class="left">
+<li>専有面積　　　　　<input type="text" name="snyuMnskSyuBbnMnsk2L" id="snyuMnskSyuBbnMnsk2L" value="{{data.snyuMnskSyuBbnMnsk2L|floatformat|default_if_none:""}}" size="11" /> ～ <input type="text" name="snyuMnskSyuBbnMnsk2U" id="snyuMnskSyuBbnMnsk2U" value="{{data.snyuMnskSyuBbnMnsk2U|floatformat|default_if_none:""}}" size="11" /> m<sup>2</sup></li>
+<li>築年月(西暦)　　　<input type="text" name="cknngtSirkL" id="cknngtSirkL" value="{{data.cknngtSirkL|default_if_none:""|date:"Y/m/d H:i:s"}}" size="11" /> ～ <input type="text" name="cknngtSirkU" id="cknngtSirkU" value="{{data.cknngtSirkU|default_if_none:""|date:"Y/m/d H:i:s"}}" size="11" /> 年</li>
+<li>間取部屋数　　　　<input type="text" name="mdrHysu" id="mdrHysu" value="{{data.mdrHysu|floatformat|default_if_none:""}}" size="11" />　間取タイプ <select name="mdrTyp" size="1">
+<option {{data.mdrTyp|default_if_none:" selected"}} value=""></option>
+<option value="ワンルーム" {% ifequal data.mdrTyp "ワンルーム" %} selected{% endifequal %}>ワンルーム</option>
+<option value="K" {% ifequal data.mdrTyp "K" %} selected{% endifequal %}>K</option>
+<option value="DK" {% ifequal data.mdrTyp "DK" %} selected{% endifequal %}>DK</option>
+<option value="LK" {% ifequal data.mdrTyp "LK" %} selected{% endifequal %}>LK</option>
+<option value="LDK" {% ifequal data.mdrTyp "LDK" %} selected{% endifequal %}>LDK</option>
+<option value="SK" {% ifequal data.mdrTyp "SK" %} selected{% endifequal %}>SK</option>
+<option value="SDK" {% ifequal data.mdrTyp "SDK" %} selected{% endifequal %}>SDK</option>
+<option value="SLK" {% ifequal data.mdrTyp "SLK" %} selected{% endifequal %}>SLK</option>
+<option value="SLDK" {% ifequal data.mdrTyp "SLDK" %} selected{% endifequal %}>SLDK</option>
+</select></li>
+<li>バルコニー方向　　<select name="blcnyHuku" size="1">
+<option {{data.blcnyHuku|default_if_none:" selected"}} value=""></option>
+<option value="北" {% ifequal data.blcnyHuku "北" %} selected{% endifequal %}>北</option>
+<option value="東" {% ifequal data.blcnyHuku "東" %} selected{% endifequal %}>東</option>
+<option value="南" {% ifequal data.blcnyHuku "南" %} selected{% endifequal %}>南</option>
+<option value="西" {% ifequal data.blcnyHuku "西" %} selected{% endifequal %}>西</option>
+</select></li>
+<li>ペット可　　　　　<input type="checkbox" name="ptflg" value="1" {% if data.ptflg %} checked {% endif %}/></li>
+</ul>
+<div class="right">
+<input type="submit" name="submitButtonName" value="取り消し" />
+</div>
+</div>
+<!--contents-input End-->
+
+<!--contents-input-->
+<div class="contents-input">
+<ul class="left">
+<li>確認年月日（西暦/月/日）<input type="text" name="kknnngpL" id="kknnngpL" value="{{data.kknnngpL|default_if_none:""|date:"Y/m/d H:i:s"}}" size="11" /> ～ <input type="text" name="kknnngpU" id="kknnngpU" value="{{data.kknnngpU|default_if_none:""|date:"Y/m/d H:i:s"}}" size="11" />年</li>
+</ul>
+<div class="right">
+<input type="submit" name="submitButtonName" value="取り消し" />
+</div>
+</div>
+<!--contents-input End-->
+
+<!--contents-input-->
+<div class="contents-input">
+<ul class="left">
+<li>検索条件名　<input type="text" name="name" id="name" value="{{data.name|default_if_none:""}}" size="11" /></li>
+<li>担当　<select name="tanto" size="1">
+<option {{data.tanto|default_if_none:" selected"}} value=""></option>
+<option value="山田太郎" {% ifequal data.tanto "山田太郎" %} selected{% endifequal %}>山田太郎</option>
+<option value="second" {% ifequal data.tanto "second" %} selected{% endifequal %}>second</option>
+<option value="third" {% ifequal data.tanto "third" %} selected{% endifequal %}>third</option>
+</select>
+</ul>
+<div class="right">
+<input type="submit" name="submitButtonName" value="検索" />
+<input type="submit" name="save" value="保存" />
+</div>
+</div>
+
+<div class="contents-page">
+page: 
+{% for p in pages%}
+{% ifequal p.page page %}
+<span class="current">{{ p.page }}</span>
+{% else %}
+ <a href="{{p.path}}">{{ p.page }}</a>
+{% endifequal %}
+{% endfor %}
+
+<span class="right">
+<input type="submit" name="submitButtonName" value="ページ削除" />
+</span>
+</div>
+
+
+
+
+
+<!--contents-input End-->
+
+{% endblock %}

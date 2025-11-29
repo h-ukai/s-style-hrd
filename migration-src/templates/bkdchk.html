@@ -1,0 +1,482 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html lang="ja" xml:lang="ja" xmlns="https://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<title>重複チェック</title>
+<link href="../css/styles.css" type="text/css" rel="stylesheet" media="all" />
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/blitzer/jquery-ui.css" rel="stylesheet" type="text/css"/><!-- jquery UI のcss-->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js"></script><!-- jquery　本体-->
+<script type="text/javascript"  src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js"></script><!-- jquery-UI　本体-->
+<style>
+.ui-autocomplete-loading {
+	background: white url('../img/ui-anim_basic_16x16.gif') right center no-repeat;
+}
+</style>
+
+<script type="text/javascript" src="../js/jTPS.js"></script>
+<link rel="stylesheet" type="text/css" href="../css/jTPS.css">
+
+<style>
+
+body {
+	font-family: Tahoma;
+	font-size: 9pt;
+}
+#tbl thead th {
+	white-space: nowrap;
+	overflow-x:hidden;
+	padding: 3px;
+}
+#tbl tbody td {
+	padding: 3px;
+}
+
+#appended{
+	white-space: nowrap;
+}
+</style>
+
+<script type="text/javascript">
+
+var flist = new Array("物件番号","作成状況","自社管理欄","業者名","代表電話番号","データ元",
+"広告転載区分","売買賃貸区分","データ種類","物件種目","価格","所在地名1","所在地名2","所在地名3","建物名","部屋番号",
+"建物面積1","専有面積","建物構造","築年月(西暦)","坪単価","登記簿地目","土地面積","現況有姿分譲地",
+"接道方向1","接道方向2","接道状況","用途地域(1)","備考1","備考2","確認年月日","変更年月日","更新年月日","登録年月日");
+
+
+$(document).ready(function(){
+
+
+	showtbl();
+
+	$("#getdata").click(function(){
+		getdata();
+	});
+
+	$("#dtsyuri").change(function(){
+		getdata();
+	});
+
+	if ($("#address1").val() != "" && $("#address1").val() != ""){
+		getdata();
+	}
+
+	// reinstate sort and pagination if cookie exists
+/*
+	var cookies = document.cookie.split(';');
+	for (var ci = 0, cie = cookies.length; ci < cie; ci++) {
+		var cookie = cookies[ci].split('=');
+		if (cookie[0] == 'jTPS') {
+			var commands = cookie[1].split(',');
+			for (var cm = 0, cme = commands.length; cm < cme; cm++) {
+				var command = commands[cm].split(':');
+				if (command[0] == 'sortasc' && parseInt(command[1]) >= 0) {
+					$('#tbl .sortableHeader:eq(' + parseInt(command[1]) + ')').click();
+				} else if (command[0] == 'sortdesc' && parseInt(command[1]) >= 0) {
+					$('#tbl .sortableHeader:eq(' + parseInt(command[1]) + ')').click().click();
+				} else if (command[0] == 'page' && parseInt(command[1]) >= 0) {
+					$('#tbl .pageSelector:eq(' + parseInt(command[1]) + ')').click();
+				}
+			}
+		}
+	}
+*/
+	// bind mouseover for each tbody row and change cell (td) hover style
+/*
+	$('#tbl tbody tr:not(.stubCell)').live('mouseover mouseout',
+		function (e) {
+			// hilight the row
+			e.type == 'mouseover' ? $(this).children('td').addClass('hilightRow') : $(this).children('td').removeClass('hilightRow');
+		}
+	);
+*/
+	$(document).on('mouseover', '#tbl tbody tr:not(.stubCell)',
+		function (e) {
+			// hilight the row
+			$(this).children('td').addClass('hilightRow') ;
+		}
+	);
+
+	$(document).on('mouseout', '#tbl tbody tr:not(.stubCell)',
+		function (e) {
+			// hilight the row
+			$(this).children('td').removeClass('hilightRow');
+		}
+	);
+
+});
+$(function(){
+
+	// オートコンプリート　https://jqueryui.com/demos/autocomplete/#remote-jsonp
+	//リファレンス　https://semooh.jp/jquery/api/ajax/jQuery.ajax/options/
+
+    $("#address1").autocomplete({
+        source: function(request, response) {
+
+            $.ajax({
+                url: "/jsonservice",
+                dataType: "jsonp",
+                data: {
+                    com: "address1",
+                    todofukenmei:$("#tdufknmi").val(),
+                    search_key: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            value: item['市区町村名']
+                        }
+                    }));
+                }
+            });
+        },
+
+        width: 200,
+		minChars: 0,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		}
+
+    })
+
+});
+
+$(function(){
+
+	// オートコンプリート　https://jqueryui.com/demos/autocomplete/#remote-jsonp
+	//リファレンス　https://semooh.jp/jquery/api/ajax/jQuery.ajax/options/
+
+    $("#address2").autocomplete({
+        source: function(request, response) {
+
+            $.ajax({
+                url: "/jsonservice",
+                dataType: "jsonp",
+                data: {
+                    com: "address2",
+                    todofukenmei:$("#tdufknmi").val(),
+                    shikutyosonmei:$("#address1").val(),
+                    search_key: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            value: item['大字・町丁目']
+                        }
+                    }));
+                }
+            });
+        },
+
+		minLength: 0,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+		$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		getdata();
+		}
+
+    })
+
+});
+
+function getdata(){
+
+		$("#tbl tbody").empty();
+		$(".sortableHeader").removeClass('sortDesc').removeClass('sortAsc');
+        $.ajax({
+            url: "/jsonservice",
+            dataType: "jsonp",
+            data: {
+                com: "bkdchk",
+                floatformat:"true",
+                //shzicmi1:"所在地1"
+                bbchntikbn:$("#bbchntikbn").val(),
+                dtsyuri:$("#dtsyuri").val(),
+                todofukenmei:$("#tdufknmi").val(),
+                shzicmi1:$("#address1").val(),
+                tcMnsk2:$("#tcMnsk2").val(),
+                ttmnMnsk1:$("#ttmnMnsk1").val(),
+                snyuMnskSyuBbnMnsk2:$("#snyuMnskSyuBbnMnsk2").val(),
+                search_key:$("#address2").val()
+            },
+            success: function(rows) {
+                //テーブルとして表示するため、htmlを構築
+				for (var i=0;i<rows.length;i++) {
+					$("#tbl tbody").append($("<tr/>").attr("id","tr" + i));
+					var row = rows[i];
+					for (var j=0;j<flist.length;j++) {
+						if(row[flist[j]]!=null){
+							if (flist[j] == "物件番号"){
+								$("#tr" + i).append(
+									$("<td/>").append(
+										$("<a/>").attr("href","../bkedit.html?bkID=" + row[flist[j]]).text(row[flist[j]]).attr("target","_blank")
+									)
+								);
+							}
+							else {
+								$("#tr" + i).append($("<td/>").attr("id","appended").text(row[flist[j]])) ;
+							}
+						}else{
+								$("#tr" + i).append($("<td/>").attr("id","appended")) ;
+						}
+					}
+				}
+				showtbl();
+            }
+        });
+}
+function showtbl(){
+
+	$('#tbl').jTPS( {perPages:[20,50,'ALL'],scrollStep:1,scrollDelay:30,
+		clickCallback:function () {
+			// target table selector
+			var table = '#tbl';
+			// store pagination + sort in cookie
+			//document.cookie = 'jTPS=sortasc:' + $(table + ' .sortableHeader').index($(table + ' .sortAsc')) + ',' +
+			//	'sortdesc:' + $(table + ' .sortableHeader').index($(table + ' .sortDesc')) + ',' +
+			//	'page:' + $(table + ' .pageSelector').index($(table + ' .hilightPageSelector')) + ';';
+		}
+	});
+
+
+}
+</script>
+
+</head>
+
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0">
+
+<div align="center">
+<br />
+<table width="900" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td align="left">
+			<h2>重複チェック</h2>
+			所在地1と所在地2は完全一致です<br>
+			面積はプラスマイナス20%の範囲で検索されます。0.8～1.2
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td align="left">
+						<table width="100%" border="0" cellspacing="1" cellpadding="5">
+							<tr>
+								<td>
+									<select name="bbchntikbn" id="bbchntikbn">
+										<option value="売買"  selected>売買</option>
+										<option value="賃貸" >賃貸</option>
+									</select>
+									<select name="dtsyuri" id="dtsyuri">
+		                            <option value=""></option>
+		                            <option value="物件"  selected>物件</option>
+		                            <option value="事例" >事例</option>
+		                            <option value="予約" >予約</option>
+		                            <option value="査定中" >査定中</option>
+		                            <option value="商談中" >商談中</option>
+		                            <option value="重複" >重複</option>
+		                            <option value="停止" >停止</option>
+		                            <option value="競売" >競売</option>
+		                            <option value="現場" >現場</option>
+		                            <option value="サンプル" >サンプル</option>
+									</select>
+									<select name="tdufknmi" id="tdufknmi" size="1">
+									   <option {{def.tdufknmi|default_if_none:" selected"}} value=""></option>
+									   <option value="北海道" {% if def.tdufknmi == "北海道" %} selected{% endif %}>北海道</option>
+									   <option value="青森県" {% if def.tdufknmi == "青森県" %} selected{% endif %}>青森県</option>
+									   <option value="岩手県" {% if def.tdufknmi == "岩手県" %} selected{% endif %}>岩手県</option>
+									   <option value="宮城県" {% if def.tdufknmi == "宮城県" %} selected{% endif %}>宮城県</option>
+									   <option value="秋田県" {% if def.tdufknmi == "秋田県" %} selected{% endif %}>秋田県</option>
+									   <option value="山形県" {% if def.tdufknmi == "山形県" %} selected{% endif %}>山形県</option>
+									   <option value="福島県" {% if def.tdufknmi == "福島県" %} selected{% endif %}>福島県</option>
+									   <option value="茨城県" {% if def.tdufknmi == "茨城県" %} selected{% endif %}>茨城県</option>
+									   <option value="栃木県" {% if def.tdufknmi == "栃木県" %} selected{% endif %}>栃木県</option>
+									   <option value="群馬県" {% if def.tdufknmi == "群馬県" %} selected{% endif %}>群馬県</option>
+									   <option value="埼玉県" {% if def.tdufknmi == "埼玉県" %} selected{% endif %}>埼玉県</option>
+									   <option value="千葉県" {% if def.tdufknmi == "千葉県" %} selected{% endif %}>千葉県</option>
+									   <option value="東京都" {% if def.tdufknmi == "東京都" %} selected{% endif %}>東京都</option>
+									   <option value="神奈川県" {% if def.tdufknmi == "神奈川県" %} selected{% endif %}>神奈川県</option>
+									   <option value="新潟県" {% if def.tdufknmi == "新潟県" %} selected{% endif %}>新潟県</option>
+									   <option value="富山県" {% if def.tdufknmi == "富山県" %} selected{% endif %}>富山県</option>
+									   <option value="石川県" {% if def.tdufknmi == "石川県" %} selected{% endif %}>石川県</option>
+									   <option value="福井県" {% if def.tdufknmi == "福井県" %} selected{% endif %}>福井県</option>
+									   <option value="山梨県" {% if def.tdufknmi == "山梨県" %} selected{% endif %}>山梨県</option>
+									   <option value="長野県" {% if def.tdufknmi == "長野県" %} selected{% endif %}>長野県</option>
+									   <option value="岐阜県" {% if def.tdufknmi == "岐阜県" %} selected{% endif %}>岐阜県</option>
+									   <option value="静岡県" {% if def.tdufknmi == "静岡県" %} selected{% endif %}>静岡県</option>
+									   <option value="愛知県" {% if def.tdufknmi == "愛知県" %} selected{% endif %}>愛知県</option>
+									   <option value="三重県" {% if def.tdufknmi == "三重県" %} selected{% endif %}>三重県</option>
+									   <option value="滋賀県" {% if def.tdufknmi == "滋賀県" %} selected{% endif %}>滋賀県</option>
+									   <option value="京都府" {% if def.tdufknmi == "京都府" %} selected{% endif %}>京都府</option>
+									   <option value="大阪府" {% if def.tdufknmi == "大阪府" %} selected{% endif %}>大阪府</option>
+									   <option value="兵庫県" {% if def.tdufknmi == "兵庫県" %} selected{% endif %}>兵庫県</option>
+									   <option value="奈良県" {% if def.tdufknmi == "奈良県" %} selected{% endif %}>奈良県</option>
+									   <option value="和歌山県" {% if def.tdufknmi == "和歌山県" %} selected{% endif %}>和歌山県</option>
+									   <option value="鳥取県" {% if def.tdufknmi == "鳥取県" %} selected{% endif %}>鳥取県</option>
+									   <option value="島根県" {% if def.tdufknmi == "島根県" %} selected{% endif %}>島根県</option>
+									   <option value="岡山県" {% if def.tdufknmi == "岡山県" %} selected{% endif %}>岡山県</option>
+									   <option value="広島県" {% if def.tdufknmi == "広島県" %} selected{% endif %}>広島県</option>
+									   <option value="山口県" {% if def.tdufknmi == "山口県" %} selected{% endif %}>山口県</option>
+									   <option value="徳島県" {% if def.tdufknmi == "徳島県" %} selected{% endif %}>徳島県</option>
+									   <option value="香川県" {% if def.tdufknmi == "香川県" %} selected{% endif %}>香川県</option>
+									   <option value="愛媛県" {% if def.tdufknmi == "愛媛県" %} selected{% endif %}>愛媛県</option>
+									   <option value="高知県" {% if def.tdufknmi == "高知県" %} selected{% endif %}>高知県</option>
+									   <option value="福岡県" {% if def.tdufknmi == "福岡県" %} selected{% endif %}>福岡県</option>
+									   <option value="佐賀県" {% if def.tdufknmi == "佐賀県" %} selected{% endif %}>佐賀県</option>
+									   <option value="長崎県" {% if def.tdufknmi == "長崎県" %} selected{% endif %}>長崎県</option>
+									   <option value="熊本県" {% if def.tdufknmi == "熊本県" %} selected{% endif %}>熊本県</option>
+									   <option value="大分県" {% if def.tdufknmi == "大分県" %} selected{% endif %}>大分県</option>
+									   <option value="宮崎県" {% if def.tdufknmi == "宮崎県" %} selected{% endif %}>宮崎県</option>
+									   <option value="鹿児島県" {% if def.tdufknmi == "鹿児島県" %} selected{% endif %}>鹿児島県</option>
+									   <option value="沖縄県" {% if def.tdufknmi == "沖縄県" %} selected{% endif %}>沖縄県</option>
+									</select>
+								</td>
+								<td>
+									所在地1<input type="text" name="address1" id="address1"
+									value="{{shzicmi1|default_if_none:""}}{{current.shzicmi1|default_if_none:""}}" style="width: 100px;" />
+								</td>
+								<td>
+									所在地2<input type="text" name="address2" id="address2"
+									value="{{shzicmi2|default_if_none:""}}{{current.shzicmi2|default_if_none:""}}" style="width: 100px;" />
+								</td>
+								<td>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									土地面積<input type="text" name="tcMnsk2" id="tcMnsk2"
+									value="{{tcMnsk2|floatformat:"-2"|default_if_none:""}}" style="width: 100px;" />㎡
+								</td>
+								<td>
+									建物面積<input type="text" name="ttmnMnsk1" id="ttmnMnsk1"
+									value="{{ttmnMnsk1|floatformat:"-2"|default_if_none:""}}" style="width: 100px;" />㎡
+								</td>
+								<td>
+									建物専有面積<input type="text" name="snyuMnskSyuBbnMnsk2" id="snyuMnskSyuBbnMnsk2"
+									value="{{snyuMnskSyuBbnMnsk2|floatformat:"-2"|default_if_none:""}}" style="width: 100px;" />㎡
+								</td>
+							<!--
+							<tr>
+							</tr>
+							-->
+								<td align="left" valign="top">
+									<table class="class_tablecolor1" width="100%" border="0" cellspacing="1" cellpadding="5" bgcolor="#d1cec9">
+										<tr>
+											<td rowspan="" align="center"><input type="submit" name="submitButtonName" id="getdata" value="再　表　示" /></td>
+											<!-- <td rowspan="" align="center"><input type="submit" name="submitButtonName" value="確　　認" /></td> -->
+										</tr>
+										<!---
+										<tr>
+											<td align="center"><input type="submit" name="submitButtonName" value="物件詳細へ" /></td>
+											<td align="center"><input type="submit" name="submitButtonName" value="資料請求" /></td>
+										</tr>
+										-->
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+			<div style="width:900px; overflow-x:scroll;">
+			<table name="tbl" id ="tbl" style="border: 1px solid #ccc;" cellspacing="0" >
+				<thead id="tblthead">
+					<tr>
+					<td sort=物件番号><a href="../bkedit.html?bkID={{current.bkID|default_if_none:""}}" target="_blank">{{current.bkID|default_if_none:""}}</a></td>
+					<td sort=作成状況>{{current.sksijky|default_if_none:""}}</td>
+					<td sort=自社管理欄>{{bkdb.jshKnrrn|default_if_none:""}}</td>
+					<td sort=業者名>{{current.kiinni|default_if_none:""}}</td>
+					<td sort=代表電話番号>{{current.dihyodnwbngu|default_if_none:""}}</td>
+					<td sort=データ元>{{current.dataSource|default_if_none:""}}</td>
+					<td sort=広告転載区分>{{current.kukkTnsiKbn|default_if_none:""}}</td>
+					<td sort=売買賃貸区分>{{current.bbchntikbn|default_if_none:""}}</td>
+					<td sort=データ種類>{{current.dtsyuri|default_if_none:""}}</td>
+					<td sort=物件種目>{{current.bkknShmk|default_if_none:""}}</td>
+					<td sort=価格>{{current.kkkuCnryu|floatformat|default_if_none:""}}</td>
+					<td sort=所在地名1>{{current.shzicmi1|default_if_none:""}}</td>
+					<td sort=所在地名2>{{current.shzicmi2|default_if_none:""}}</td>
+					<td sort=所在地名3>{{current.shzicmi3|default_if_none:""}}</td>
+					<td sort=建物名>{{current.ttmnmi|default_if_none:""}}</td>
+					<td sort=部屋番号>{{current.hyBngu|default_if_none:""}}</td>
+					<td sort=建物面積1>{{current.ttmnMnsk1|default_if_none:""}}</td>
+					<td sort=専有面積>{{current.snyuMnskSyuBbnMnsk2|floatformat|default_if_none:""}}</td>
+					<td sort=建物構造>{{current.ttmnKuzu|default_if_none:""}}</td>
+					<td sort=築年月(西暦)>{{current.cknngtSirk|date:"Y/m/d H:i:s"}}</td>
+					<td sort=坪単価>{{current.tbTnk|floatformat|default_if_none:""}}</td>
+					<td sort=登記簿地目>{{current.tukbCmk|default_if_none:""}}</td>
+					<td sort=土地面積>{{current.tcMnsk2|floatformat|default_if_none:""}}</td>
+					<td sort=現況有姿分譲地>{{current.bnjyuTkcGnkyuYusBnjyuc|default_if_none:""}}</td>
+					<td sort=接道方向1>{{current.stduHuku1|default_if_none:""}}</td>
+					<td sort=接道方向2>{{current.stduHuku2|default_if_none:""}}</td>
+					<td sort=接道状況>{{current.stduJyukyu|default_if_none:""}}</td>
+					<td sort=用途地域(1)>{{current.yutCik1|default_if_none:""}}</td>
+					<td sort=備考1>{{current.bku1|default_if_none:""}}</td>
+					<td sort=備考2>{{current.bku2|default_if_none:""}}</td>
+					<td sort=確認年月日>{{current.kknnngp|date:"Y/m/d H:i:s"}}</td>
+					<td sort=変更年月日>{{current.hnknngp|date:"Y/m/d H:i:s"}}</td>
+					<td sort=更新年月日>{{current.ksnnngp|date:"Y/m/d H:i:s"}}</td>
+					<td sort=登録年月日>{{current.turknngp|date:"Y/m/d H:i:s"}}</td>
+					</tr>
+					<tr>
+					<th sort=物件番号>物件番号</th>
+					<th sort=作成状況>作成状況</th>
+					<th sort=自社管理欄>自社管理欄</th>
+					<th sort=業者名>業者名</th>
+					<th sort=代表電話番号>代表電話番号</th>
+					<th sort=データ元>データ元</th>
+					<th sort=広告転載区分>広告転載区分</th>
+					<th sort=売買賃貸区分>売買賃貸区分</th>
+					<th sort=データ種類>データ種類</th>
+					<th sort=物件種目>物件種目</th>
+					<th sort=価格>価格</th>
+					<th sort=所在地名1>所在地名1</th>
+					<th sort=所在地名2>所在地名2</th>
+					<th sort=所在地名3>所在地名3</th>
+					<th sort=建物名>建物名</th>
+					<th sort=部屋番号>部屋番号</th>
+					<th sort=建物面積1>建物面積1</th>
+					<th sort=専有面積>専有面積</th>
+					<th sort=建物構造>建物構造</th>
+					<th sort=築年月(西暦)>築年月(西暦)</th>
+					<th sort=坪単価>坪単価</th>
+					<th sort=登記簿地目>登記簿地目</th>
+					<th sort=土地面積>土地面積</th>
+					<th sort=現況有姿分譲地>現況有姿分譲地</th>
+					<th sort=接道方向1>接道方向1</th>
+					<th sort=接道方向2>接道方向2</th>
+					<th sort=接道状況>接道状況</th>
+					<th sort=用途地域(1)>用途地域(1)</th>
+					<th sort=備考1>備考1</th>
+					<th sort=備考2>備考2</th>
+					<th sort=確認年月日>確認年月日</th>
+					<th sort=変更年月日>変更年月日</th>
+					<th sort=更新年月日>更新年月日</th>
+					<th sort=登録年月日>登録年月日</th>
+					</tr>
+				</thead>
+				<tbody id="tbltbody">
+				</tbody>
+				<tfoot class="nav">
+					<tr>
+						<td colspan=8>
+							<div class="pagination"></div>
+							<div class="paginationTitle">Page</div>
+							<div class="selectPerPage"></div>
+							<div class="status"></div>
+						</td>
+					</tr>
+				</tfoot>
+
+			</table>
+			</div>
+		</td>
+	</tr>
+</table>
+</div>
+</body>
+
+</html>

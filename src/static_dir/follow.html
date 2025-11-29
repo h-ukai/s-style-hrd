@@ -1,0 +1,717 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html lang="ja" xml:lang="ja" xmlns="https://www.w3.org/1999/xhtml">
+    <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf8" />
+    <title>顧客フォロー状況</title>
+    <link href="/css/baselayout.css" type="text/css" rel="stylesheet" media="all" />
+    <!-- jquery UI のcss-->
+    <link href="/css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css"/>
+    <!-- jquery UI のcss-->
+    <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script><!-- jquery　本体-->
+    <script type="text/javascript"  src="/js/jquery-ui-1.8.16.custom.min.js"></script><!-- jquery-UI　本体-->
+    <script type="text/javascript" language="JavaScript" src="/js/follow.js"></script>
+    <script type="text/javascript" src="/js/jQueryMultiCheckbox.js"></script>
+    <link type="text/css" rel="stylesheet" href="/css/follow.css">
+    <script type="text/javascript" language="JavaScript" src="/js/jTPS_follow.js"></script>
+    <link type="text/css" rel="stylesheet" href="/css/jTPS_follow.css">
+    <link type="text/css" rel="stylesheet" href="/css/mark.css">
+
+<style>
+.ui-autocomplete-loading {
+	background: white url('/img/ui-anim_basic_16x16.gif') right center no-repeat;
+}
+.ui-autocomplete {
+    max-height: 300px;
+    width: auto;
+    overflow-x: hidden;
+    padding-right: 20px;
+}
+#jquery-ui-autocomplete label {
+    float: left;
+    margin-right: 0.5em;
+    color: black;
+    font-size: 13px;
+}
+</style>
+<script type="text/javascript">
+var urlvar;
+var list = null;
+urlvar = getUrlVars();
+var d   = document;
+//var ajaxURL = "https://localhost:8080/jsonservice";
+var ajaxURL = "https://s-style-hrd.appspot.com/jsonservice";
+//var ajaxareaURL = "https://localhost:8080/jsonservice";
+var ajaxareaURL = "https://s-style-hrd.appspot.com/jsonservice";
+var bkeditFile = "https://s-style-hrd.appspot.com/bkedit.html?bkID=";
+var followFile = "follow.html?memberID=";
+var set_memberID = urlvar['memberID'];
+var set_tantoID = "test222";
+// var set_tantoID = urlvar['memberID'];
+var set_action = urlvar['set_action'];
+var thingCheckedID;
+var flist = new Array("key", "済","アクション","表題","本文","予定日","予定終了日","タイムスタンプ");
+var slist = new Array("物件番号","作成状況","メモ","送信済","送信日時","自社管理欄","業者名","代表電話番号","データ元","広告転載区分","売買賃貸区分","物件種目","価格","所在地名1","所在地名2","所在地名3","建物名","部屋番号","建物面積1","専有面積","間取タイプ（1）","間取部屋数（1）","建物構造","築年月（西暦）","坪単価","登記簿地目","土地面積","現況有姿分譲地","接道方向1","接道方向2","接道状況","用途地域（1）","備考1","備考2","確認年月日","変更年月日","更新年月日","登録年月日");
+var mlist = new Array("メンバーID", "氏名","電話","FAX");
+var app_list = new Array("自動検索","TEL","要フォロー","新規","FAX","条件確認","連絡", "訪問","案内","手渡し","検索結果","相談","商談","報告","打ち合わせ","査定報告","調査報告","媒介契約","契約","決済","ローン相談","送付依頼","重説");
+var act_list = new Array("資料請求","問い合わせ","条件変更","見学希望","検討中","オープンハウス来場","住所変更","相談","他社にて契約","辞退","みあわせ","物件確認","商談中","売却希望","相談会来場","場所が知りたい","NET資料請求","査定について","契約について","決済について","ローンについて","休止","緊急事態","クレーム","買い付け証明","売却条件","買付条件","一覧資料請求");
+var reading_listf_flg = false;
+var reading_lists_flg = false;
+var reading_listm_flg = false;
+var reading_calendar_flg = false;
+var reading_still_flg = false;
+
+$(document).ready(function(){
+	if (! set_memberID ){
+		set_memberID = $("#userID").val();
+	}
+	if (set_action != "Search") {
+		// フォロー一覧を表示
+		FollowList (set_memberID);
+	}
+	else {
+		// 検索画面を表示
+		MemberList (set_tantoID,urlvar['action']);
+	}
+
+	$("#trader_id").autocomplete({
+		source: function(request, response) {
+			$.ajax({
+				url: ajaxURL ,
+				dataType: "jsonp",
+				data: {
+					com: "getmemID",
+					memID: request.term
+				},
+				success: function(data) {
+					response($.map(data, function(item) {
+						return {
+							label: item['メンバーID'] + ' (' + item['氏名'] + ')' + item['サイト名'],
+							value: item['メンバーID'],
+							id: item['メンバーID'],
+							tel: item['電話'],
+							name:item['氏名'],
+							yomi:item['読み仮名'],
+							site:item['サイト名'],
+							mail:item['メールアドレス']
+						}
+					}));
+				}
+			});
+		},
+		width: 200,
+		minChars: 5,
+		delay:1000,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+		select: function(ev, ui) {
+			
+			// 選択項目の一覧を取得
+			$("#trader_fullname").html(ui.item.name);
+			$("#site").html(ui.item.site);
+			$("#trader_id").val(ui.item.id);
+			$("#memberID").val(ui.item.id);
+			$("#trader_name").val(ui.item.yomi);
+			$("#trader_tel").val(ui.item.tel);
+			$("#trader_mail").val(ui.item.mail);
+//			FollowList (ui.item.id);
+			goloc(GetFileName(window.location.href),'')
+		}
+    });
+    $("#trader_name").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: ajaxURL ,
+                dataType: "jsonp",
+                data: {
+                    com: "getmemName",
+                    search_key: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label: item['読み仮名'] + ' ' + item['氏名'] + ' (' + item['電話'] + ')' + item['サイト名'],
+                            value: item['読み仮名'],
+                            id: item['メンバーID'],
+                            tel: item['電話'],
+                            name:item['氏名'],
+                            yomi:item['読み仮名'],
+                            site:item['サイト名'],
+                            mail:item['メールアドレス']
+                        }
+                    }));
+                 }
+             });
+         },
+        width: 200,
+		minChars: 5,
+		delay:1000,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+		select: function(ev, ui) {
+			// 選択項目の一覧を取得
+			$("#trader_fullname").html(ui.item.name);
+			$("#site").html(ui.item.site);
+		    $("#trader_id").val(ui.item.id);
+		    $("#memberID").val(ui.item.id);
+		    $("#trader_name").val(ui.item.yomi);
+		    $("#trader_tel").val(ui.item.tel);
+            $("#trader_mail").val(ui.item.mail);
+//			FollowList (ui.item.id);
+			goloc(GetFileName(window.location.href),'')
+		}
+    });
+    $("#trader_tel").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: ajaxURL ,
+                dataType: "jsonp",
+                data: {
+                    com: "getmemTel",
+                    memTel: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label: item['電話']+ ' (' + item['氏名'] + ')' + item['サイト名'],
+                            value: item['電話'],
+                            id: item['メンバーID'],
+                            tel: item['電話'],
+                            name:item['氏名'],
+                            yomi:item['読み仮名'],
+                            site:item['サイト名'],
+                            mail:item['メールアドレス']
+                        }
+                    }));
+                 }
+             });
+         },
+        width: 200,
+		minChars: 5,
+		delay:1000,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+		select: function(ev, ui) {
+			// 選択項目の一覧を取得
+        	$("#trader_fullname").html(ui.item.name);
+	        $("#site").html(ui.item.site);
+            $("#trader_id").val(ui.item.id);
+		    $("#memberID").val(ui.item.id);
+            $("#trader_name").val(ui.item.yomi);
+            $("#trader_tel").val(ui.item.tel);
+            $("#trader_mail").val(ui.item.mail);
+//			FollowList (ui.item.id);
+			goloc(GetFileName(window.location.href),'')
+		}
+    });
+
+    $("#trader_mail").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: ajaxURL ,
+                dataType: "jsonp",
+                data: {
+                    com: "getmemmail",
+                    mail: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label: item['メールアドレス']+ ' (' + item['氏名'] + ')' + item['サイト名'],
+                            value: item['メールアドレス'],
+                            id: item['メンバーID'],
+                            tel: item['電話'],
+                            name:item['氏名'],
+                            yomi:item['読み仮名'],
+                            site:item['サイト名'],
+                            mail:item['メールアドレス']
+                        }
+                    }));
+                 }
+             });
+         },
+        width: 200,
+		minChars: 5,
+		delay:1000,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+		select: function(ev, ui) {
+			// 選択項目の一覧を取得
+        	$("#trader_fullname").html(ui.item.name);
+	        $("#site").html(ui.item.site);
+            $("#trader_id").val(ui.item.id);
+		    $("#memberID").val(ui.item.id);
+            $("#trader_name").val(ui.item.yomi);
+            $("#trader_tel").val(ui.item.tel);
+            $("#trader_mail").val(ui.item.mail);
+//			FollowList (ui.item.id);
+			goloc(GetFileName(window.location.href),'')
+		}
+    });
+
+	// カレンダーを表示
+	CalList(set_tantoID);
+	// 未フォローを表示
+	StillList(set_tantoID);
+	
+
+//	$("#subject15").click(function(){ $("#dialog1").dialog("open"); });
+//	$("#button_test").click(function(){ $("#dialog1").dialog("open"); });
+
+});
+function getUrlVars() {
+    var vars = [], hash; 
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&'); 
+    for(var i = 0; i < hashes.length; i++) { 
+        hash = hashes[i].split('='); 
+        vars.push(hash[0]); 
+        if (hash[1]){
+            var str1 = hash[1]
+            vars[hash[0]] = str1.replace("#", "");
+        }
+    } 
+    return vars; 
+}
+function goloc(locurl,action){
+    var hashes = GetFileName(window.location.href);
+    var locfile = GetFileName(locurl);
+    if (locurl==hashes){
+        if (hashes=='follow.html'){
+            if (action != "Search"){
+                FollowList ($("#trader_id").val());
+            }
+            else{
+                MemberList (set_tantoID,urlvar['action']);
+            }
+        }
+    }
+    document.location=locurl+"?memberID="+$("#trader_id").val()
+}
+function GetFileName(file_url){
+    file_url = file_url.substring(file_url.lastIndexOf("/")+1,file_url.length)
+    file_url = file_url.substring(0,file_url.indexOf("？"));
+    return file_url;
+}
+function selectgo(obj){
+  if (obj.val() != 0){
+    href = obj.val();
+    window.open(href,'_blank')
+//    document.location.href = href+"&target='_blank'";
+//    location.href = href + "target=_";
+  }
+}
+
+function getExplicitOriginalTarget( _event ) {
+    return document.activeElement || _event.explicitOriginalTarget;
+}
+function ModalDisplayTextarea (com, key, sub_key, id) {
+		
+	$("#modalSpace").hide();
+	$("#glayLayer").show();
+	if (com == "addeditfol") {
+		$("#overTextareaLayer").show().html($("#modalTextarea").html()).css({
+			top:$("#div_flist").offset().top,
+			left:($("#div_flist").offset().left + $("#div_flist").width) - $(this).width
+		});
+	}
+	else if (com == "addeditBKlist") {
+		$("#overTextareaLayer").show().html($("#modalTextarea").html()).css({
+			top:$("#div_slist").offset().top,
+			left:($("#div_slist").offset().left + $("#div_slist").width) - $(this).width
+		});
+	}
+	var objtoedit = document.getElementById(id);
+	$("#overTextareaLayer").val(objtoedit.innerHTML);
+	$("#overTextareaLayer").focus();
+	var registList = new Array();
+	var timeOut = 30;
+	var time_id;
+	time_id = setTimeout(function() {
+		registList = ModalTextareaUpdate (com, key, sub_key, $("#overTextareaLayer").val(), id, registList, time_id);
+	}, timeOut * 1000);
+	
+	$("#glayLayer").click(function(){
+		registList = ModalTextareaUpdate (com, key, sub_key, $("#overTextareaLayer").val(), id, registList, time_id);
+	});
+	$("#overTextareaLayer").dblclick(function(){
+		registList = ModalTextareaUpdate (com, key, sub_key, $("#overTextareaLayer").val(), id, registList, time_id);
+	});
+	$(window).keydown(function(e){
+		if (e.keyCode == 27) {
+			clearTimeout(time_id);
+			$("#glayLayer").hide();
+			$("#overTextareaLayer").hide();
+		}
+	});
+//	if($.browser.msie && $.browser.version<7){  //表示位置の設定を疑似的にposition:fixedにするIE用の設定
+//		$(window).scroll(function(){
+//			  $("#glayLayer").get(0).style.setExpression("top","$(document).scrollTop()+'px'");
+//			  $("#overTextareaLayer").get(0).style.setExpression("top","($(document).scrollTop() + $(window).height()/2)+'px'");
+//		});
+//	}
+	return false;
+}
+function ModalTextareaUpdate (com, key, sub_key, val, id, registListTemp, time_id) {
+	if (jQuery.inArray(id, registListTemp) < 0) {
+		if (document.getElementById(id).innerHTML != val) {
+			if (com == "addeditfol") {
+				FollowBody (com, key, val, id);
+			}
+			else if (com == "addeditBKlist") {
+				BkMemo (com, key, sub_key, val, id);
+			}
+		}
+		$("#glayLayer").hide();
+		$("#overTextareaLayer").hide();
+		registListTemp.push(id)
+		clearTimeout(time_id);
+	}
+	return (registListTemp);
+}
+function ModalDisplayText (com, key, spanId, id, app_list, act_list) {
+		
+	$("#modalSpace").hide();
+	$("#glayLayer").show();
+	if (com == "addeditfol") {
+		if (
+			key == "subject" ||
+			key == "reservation" ||
+			key == "reservationend"
+		) {
+			$("#overTextLayer").show().html($("#modalText").html()).css({
+				top:$("#"+id).offset().top,
+				left:$("#"+id).offset().left
+			});
+		}
+		else {
+			$("#overTextLayer").show().html($("#modalText").html()).css({
+				top:$("#"+spanId).offset().top,
+				left:$("#"+spanId).offset().left
+			});
+		}
+	}
+	else if (com == "addeditBKlist") {
+		$("#overTextLayer").show().html($("#modalText").html()).css({
+			top:$("#"+id).offset().top,
+			left:$("#"+id).offset().left
+		});
+	}
+	var objtoedit = document.getElementById(id);
+	$("#overTextLayer").val(objtoedit.innerHTML);
+	$("#overTextLayer").focus();
+	var registList = new Array();
+	var timeOut = 30;
+	var time_id;
+	
+	time_id = setTimeout(function() {
+		registList = ModalTextUpdate (com, key, $("#overTextLayer").val(), spanId, id, app_list, act_list, registList, time_id);
+	}, timeOut * 1000);
+	
+	$("#glayLayer").click(function(){
+		registList = ModalTextUpdate (com, key, $("#overTextLayer").val(), spanId, id, app_list, act_list, registList, time_id);
+	});
+	$("#overTextLayer").dblclick(function(){
+		registList = ModalTextUpdate (com, key, $("#overTextLayer").val(), spanId, id, app_list, act_list, registList, time_id);
+	});
+	$(window).keydown(function(e){
+		if (e.keyCode == 27) {
+			clearTimeout(time_id);
+			$("#glayLayer").hide();
+			$("#overTextLayer").hide();
+		}
+		else if (e.keyCode == 13 || e.keyCode == 108) {
+			registList = ModalTextUpdate (com, key, $("#overTextLayer").val(), spanId, id, app_list, act_list, registList, time_id);
+		}
+	});
+	return false;
+}
+function ModalTextUpdate (com, key, val, spanId, id, app_list, act_list, registListTemp, time_id) {
+	if (jQuery.inArray(id, registListTemp) < 0) {
+		if (document.getElementById(id).innerHTML != val) {
+			if (com == "addeditfol") {
+				if (key == "subject") {
+					FollowSubject (com, spanId, val, id, set_tantoID);
+				}
+				else if (key == "reservation") {
+					FollowReservation (com, spanId, val, id, set_tantoID);
+				}
+				else if (key == "reservationend") {
+					FollowReservationend (com, spanId, val, id, set_tantoID);
+				}
+				else {
+					FollowKindname (com, val, spanId, id, set_tantoID, app_list, act_list);
+				}
+			}
+			else if (com == "addeditBKlist") {
+				BKSenddate (com, key, spanId, val, id, app_list);
+			}
+		}
+		$("#glayLayer").hide();
+		$("#overTextLayer").hide();
+		registListTemp.push(id)
+		clearTimeout(time_id);
+	}
+	return (registListTemp);
+}
+function ModalFollowInput (key) {
+	// 初期化
+	$("#overFollowInputLayer").empty();
+		
+	$("#modalSpace").hide();
+	$("#glayLayer").show();
+	$("#overFollowInputLayer").show().append($("<table/>").attr("id","tblmf").attr("border","0").append($("<tr/>").attr("id","trmf0")));
+		$("#trmf0").append($("<td/>").attr("colspan","4").attr("id","tdmf0").attr("align","right"));
+		$("#tdmf0").append($("<img>").attr("id","imgmf0").attr("src","/img/close_mark.png").attr("height", "30").attr("width", "30").attr("border", "0"));
+		
+		$("#tblmf").append($("<tr/>").attr("id","trmf1"));
+		$("#trmf1").append($("<td/>").attr("align","right").text("済み"));
+		$("#trmf1").append($("<td/>").attr("colspan","3").append("<input id=\"checkFollowDone\" type=\"checkbox\" value=\"1\">"));
+		
+		$("#tblmf").append($("<tr/>").attr("id","trmf2"));
+		$("#trmf2").append($("<td/>").attr("align","right").text("アクション"));
+		$("#trmf2").append($("<td/>").append("<input id=\"inputFollowKindname\" type=\"text\" size=\"15\"><br />"));
+		$("#trmf2").append($("<td/>").attr("align","right").text("表題"));
+		$("#trmf2").append($("<td/>").append("<input id=\"inputFollowSubject\" type=\"text\" size=\"15\">"));
+		
+		$("#tblmf").append($("<tr/>").attr("id","trmf3"));
+		$("#trmf3").append($("<td/>").attr("align","right").text("メモ"));
+		$("#trmf3").append($("<td/>").attr("colspan","3").append("<textarea id=\"inputFollowBody\" size=\"20\" cols=\"25\" rows=\"3\"></textarea>"));
+		
+		$("#tblmf").append($("<tr/>").attr("id","trmf4"));
+		$("#trmf4").append($("<td/>").attr("align","right").text("予定日"));
+		$("#trmf4").append($("<td/>").attr("colspan","3").append("<input id=\"inputFollowReservation\" type=\"text\" size=\"20\">"));
+		
+		$("#tblmf").append($("<tr/>").attr("id","trmf5"));
+		$("#trmf5").append($("<td/>").attr("align","right").text("予定終了日"));
+		$("#trmf5").append($("<td/>").attr("colspan","3").append("<input id=\"inputFollowReservationend\" type=\"text\" size=\"20\">"));
+		
+		$("#tblmf").append($("<tr/>").attr("id","trmf6"));
+		$("#trmf6").append($("<td/>").attr("id","tdmf6").attr("colspan","4").attr("align","center"));
+		$("#tdmf6").append($("<button>").attr("type","button")
+			.attr("onClick", "FollowInsert(document.getElementById('checkFollowDone').checked, document.getElementById('inputFollowKindname').value, document.getElementById('inputFollowSubject').value, document.getElementById('inputFollowBody').value, document.getElementById('inputFollowReservation').value, document.getElementById('inputFollowReservationend').value,'');").text("保存"));
+		$("#tdmf6").append($("<button>").attr("type","button")
+		    .attr("onClick", "FollowInsert(document.getElementById('checkFollowDone').checked, document.getElementById('inputFollowKindname').value, document.getElementById('inputFollowSubject').value, document.getElementById('inputFollowBody').value, document.getElementById('inputFollowReservation').value, document.getElementById('inputFollowReservationend').value,'member');").text("メール送信"));
+		$("#tdmf6").append($("<button>").attr("type","button")
+		    .attr("onClick", "FollowInsert(document.getElementById('checkFollowDone').checked, document.getElementById('inputFollowKindname').value, document.getElementById('inputFollowSubject').value, document.getElementById('inputFollowBody').value, document.getElementById('inputFollowReservation').value, document.getElementById('inputFollowReservationend').value,'tanto');").text("担当者にメール送信"));
+	$("#overFollowInputLayer").css({
+		top:$("#div_flist").offset().top,
+		left:($("#div_flist").offset().left + $("#div_flist").width) - $(this).width
+	});
+	$("#inputFollowID").focus();
+	$("#imgmf0").hover(
+		function(){
+			$(this).css("cursor","pointer"); //---カーソルを指に
+		},
+		function(){
+			$(this).css("cursor","default"); //---カーソルを戻す
+		}
+	);
+	$("#imgmf0").click(function(){
+		$("#glayLayer").hide();
+		$("#overFollowInputLayer").hide();
+	});
+	$("#glayLayer").click(function(){
+		$("#glayLayer").hide();
+		$("#overFollowInputLayer").hide();
+	});
+	$(window).keydown(function(e){
+		if (e.keyCode == 27) {
+			$("#glayLayer").hide();
+			$("#overFollowInputLayer").hide();
+		}
+	});
+	return false;
+}
+function ModalThingInput (key) {
+	// 初期化
+	$("#overThingInputLayer").empty();
+		
+	$("#modalSpace").hide();
+	$("#glayLayer").show();
+	$("#overThingInputLayer").show().append($("<table/>").attr("id","tblmt").attr("border","0").append($("<tr/>").attr("id","trmt0")));
+		$("#trmt0").append($("<td/>").attr("colspan","2").attr("id","tdmt0").attr("align","right"));
+		$("#tdmt0").append($("<img>").attr("id","imgmt0").attr("src","/img/close_mark.png").attr("height", "30").attr("width", "30").attr("border", "0"));
+		
+		$("#tblmt").append($("<tr/>").attr("id","trmt1"));
+		$("#trmt1").append($("<td/>").attr("align","right").text("物件番号"));
+		$("#trmt1").append($("<td/>").append("<input id=\"inputThingID\" type=\"text\" size=\"13\">"));
+		
+		$("#tblmt").append($("<tr/>").attr("id","trmt2"));
+		$("#trmt2").append($("<td/>").attr("align","right").text("メモ"));
+		$("#trmt2").append($("<td/>").append("<textarea id=\"inputThingMemo\" cols=\"25\" rows=\"3\"></textarea>"));
+		
+		$("#tblmt").append($("<tr/>").attr("id","trmt3"));
+		$("#trmt3").append($("<td/>").attr("id","tdmt3").attr("colspan","2").attr("align","center"));
+		$("#tdmt3").append($("<button>").attr("type","button").attr("onClick", "BkInsert(set_key, document.getElementById('inputThingID').value, document.getElementById('inputThingMemo').value, false);").text("保存"));
+	$("#overThingInputLayer").css({
+		top:$("#div_slist").offset().top,
+		left:($("#div_slist").offset().left + $("#div_slist").width) - $(this).width
+	});
+	$("#inputThingID").focus();
+	$("#imgmt0").hover(
+		function(){
+			$(this).css("cursor","pointer"); //---カーソルを指に
+		},
+		function(){
+			$(this).css("cursor","default"); //---カーソルを戻す
+		}
+	);
+	$("#imgmt0").click(function(){
+		$("#glayLayer").hide();
+		$("#overThingInputLayer").hide();
+	});
+	$("#glayLayer").click(function(){
+		$("#glayLayer").hide();
+		$("#overThingInputLayer").hide();
+	});
+	$(window).keydown(function(e){
+		if (e.keyCode == 27) {
+			$("#glayLayer").hide();
+			$("#overThingInputLayer").hide();
+		}
+	});
+	return false;
+}
+</script>
+
+<style type="text/css">
+         #dialog {
+            width:375px; height:203px;
+            padding:10px;
+            background-color:#fff;
+         }
+		 .ui-dialog-titlebar {}
+</style>
+
+</head>
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0">
+<div class="wrapper">
+<!--header-->
+<div class="header">顧客フォロー状況 s-style hon てすと用アカウント 
+<a href="/login.html?logoff=true&corp_name=s-style&branch_name=hon&sitename=backoffice&togo=/follow/s-style/hon/backoffice/follow.html">ログオフ</a>
+<select name="selectName" size="1" onchange="window.open($(this).val(),'_balank')">
+<option selected="selected" value=0 >メニュー</option>
+<option value="/bkedit.html">物件登録</option>
+<option value="/csvupload/bkdata.html">レインズアップロード</option>
+<option value="">自動検索</option>
+<option value="/bkjoukyoulist.html">資料作成状況</option>
+<option value="/bkdchk.html">重複チェック</option>
+<option value="/memberSearchandMail/s-style/hon/backoffice/memberSearchandMail.html">顧客検索・顧客グループ・メール一斉送信</option>
+<option value="/addresslist.html">アドレスリスト（小学校区）作成・編集</option>
+<option value="/csvupload/addressset.html">アドレスリスト（小学校区）アップロード</option>
+</select>
+</div>
+<!--header End-->
+<form action="" method="post" name="frmbksearch" id="frmbksearch">
+<input type="hidden" name="usurID" id = "userID" value="test222"/>
+<input type="hidden" name="usurkey" id ="usurkey" value="agdhbWFuZWRichsLEgZtZW1iZXIiD3Mtc3R5bGUvdGVzdDIyMgw"/>
+<input type="hidden" name="key" id = "key" value=""/>
+<input type="hidden" name="page" id= "page" value=""/>
+<div class="container">
+<div class="contents">
+
+<!-- ここから本文記入 -->
+<ul>
+<!--contents-head01-->
+<li class="contents-head01"><span id="site">backoffice</span> <span id="trader_fullname">てすと用アカウント</span><br /> ID:<input type="text" name="trader_id" id="trader_id" size="5" value="test222"/> yomi:<input type="text" name="trader_name" id="trader_name" size="16" value="てすとようあかうんと"/> tel:<input type="text" name="trader_tel" id="trader_tel" size="13" value=""/> mail:<input type="text" name="trader_mail" id="trader_mail" size="20" value=""/></li>
+<!--contents-head01 END-->
+<!--contents-head02-->
+<li class="contents-head02"><button name="buttonName" type="button" onclick="goloc('/follow/s-style/hon/backoffice/follow.html','')">フォロー状況</button><button name="buttonName" type="button" onclick="goloc('/memberedit/s-style/hon/backoffice/memberedit.html','')">顧客台帳</button><button name="buttonName" type="button" onclick="goloc('/bksearch/s-style/hon/backoffice/bksearch.html','')">検索条件</button><button name="buttonName" type="button" onclick="document.location='/memberedit/s-style/hon/backoffice/memberedit.html'" >新規登録</button><button type="button" onclick="ModalFollowInput(set_key);">新規フォロー</button></li>
+<!--contents-head02 END-->
+</ul>
+
+<!--follow01-->
+
+<div id="div_flist" align="center" style="width: 95%; overflow-x: scroll; margin: 10px;">
+    <table id="tblf" border="0" cellspacing="1" cellpadding="5" bgcolor="#8d8268">
+    	<thead id="tblfhead"></thead>
+    	<tbody id="tblfbody"></tbody>
+    	<tfoot class="nav"></tfoot>
+    </table>
+</div>
+<!--follow01 End-->
+<!--follow01-->
+<div id="div_slist" align="center" style="width: 95%; overflow-x: scroll; margin: 10px;">
+    <table id="tbls" border="0" cellspacing="1" cellpadding="5" bgcolor="#8d8268">
+	<thead id="tblshead"></thead>
+	<tbody id="tblsbody"></tbody>
+	<tfoot class="nav"></tfoot>
+    </table>
+</div>
+<div id="btn_slist">
+    <button type="button" onclick="ModalThingInput(set_key);">新規入力</button>&nbsp;&nbsp;
+    <button type="button" onclick="ThingDelete(set_key);">チェックを削除</button>
+</div>
+<!--follow02 End-->
+<!--follow03-->
+<div id="div_mlist" class="follow03">
+    <table width="95%" border="0" cellpadding="5" cellspacing="1" bgcolor="#8d8268" id="tblm">
+    	<thead id="tblmhead">
+    	</thead>
+    	<tbody id="tblmbody"></tbody>
+    	<tfoot class="nav">
+		<tr>
+			<td colspan=8>
+				<div class="pagination"></div>
+				<div class="paginationTitle">Page</div>
+				<div class="selectPerPage"></div>
+				<div class="status"></div>
+			</td>
+		</tr>
+		</tfoot>
+    </table>
+</div>
+<!--follow03 End-->
+</div>
+<div id="modalSpace" style="display: none;">
+    <div id='modalFollowInputLayer'></div>
+    <div id='modalThingInputLayer'></div>
+    <textarea id="modalTextarea" cols=25 rows=6></textarea>
+</div>
+<div id='glayLayer'></div>
+<div id='overFollowInputLayer'></div>
+<div id='overThingInputLayer'></div>
+<textarea id='overTextareaLayer'>
+</textarea>
+<input type="text" id="overTextLayer" size="17">
+<!--contents END-->
+
+<!--leftcontent-->
+<div class="leftcontent">
+<div id="calendar" class="calendar">
+  <table id="tblc" border="0" cellspacing="1" cellpadding="5" bgcolor="#8d8268">
+    <tbody id="tblcbody"></tbody>
+  </table>
+</div>
+</div>
+<!--leftcontent End-->
+<p class="container-clear">&nbsp;</p>
+</div><!-- // container END -->
+<!--rightcontent-->
+<div class="rightcontent">
+<div class="title">
+未フォロー
+</div>
+<div id="still" class="content">
+</div>
+</div>
+<!--rightcontent End-->
+<div class="footer">Database</div>
+</div><!--wrapper End-->
+</body>
+</html>

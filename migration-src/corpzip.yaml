@@ -1,0 +1,38 @@
+# Python 3.11 では bulkloader は廃止されました
+# データインポート/エクスポートは Cloud Datastore Admin または gcloud コマンドを使用します
+
+# 移行方法:
+# 1. CSVデータをDatastoreにインポート:
+#    - Cloud Console の Datastore Admin UI を使用
+#    - または、Python スクリプトで google.cloud.ndb を使用してインポート
+#
+# 2. Python スクリプト例:
+#    from google.cloud import ndb
+#    import csv
+#
+#    client = ndb.Client()
+#    with client.context():
+#        with open('data.csv', 'r', encoding='utf-8') as f:
+#            reader = csv.DictReader(f)
+#            for row in reader:
+#                entity = ZipList(
+#                    id=row['zipcode'],
+#                    cityno=row['cityno'],
+#                    # ... (他のプロパティ)
+#                )
+#                entity.put()
+#
+# 3. データエクスポート:
+#    gcloud datastore export gs://[BUCKET_NAME]/[EXPORT_FOLDER] --kinds="ziplist"
+
+# 旧 bulkloader 設定（参考）:
+# - kind: ziplist
+# - connector: csv
+# - encoding: utf-8
+# - columns: cityno, companykana, company, pref, city, town, address, zipcode, oldzip, ...
+# - __key__: zipcode
+
+# 注意:
+# - bulkloader は完全廃止のため、このファイルは使用されません
+# - 既存データの移行には Cloud Console または gcloud コマンドを使用
+# - 新規データ投入には専用のPythonスクリプトを作成してください

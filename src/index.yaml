@@ -1,0 +1,633 @@
+indexes:
+
+# bkdata
+
+# bksearch
+
+- kind: BKdata
+  properties:
+  - name: searchkeys
+  - name: hnknngp
+
+- kind: BKdata
+  properties:
+  - name: searchkeys
+  - name: kknnngp
+
+- kind: BKdata
+  properties:
+  - name: searchkeys
+  - name: ksnnngp
+
+- kind: BKdata
+  properties:
+  - name: searchkeys
+  - name: turknngp
+  
+#duplicationcheck
+
+- kind: BKdata
+  properties:
+  - name: tcMnsk2
+  - name: kknnngp
+
+- kind: BKdata
+  properties:
+  - name: bkknShbt
+  - name: dtsyuri
+  - name: duplicationcheck
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: tcMnsk2
+  - name: kknnngp
+
+- kind: BKdata
+  properties:
+  - name: bkknShbt
+  - name: bknbng
+  - name: dtsyuri
+  - name: hyBngu
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: shziki
+  - name: duplicationcheck
+
+- kind: BKdata
+  properties:
+  - name: bkknShbt
+  - name: bknbng
+  - name: dtsyuri
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: tcMnsk2
+  - name: duplicationcheck
+
+- kind: BKdata
+  properties:
+  - name: bkknShbt
+  - name: bknbng
+  - name: dtsyuri
+  - name: mdrHysu1
+  - name: mdrTyp1
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: shziki
+  - name: snyuMnskSyuBbnMnsk2
+  - name: duplicationcheck
+
+- kind: BKdata
+  properties:
+  - name: bknbng
+  - name: dtsyuri
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: duplicationcheck
+
+- kind: BKdata
+  properties:
+  - name: bkknShbt
+  - name: bknbng
+  - name: dtsyuri
+  - name: hyBngu
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: shziki
+  - name: duplicationcheck
+  - name: kknnngp
+    direction: asc
+
+- kind: BKdata
+  properties:
+  - name: bkknShbt
+  - name: bknbng
+  - name: dtsyuri
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: tcMnsk2
+  - name: duplicationcheck
+  - name: kknnngp
+    direction: asc
+
+- kind: BKdata
+  properties:
+  - name: bkknShbt
+  - name: bknbng
+  - name: dtsyuri
+  - name: mdrHysu1
+  - name: mdrTyp1
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: shziki
+  - name: snyuMnskSyuBbnMnsk2
+  - name: duplicationcheck
+  - name: kknnngp
+    direction: asc
+
+- kind: BKdata
+  properties:
+  - name: bknbng
+  - name: dtsyuri
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: duplicationcheck
+  - name: kknnngp
+    direction: asc
+
+
+#bkdchk json
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: tdufknmi
+  - name: snyuMnskSyuBbnMnsk2
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: tdufknmi
+  - name: tcMnsk2
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: tdufknmi
+  - name: ttmnMnsk1
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: shzicmi1
+  - name: tdufknmi
+  - name: snyuMnskSyuBbnMnsk2
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: shzicmi1
+  - name: tdufknmi
+  - name: tcMnsk2
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: shzicmi1
+  - name: tdufknmi
+  - name: ttmnMnsk1
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: tdufknmi
+  - name: snyuMnskSyuBbnMnsk2
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: tdufknmi
+  - name: tcMnsk2
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: tdufknmi
+  - name: ttmnMnsk1
+
+#bkdataopenshow json
+
+- kind: BKdata
+  properties:
+  - name: sksijky
+  - name: kknnngp
+    direction: desc
+
+#bkdata bklist show
+
+- kind: BKdata
+  properties:
+  - name: icons
+  - name: mtngflg
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: webknskflg
+  - name: hykpint
+    direction: desc
+
+- kind: BKdata
+  properties:
+  - name: bkknShbt
+  - name: mtngflg
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: webknskflg
+  - name: icons
+  - name: hykpint
+    direction: desc
+
+#blob
+
+- kind: Blob
+  properties:
+  - name: Branch_Key
+  - name: CorpOrg_key
+  - name: bkID
+  - name: blobNo
+
+- kind: Blob
+  properties:
+  - name: Branch_Key
+  - name: CorpOrg_key
+  - name: bkID
+  - name: blobNo
+    direction: desc
+
+- kind: Blob
+  properties:
+  - name: Branch_Key
+  - name: CorpOrg_key
+  - name: bkID
+  - name: media
+  - name: pos
+
+- kind: Blob
+  properties:
+  - name: Branch_Key
+  - name: CorpOrg_key
+  - name: bkID
+  - name: pos
+
+- kind: Blob
+  properties:
+  - name: Branch_Key
+  - name: CorpOrg_key
+  - name: bkID
+  - name: webpos
+  - name: blobNo
+
+- kind: Blob
+  properties:
+  - name: CorpOrg_key
+  - name: bkID
+  - name: media
+  - name: pos
+
+- kind: Blob
+  properties:
+  - name: CorpOrg_key
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: bkID
+  - name: media
+  - name: pos
+
+- kind: Blob
+  properties:
+  - name: CorpOrg_key
+  - name: ttmnmi
+  - name: bkID
+  - name: media
+  - name: pos
+
+- kind: Contact
+  properties:
+  - name: user
+  - name: name
+
+- kind: Message
+  properties:
+  - name: corp
+  - name: kill
+  - name: subject
+
+- kind: Message
+  properties:
+  - name: corp
+  - name: subject
+
+- kind: Station
+  properties:
+  - name: line_name
+  - name: line_sort
+
+- kind: Station
+  properties:
+  - name: line_name
+  - name: pref_cd
+  - name: station_name
+
+- kind: Station
+  properties:
+  - name: line_name
+  - name: pref_cd
+  - name: station_name
+  - name: station_sort
+
+- kind: Station
+  properties:
+  - name: line_name
+  - name: pref_cd
+  - name: station_sort
+
+- kind: Station
+  properties:
+  - name: pref_cd
+  - name: line_name
+
+- kind: Station
+  properties:
+  - name: pref_cd
+  - name: line_name
+  - name: line_sort
+
+- kind: Station
+  properties:
+  - name: pref_cd
+  - name: line_name
+  - name: station_sort
+
+- kind: Ziplist
+  properties:
+  - name: pref
+  - name: city
+
+- kind: Ziplist
+  properties:
+  - name: pref
+  - name: city
+  - name: town
+
+- kind: address1
+  properties:
+  - name: todofukenmei
+  - name: shikutyosonmei
+
+- kind: address2
+  properties:
+  - name: todofukenmei
+  - name: ooazatyotyome
+
+- kind: address2
+  properties:
+  - name: todofukenmei
+  - name: shikutyosonmei
+
+- kind: address2
+  properties:
+  - name: todofukenmei
+  - name: shikutyosonmei
+  - name: ooazatyotyome
+
+- kind: address2
+  properties:
+  - name: shikutyosonmei
+  - name: todofukenmei
+  - name: ooazatyotyome
+
+
+- kind: bksearchaddresslist
+  properties:
+  - name: co
+  - name: division
+  - name: name
+
+- kind: bksearchaddresslist
+  properties:
+  - name: co
+  - name: name
+
+- kind: bksearchaddresslist
+  properties:
+  - name: division
+  - name: division
+
+- kind: bksearchaddresslist
+  properties:
+  - name: division
+  - name: division=
+  - name: name
+
+- kind: bksearchaddresslist
+  properties:
+  - name: division
+  - name: name
+
+- kind: bksearchaddresslist
+  properties:
+  - name: division=
+  - name: name
+
+- kind: bksearchaddresslist
+  properties:
+  - name: division==
+  - name: name
+
+- kind: bksearchdata
+  properties:
+  - name: member
+  - name: dataSource
+
+- kind: bksearchdata
+  properties:
+  - name: member
+  - name: sortkey
+
+- kind: bksearchensen
+  properties:
+  - name: ref_bksearchdata
+  - name: sortkey
+
+- kind: bksearchmadori
+  properties:
+  - name: ref_bksearchdata
+  - name: sortkey
+
+- kind: blob
+  properties:
+  - name: Branch_Key
+  - name: CorpOrg_key
+  - name: bkID
+  - name: blobNo
+    direction: desc
+
+- kind: line
+  properties:
+  - name: pref_cd
+  - name: line_name
+  - name: line_sort
+
+- kind: listcombinator
+  properties:
+  - name: ref_bksearchdata
+  - name: sortkey
+
+- kind: matchingdate
+  properties:
+  - name: Branch_Key_name
+  - name: CorpOrg_key_name
+  - name: matchingdate
+    direction: desc
+
+- kind: member
+  properties:
+  - name: CorpOrg_key_name
+  - name: mail
+  - name: sitename
+
+- kind: member
+  properties:
+  - name: CorpOrg_key_name
+  - name: memberID
+  - name: sitename
+
+- kind: member
+  properties:
+  - name: CorpOrg_key_name
+  - name: mobilephone
+
+- kind: member
+  properties:
+  - name: CorpOrg_key_name
+  - name: mobilephone
+  - name: sitename
+
+- kind: member
+  properties:
+  - name: CorpOrg_key_name
+  - name: phone
+
+- kind: member
+  properties:
+  - name: CorpOrg_key_name
+  - name: phone
+  - name: sitename
+
+- kind: member
+  properties:
+  - name: CorpOrg_key_name
+  - name: seiyaku
+  - name: service
+  - name: status
+  - name: tourokunengappi
+
+- kind: member
+  properties:
+  - name: CorpOrg_key_name
+  - name: seiyaku
+  - name: status
+  - name: tourokunengappi
+
+- kind: member
+  properties:
+  - name: CorpOrg_key_name
+  - name: seiyaku
+  - name: tourokunengappi
+
+- kind: member
+  properties:
+  - name: CorpOrg_key_name
+  - name: service
+  - name: tourokunengappi
+
+- kind: member
+  properties:
+  - name: CorpOrg_key_name
+  - name: status
+  - name: tourokunengappi
+
+- kind: member
+  properties:
+  - name: CorpOrg_key_name
+  - name: yomi
+
+- kind: member
+  properties:
+  - name: CorpOrg_key_name
+  - name: yomi
+  - name: phone
+  - name: sitename
+
+- kind: member
+  properties:
+  - name: phone
+  - name: memberID
+
+- kind: wordstockerdb
+  properties:
+  - name: corp
+  - name: branch
+  - name: name
+
+- kind: wordstockerdb
+  properties:
+  - name: corp
+  - name: branch
+  - name: site
+  - name: name
+
+- kind: wordstockerdb
+  properties:
+  - name: corp
+  - name: name
+
+- kind: wordstockerdb
+  properties:
+  - name: corp
+  - name: site
+  - name: name
+
+- kind: ziplist
+  properties:
+  - name: pref
+  - name: city
+  - name: zipcode
+
+- kind: ziplist
+  properties:
+  - name: pref
+  - name: zipcode
+
+# AUTOGENERATED
+
+# This index.yaml is automatically updated whenever the dev_appserver
+# detects that a new type of query is run.  If you want to manage the
+# index.yaml file manually, remove the above marker line (the line
+# saying "# AUTOGENERATED").  If you want to manage some indexes
+# manually, move them above the marker line.  The index.yaml file is
+# automatically uploaded to the admin console when you next deploy
+# your application using appcfg.py.
+
+- kind: BKdata
+  properties:
+  - name: icons
+  - name: mtngflg
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: webknskflg
+  - name: hykpint

@@ -1,0 +1,64 @@
+# Python 3.11 では queue.yaml は廃止されました
+# Cloud Tasks API を使用する必要があります
+
+# 移行方法:
+# 1. Cloud Tasks キューを gcloud コマンドで作成:
+#    gcloud tasks queues create mintask --location=asia-northeast1 \
+#      --max-dispatches-per-second=1 \
+#      --max-concurrent-dispatches=1 \
+#      --max-attempts=6 \
+#      --min-backoff=10s \
+#      --max-backoff=200s \
+#      --max-doublings=2
+#
+#    gcloud tasks queues create oneshotmintask --location=asia-northeast1 \
+#      --max-dispatches-per-second=1 \
+#      --max-concurrent-dispatches=1 \
+#      --max-attempts=1 \
+#      --min-backoff=10s \
+#      --max-backoff=200s \
+#      --max-doublings=2
+#
+# 2. タスク作成コード例:
+#    from google.cloud import tasks_v2
+#
+#    client = tasks_v2.CloudTasksClient()
+#    parent = client.queue_path(project, location, queue_name)
+#
+#    task = {
+#        'http_request': {
+#            'http_method': tasks_v2.HttpMethod.POST,
+#            'url': f'https://{project}.appspot.com/task-handler',
+#            'headers': {'Content-Type': 'application/json'},
+#            'body': json.dumps(payload).encode()
+#        }
+#    }
+#
+#    response = client.create_task(request={'parent': parent, 'task': task})
+
+# 旧queue.yaml定義（参考）:
+# - name: mintask
+#   rate: 1/s
+#   bucket_size: 1
+#   max_concurrent_requests: 1
+#   retry_parameters:
+#     task_retry_limit: 6
+#     min_backoff_seconds: 10
+#     max_backoff_seconds: 200
+#     max_doublings: 2
+#
+# - name: oneshotmintask
+#   rate: 1/s
+#   bucket_size: 1
+#   max_concurrent_requests: 1
+#   retry_parameters:
+#     task_retry_limit: 0  # リトライなし
+#     min_backoff_seconds: 10
+#     max_backoff_seconds: 200
+#     max_doublings: 2
+
+# 注意:
+# - queue.yaml は完全廃止
+# - Cloud Tasks API (`google.cloud.tasks_v2`) を使用
+# - キュー設定は gcloud コマンドで管理
+# - タスク作成時は service_account_email を指定して認証

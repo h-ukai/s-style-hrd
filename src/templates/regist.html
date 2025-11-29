@@ -1,0 +1,148 @@
+{% extends applicationpagebase %}
+
+{% comment %}
+Another login utility sample on Google App Engine
+
+Author    : OKAZAKI Hiroki (okaz@teshigoto.net, https://www.teshigoto.net/)
+Version   : $Id: regist.html,v 1.3 2009/02/04 06:28:00 okaz Exp $
+Copyright : Copyright (c) 2009 OKAZAKI Hiroki
+License   : Python
+{% endcomment %}
+
+
+{% block revision %}$Revision: 1.3 ${% endblock %}
+{% block date %}$Date: 2009/02/04 06:28:00 ${% endblock %}
+
+{% block title %}新規登録{% endblock %}
+
+{% block loginurl %}
+/login?corp_name={{corp_name}}&branch_name={{branch_name}}&sitename={{sitename}}&togo={{togo}}
+{% endblock %}
+<h2>新規登録</h2>
+
+</br>
+
+</br>
+{% block content %}
+{% if not completed_msg %}
+{% if error_msg %}
+<p class="error_msg">
+{{ error_msg|escape|linebreaksbr }}
+</p>
+{% else %}
+
+<p>
+ご希望のIDとパスワード、メールアドレスを入力して新規登録ボタンを押してください。</br>
+のちほどメールが届きますので、メールの指示に従って登録作業を完了させてください。</br>
+</p>
+
+{% endif %}
+
+
+<form name="myform" 
+      id="myform" 
+      action="/regist" 
+      method="post">
+
+
+{% if reqnum %}
+<p>
+お問い合わせ物件 : {{reqnum}}
+</p>
+{% endif %}
+<p>
+ご希望条件・お問い合わせ :</p> <textarea type="text" id="reqtext" name="reqtext" rows="5"  cols="60"　wrap=hard >{{reqtext}}</textarea>
+</p>
+<p>
+ご希望のログインID : <input type="text" 
+				   id="new_login_id"
+				   name="new_login_id" 
+				   value="{{ new_login_id_value|escape }}" />
+</p>
+
+<p>
+ご希望のパスワード : <input type="password" 
+				    id="new_login_pwd"
+				    name="new_login_pwd" 
+				    value="" />
+</p>
+
+<p>
+連絡先メールアドレス : <input type="text"
+				     id="new_user_email"
+				     name="new_user_email"
+				     value="{{ new_user_email_value|escape }}" />
+</p>
+
+<p>
+<input type="hidden" id="corp_name" name="corp_name" value="{{corp_name}}" />
+<input type="hidden" id="sitename" name="sitename" value="{{sitename}}" />
+<input type="hidden" id="branch_name" name="branch_name" value="{{branch_name}}" />
+<input type="hidden" id="togo" name="togo" value="{{togo}}" />
+<input type="hidden" id="sid" name="sid" value="{{sid}}" />
+<input type="hidden" id="reqnum" name="reqnum" value="{{reqnum}}">
+<input type="hidden" id="ref" name="ref" value="{{ref}}">
+<input type="hidden" id="userpagebase" name="userpagebase" value="{{userpagebase}}" />
+<input type="submit"
+       id="new_regist"
+       name="new_regist"
+       value="新規登録" />
+</p>
+
+</form>
+
+
+<script src="https://www.google.com/recaptcha/api.js?render={{sitekey}}"></script>
+<script>
+var rc_form = document.getElementById('myform');
+//フォーム要素にイベントハンドラを設定
+rc_form.onsubmit = function(event) {
+	//デフォルトの動作（送信）を停止
+	if (this.elements['new_login_id'].value){
+	  event.preventDefault();  
+	  //トークンを取得
+	  grecaptcha.ready(function() {
+	    grecaptcha.execute('{{sitekey}}', {action: 'contact'}).then(function(token) {
+	      var token_input = document.createElement('input'); //input 要素を生成
+	      token_input.type = 'hidden';
+	      token_input.name = 'g-recaptcha-response';
+	      token_input.value = token; //トークンを値に設定
+	      rc_form.appendChild(token_input);
+	      var action_input = document.createElement('input'); //input 要素を生成
+	      action_input.type = 'hidden';
+	      action_input.name = 'action';
+	      action_input.value = 'contact';  //アクション名を値に設定
+	      rc_form.appendChild(action_input);
+	      var new_regist_input = document.createElement('input'); //input 要素を生成
+	      new_regist_input.type = 'hidden';
+	      new_regist_input.name = 'new_regist';
+	      new_regist_input.value = '新規登録';  //アクション名を値に設定
+	      rc_form.appendChild(new_regist_input);
+	      rc_form.submit();  //フォームを送信 このメソッドを使うとtype submit の new_regist.valueが送信されないので上で挿入している
+	    });
+	  });
+	}
+}
+</script> 
+
+
+
+<p>
+<a href="/login?corp_name={{corp_name}}&branch_name={{branch_name}}&sitename={{sitename}}&togo={{togo}}&userpagebase={{userpagebase}}">
+すでにご登録済みの方は<br />こちらからログイン願います
+</a>
+</p>
+
+{% else %}
+
+<p>
+{{ completed_msg|escape|linebreaksbr }}
+</p>
+
+{% endif %}
+
+<p>
+<a href="/">{{ return_top|escape }}</a>
+</p>
+
+{% endblock %}

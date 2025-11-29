@@ -1,0 +1,31 @@
+# Python 3.11 では backends.yaml は廃止されました
+# 代替として、複数のサービスを app.yaml で定義する必要があります
+
+# 移行方法:
+# 1. メインサービス: app.yaml (既存)
+# 2. バックエンドサービス: memdb-service.yaml, memdb2-service.yaml を作成
+#
+# 例: memdb-service.yaml
+# service: memdb
+# runtime: python311
+# instance_class: B2
+# manual_scaling:
+#   instances: 1
+#
+# デプロイ:
+# gcloud app deploy app.yaml memdb-service.yaml memdb2-service.yaml
+
+# 旧backends定義（参考）:
+# - name: memdb
+#   class: B2
+#   instances: 1
+#   options: dynamic
+# - name: memdb2
+#   class: B2
+#   instances: 1
+#   options: dynamic
+
+# 注意:
+# - backends は完全廃止のため、このファイルは使用されません
+# - Task Queue のターゲット指定は 'target: memdb' → 'service: memdb' に変更
+# - サービス間通信は Service-to-Service 認証を使用

@@ -1,0 +1,146 @@
+{% extends applicationpagebase %}
+{% block revision %}$Revision: 1.4 ${% endblock %}
+{% block date %}$Date: 2009/02/05 02:02:28 ${% endblock %}
+
+{% block title %}お客様の情報{% endblock %}
+
+{% block content %}
+<form name="registform"
+      action=""
+      method="post">
+<input type="hidden" id="corp_name" name="corp_name" value="{{corp_name}}" />
+<input type="hidden" id="sitename" name="sitename" value="{{sitename}}" />
+<input type="hidden" id="branch_name" name="branch_name" value="{{branch_name}}" />
+<input type="hidden" id="togo" name="togo" value="{{togo}}" />
+<input type="hidden" id="mail" name="mail" value="{{mail}}" />
+<input type="hidden" id="ref" name="ref" value="{{ref}}" />
+<input type="hidden" id="userpagebase" name="userpagebase" value="{{userpagebase}}" />
+
+		<table width="100%" border="0" cellspacing="1" cellpadding="8" bgcolor="#a8a29f">
+			<tr>
+				<td class="class14white" colspan="2" align="left" valign="top" bgcolor="#ff8311">お客様の情報をご記入下さい <span class="class-aka">（赤文字はすべて必須項目です）</span></td>
+			</tr>
+			{% if error_msg %}
+			<tr>
+			<td class="class14red" colspan="2" align="left" valign="top" bgcolor="white">
+                      <p class="error_msg">
+                      {{ error_msg|escape }}
+                      </p>
+
+                  </td>
+                  </tr>
+                  {% endif %}
+                  {% if completed_msg %}
+                  <tr>
+                  <td class="class14white" colspan="2" align="left" valign="top" bgcolor="#a8a29f">
+                  <p>
+                  {{ completed_msg|safe }}
+                  </p>
+                  </td>
+                  </tr>
+                  {% endif %}
+                  <br />
+
+			<tr>
+				<td align="left" valign="top" bgcolor="#f6f6f6" width="170"><p style="color: red;">●お名前</p></td>
+				<td align="left" valign="top" bgcolor="white">姓<input type="text" name="lastname" id="lastname" size="16" value="{{lastname}}"/>　名<input type="text" name="fastname" id="fastname" size="16" value="{{fastname}}"/>　 <span class="class10rightgray2">（記入例）山田　太郎</span></td>
+			</tr>
+			<tr>
+				<td align="left" valign="top" bgcolor="#f6f6f6" width="170"><p style="color: red;">●ふりがな</p></td>
+				<td align="left" valign="top" bgcolor="white">姓<input type="text" name="yomi1" id="yomi1" size="16" value="{{yomi1}}" />　名<input type="text" name="yomi2" id="yomi2" size="16"  value="{{yomi2}}"/>　 <span class="class10rightgray2">（記入例）やまだ　たろう</span></td>
+			</tr>
+			<tr>
+				<td align="left" valign="top" bgcolor="#f6f6f6" width="170"><p style="color: red;">●ご住所</p></td>
+				<td align="left" valign="top" bgcolor="white">●郵便番号<input type="text" name="zip1" id="zip1" size="3" value="{{zip1}}"/>-<input type="text" name="zip2" id="zip2" size="4"  value="{{zip2}}"/><br />
+					都道府県<select name="ken" id="ken">
+						<option {{ken|default_if_none:" selected"}} value="">選択してください</option>
+                        <option value="北海道" {% if ken == "北海道" %} selected{% endif %}>北海道</option>
+                        <option value="青森県" {% if ken == "青森県" %} selected{% endif %}>青森県</option>
+                        <option value="岩手県" {% if ken == "岩手県" %} selected{% endif %}>岩手県</option>
+                        <option value="宮城県" {% if ken == "宮城県" %} selected{% endif %}>宮城県</option>
+                        <option value="秋田県" {% if ken == "秋田県" %} selected{% endif %}>秋田県</option>
+                        <option value="山形県" {% if ken == "山形県" %} selected{% endif %}>山形県</option>
+                        <option value="福島県" {% if ken == "福島県" %} selected{% endif %}>福島県</option>
+                        <option value="茨城県" {% if ken == "茨城県" %} selected{% endif %}>茨城県</option>
+                        <option value="栃木県" {% if ken == "栃木県" %} selected{% endif %}>栃木県</option>
+                        <option value="群馬県" {% if ken == "群馬県" %} selected{% endif %}>群馬県</option>
+                        <option value="埼玉県" {% if ken == "埼玉県" %} selected{% endif %}>埼玉県</option>
+                        <option value="千葉県" {% if ken == "千葉県" %} selected{% endif %}>千葉県</option>
+                        <option value="東京都" {% if ken == "東京都" %} selected{% endif %}>東京都</option>
+                        <option value="神奈川県" {% if ken == "神奈川県" %} selected{% endif %}>神奈川県</option>
+                        <option value="新潟県" {% if ken == "新潟県" %} selected{% endif %}>新潟県</option>
+                        <option value="富山県" {% if ken == "富山県" %} selected{% endif %}>富山県</option>
+                        <option value="石川県" {% if ken == "石川県" %} selected{% endif %}>石川県</option>
+                        <option value="福井県" {% if ken == "福井県" %} selected{% endif %}>福井県</option>
+                        <option value="山梨県" {% if ken == "山梨県" %} selected{% endif %}>山梨県</option>
+                        <option value="長野県" {% if ken == "長野県" %} selected{% endif %}>長野県</option>
+                        <option value="岐阜県" {% if ken == "岐阜県" %} selected{% endif %}>岐阜県</option>
+                        <option value="静岡県" {% if ken == "静岡県" %} selected{% endif %}>静岡県</option>
+                        <option value="愛知県" {% if ken == "愛知県" %} selected{% endif %}>愛知県</option>
+                        <option value="三重県" {% if ken == "三重県" %} selected{% endif %}>三重県</option>
+                        <option value="滋賀県" {% if ken == "滋賀県" %} selected{% endif %}>滋賀県</option>
+                        <option value="京都府" {% if ken == "京都府" %} selected{% endif %}>京都府</option>
+                        <option value="大阪府" {% if ken == "大阪府" %} selected{% endif %}>大阪府</option>
+                        <option value="兵庫県" {% if ken == "兵庫県" %} selected{% endif %}>兵庫県</option>
+                        <option value="奈良県" {% if ken == "奈良県" %} selected{% endif %}>奈良県</option>
+                        <option value="和歌山県" {% if ken == "和歌山県" %} selected{% endif %}>和歌山県</option>
+                        <option value="鳥取県" {% if ken == "鳥取県" %} selected{% endif %}>鳥取県</option>
+                        <option value="島根県" {% if ken == "島根県" %} selected{% endif %}>島根県</option>
+                        <option value="岡山県" {% if ken == "岡山県" %} selected{% endif %}>岡山県</option>
+                        <option value="広島県" {% if ken == "広島県" %} selected{% endif %}>広島県</option>
+                        <option value="山口県" {% if ken == "山口県" %} selected{% endif %}>山口県</option>
+                        <option value="徳島県" {% if ken == "徳島県" %} selected{% endif %}>徳島県</option>
+                        <option value="香川県" {% if ken == "香川県" %} selected{% endif %}>香川県</option>
+                        <option value="愛媛県" {% if ken == "愛媛県" %} selected{% endif %}>愛媛県</option>
+                        <option value="高知県" {% if ken == "高知県" %} selected{% endif %}>高知県</option>
+                        <option value="福岡県" {% if ken == "福岡県" %} selected{% endif %}>福岡県</option>
+                        <option value="佐賀県" {% if ken == "佐賀県" %} selected{% endif %}>佐賀県</option>
+                        <option value="長崎県" {% if ken == "長崎県" %} selected{% endif %}>長崎県</option>
+                        <option value="熊本県" {% if ken == "熊本県" %} selected{% endif %}>熊本県</option>
+                        <option value="大分県" {% if ken == "大分県" %} selected{% endif %}>大分県</option>
+                        <option value="宮崎県" {% if ken == "宮崎県" %} selected{% endif %}>宮崎県</option>
+                        <option value="鹿児島県" {% if ken == "鹿児島県" %} selected{% endif %}>鹿児島県</option>
+                        <option value="沖縄県" {% if ken == "沖縄県" %} selected{% endif %}>沖縄県</option>
+
+					</select><br />
+					市区町村　<span class="class10rightgray2">（記入例）名古屋市千種区</span><br />
+					<input type="text" name="address1" id="address1" size="48"  value="{{address1}}"/><br />
+					町字丁目　<span class="class10rightgray2">（記入例）末盛通1丁目</span><br />
+					<input type="text" name="address2" id="address2" size="48"  value="{{address2}}"/><br />
+					番地、マンション名　<span class="class10rightgray2">（記入例）１番地,1-1　S-Styleマンション</span><br />
+					<input type="text" name="address3" id="address3" size="48"  value="{{address3}}"/><br />
+					<span class="class10">※お申し込みのお客様お名前と、ご売却希望物件の表札名が異なる場合は、表札名もご記入ください。</span></td>
+			</tr>
+			<tr>
+				<td align="left" valign="top" bgcolor="#f6f6f6" width="170">
+					<p style="color: red;">●お電話番号（携帯可）</p>
+				</td>
+				<td align="left" valign="top" bgcolor="white"><input type="text" name="phone" id="phone" size="25"  value="{{phone}}"/>　<span class="class10rightgray2">（記入例）123-4567-7890</span></td>
+			</tr>
+                  <tr>
+                        <td align="left" valign="top" bgcolor="#f6f6f6" width="170">
+                              ●お問い合わせ物件番号
+                        </td>
+                        <td align="left" valign="top" bgcolor="white"><input type="text" id="reqnum" name="reqnum" value="{{reqnum}}" /></td>
+
+                  </tr>
+                  <tr>
+                        <td align="left" valign="top" bgcolor="#f6f6f6" width="170">
+                              ●お問い合わせ内容／ご希望条件
+                        </td>
+                        <td align="left" valign="top" bgcolor="white"><textarea type="text" id="reqtext" name="reqtext" rows="5"  cols="60" wrap=hard >{{reqtext}}</textarea></td>
+                  </tr>
+
+		</table>
+		<br />
+		<br />
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+				<td align="center"><input type="submit" id="formsubmit" name="formsubmit" value="この内容で送信する" /></td>
+			</tr>
+		</table>
+		<br />
+</form>
+<iframe src="https://{{sitename}}/auth/setsid?sid={{sid}}" width="0" height="0" onload="{{onloadsclipt}}"></iframe>
+
+{% endblock %}

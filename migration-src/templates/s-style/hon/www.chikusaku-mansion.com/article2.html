@@ -1,0 +1,496 @@
+{% extends "applicationpagebase.html" %}
+
+{% block title %}
+{{data.bkdata.ttmnmi}}　{{data.bkdata.tdufknmi|default:""}}{{data.bkdata.shzicmi1|default:""}}{{data.bkdata.shzicmi2|default:""}}{{data.bkdata.shzicmi3|default:""}}　｜　【千種区マンション探し.com】
+{% endblock title %}
+
+{% block head %}
+<link rel="stylesheet" href="https://www.chikusaku-mansion.com/css/galleriffic-3.css" type="text/css" />
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB3Pj9gP_x_Gjdgg2GqXaGHQnB5hNaw3no&sensor=false"></script>
+<script type="text/javascript" src="https://www.chikusaku-mansion.com/js/navi2.js"></script>
+<script type="text/javascript" src="https://www.chikusaku-mansion.com/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="https://www.chikusaku-mansion.com/js/jquery.history.js"></script>
+<script type="text/javascript" src="https://www.chikusaku-mansion.com/js/jquery.galleriffic.js"></script>
+<script type="text/javascript" src="https://www.chikusaku-mansion.com/js/jquery.opacityrollover.js"></script>
+<script type="text/javascript" src="https://www.chikusaku-mansion.com/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="https://www.chikusaku-mansion.com/js/simulation.js"></script>
+<!-- We only want the thunbnails to display when javascript is disabled -->
+<script type="text/javascript">
+    document.write('<style>.noscript { display: none; }</style>');
+</script>
+
+<script type="text/javascript">
+
+
+function ToFavorite(toURL,toStr){
+	//Internet Explorer
+	if(navigator.userAgent.indexOf("MSIE") > -1){
+		window.external.AddFavorite(toURL,toStr);
+	}else{
+	//Lunascape
+	if(navigator.userAgent.indexOf("Lunascape") > -1){
+		alert("[Ctrl]と[G}ボタンを同時に押してください。");
+	}else{
+	//Flock
+	if(navigator.userAgent.indexOf("Flock") > -1){
+//		window.open(toURL,'sidebar','title='+toStr); //パネル開くが引数渡されず
+		window.sidebar.addPanel(toStr,toURL,''); //パネル開くが引数渡されず　挙動不審
+	}else{
+	//Firefox
+	if(navigator.userAgent.indexOf("Firefox") > -1){
+		window.sidebar.addPanel(toStr,toURL,'');
+	}else{
+	//Opera
+	if(navigator.userAgent.indexOf("Opera") > -1){
+		window.open(toURL,'sidebar','title='+toStr);
+	}else{
+	//Chrome,Safari
+	if(navigator.userAgent.indexOf("Chrome") > -1){
+		alert("[Ctrl]と[D}ボタンを同時に押してください。");
+	}else{
+	//Chrome,Safari
+// 調べ切れず
+	}}}}}}}
+
+
+
+	//String.fromCharCode(64) //アットマークの文字コード表現 https://www.red.oit-net.jp/tatsuya/java/prompt2.htm
+	function _mailto(){
+		ad = 's-style' + String.fromCharCode(32+14) + 's8';
+		dm = 'nifty' + String.fromCharCode(32+14) + 'com';
+		sb = '?subject={{data.mailmsgCP932}}'
+		bd = '&body={{data.mailmsgCP932}}'
+		var ua = navigator.userAgent.toUpperCase();
+    	if (ua.indexOf("MAC") >= 0) {
+			sb = '?subject={{data.mailmsg}}'
+			bd = '&body={{data.mailmsg}}'
+    	}
+		location.href = 'mailto:' + ad + String.fromCharCode(64) + dm + sb + bd;
+
+		//location.href='mailto:aaaa@ne.jp';
+		//というようにlocation.hrefで代用できます。
+		//ちなみにmailtoはmailto:メールアドレス?subject=タイトル&body=本文
+		//というように内容を設定できますが、本文に改行を入れたい場合は改行したいところに%0D%0Aを入れれば改行されます。
+		return false
+
+	}
+
+  var map;
+  function initialize() {
+    var latlng = new google.maps.LatLng({{data.bkdata.idkd}});
+    var myOptions = {
+      zoom: 17,
+      center: latlng,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+    createMarker();
+  }
+  function createMarker(){
+        var lat = (map.getCenter()).lat();
+        var lng = (map.getCenter()).lng();
+        marker1 = new google.maps.Marker({
+            position: new google.maps.LatLng(lat,lng),
+            map: map,
+            title: "{{data.bkdata.ttmnmi|default:""}}",
+            draggable: false //なんかV3での動作が超遅いきがする
+        });
+/*
+        google.maps.event.addListener(marker1,'mouseup',function(){
+            echoPoint(marker1.position);
+        });
+        google.maps.event.addListener(map,'dblclick',function(event){
+            marker1.setPosition(event.latLng);
+            echoPoint(marker1.position);
+        });
+*/
+    }
+
+</script>
+<script type="text/javascript">
+
+function gocal(){
+        var kakaku = parseFloat(fig2num("{{data.bkdata.kkkuCnryu}}"));
+        if(! isNaN(kakaku){% if data.bkdata.kkkksyk %} and false {% endif %}){
+            var sonota = Math.floor(kakaku * 0.08);
+            $("#sonota").text(number_format(sonota)+"円");
+            var sogaku = kakaku + sonota;
+            $("#kounyusogaku").text(number_format(sogaku)+"円");
+            var zikosikin = Number($("#zikosikin").val()*10000);
+            // zikosikin = Number(zikosikin.split("万円")[0]);
+            var syakunyugaku = sogaku - zikosikin;
+            $("#txt_debtmoney").val(syakunyugaku/10000);
+            $("#txt_debtmoney2").text(number_format(syakunyugaku/10000)+"万円");
+            CalcRepaymentMoney();
+            $("#tukisiharaigaku").text($("#txt_repayment_everymonth").val() + "円");
+        }
+        $.cookie("zikosikin",$("#zikosikin").val(),{ expires: 30 });
+        $.cookie("txt_rate",$("#txt_rate").val(),{ expires: 30 });
+        $.cookie("txt_kikan",$("#txt_kikan").val(),{ expires: 30 });
+}
+
+$(window).load(function() {
+
+    initialize();//googleマップ表示
+    if($.cookie("zikosikin")){
+        $("#zikosikin").val($.cookie("zikosikin"))
+    }
+    if($.cookie("txt_rate")){
+        $("#txt_rate").val($.cookie("txt_rate"))
+    }
+    if($.cookie("txt_kikan")){
+        $("#txt_kikan").val($.cookie("txt_kikan"))
+    }
+
+    $("#zikosikin").change(gocal);
+    $("#txt_rate").change(gocal);
+    $("#txt_kikan").change(gocal);
+
+    gocal();
+    $("#kanrisyuzen").text(number_format(parseFloat(fig2num($("#kanri").val())) + parseFloat(fig2num($("#syuzentumitate").val())))+"円");
+
+	// We only want these styles applied when javascript is enabled
+	$('div.navigation').css({'width' : '355px', 'float' : 'left'});
+	$('div.content').css('display', 'block');
+
+	// Initially set opacity on thumbs and add
+	// additional styling for hover effect on thumbs
+	var onMouseOutOpacity = 0.67;
+	$('#thumbs ul.thumbs li').opacityrollover({
+    	mouseOutOpacity:   onMouseOutOpacity,
+		mouseOverOpacity:  1.0,
+		fadeSpeed:         'fast',
+		exemptionSelector: '.selected'
+	});
+
+	// Initialize Advanced Galleriffic Gallery
+	var gallery = $('#thumbs').galleriffic({
+	    delay:                     3500,
+		numThumbs:                 100,
+		preloadAhead:              0,
+		enableTopPager:            false,
+		enableBottomPager:         false,
+		maxPagesToShow:            10,
+		imageContainerSel:         '#slideshow',
+		controlsContainerSel:      '#controls',
+		captionContainerSel:       '#caption',
+		loadingContainerSel:       '#loading',
+		renderSSControls:          true,
+		renderNavControls:         true,
+		playLinkText:              'Play Slideshow',
+		pauseLinkText:             'Pause Slideshow',
+		prevLinkText:              '&lsaquo; Previous Photo',
+		nextLinkText:              'Next Photo &rsaquo;',
+		nextPageLinkText:          'Next &rsaquo;',
+		prevPageLinkText:          '&lsaquo; Prev',
+		enableHistory:             false,
+		autoStart:                 true,
+		syncTransitions:           true,
+		defaultTransitionDuration: 900,
+		onSlideChange:             function(prevIndex, nextIndex) {
+		// 'this' refers to the gallery, which is an extension of $('#thumbs')
+		    this.find('ul.thumbs').children()
+		        .eq(prevIndex).fadeTo('fast', onMouseOutOpacity).end()
+		        .eq(nextIndex).fadeTo('fast', 1.0);
+			},
+			onPageTransitionOut:       function(callback) {
+				this.fadeTo('fast', 0.0, callback);
+			},
+			onPageTransitionIn:        function() {
+				this.fadeTo('fast', 1.0);
+			}
+			});
+				/**** Functions to support integration of galleriffic with the jquery.history plugin ****/
+				// PageLoad function
+				// This function is called when:
+				// 1. after calling $.historyInit();
+				// 2. after calling $.historyLoad();
+				// 3. after pushing "Go Back" button of a browser
+
+function pageload(hash) {
+	// alert("pageload: " + hash);
+	// hash doesn't contain the first # character.
+	if(hash) {
+		$.galleriffic.gotoImage(hash);
+	} else {
+		gallery.gotoIndex(0);
+	}
+}
+
+				// Initialize history plugin.
+				// The callback is called at once by present location.hash.
+				$.historyInit(pageload, "advanced.html");
+
+				// set onclick event for buttons using the jQuery .on() method
+				$(document).on('click', "a[rel='history']", function(e) {
+					if (e.button != 0) return true;
+
+					var hash = this.href;
+					hash = hash.replace(/^.*#/, '');
+
+					// moves to a new page.
+					// pageload is called at once.
+					// hash don't contain "#", "?"
+					$.historyLoad(hash);
+
+					return false;
+				});
+
+
+
+	});
+
+</script>
+
+
+<style type="text/css">
+<!--
+body {
+	background-image:url(https://www.chikusaku-mansion.com/cmn_img/back01.jpg);
+	background-repeat:repeat-x;
+}
+-->
+</style>
+
+{% endblock head %}
+
+{% block content %}
+
+
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+            <td align="right">
+            <a href="javascript:ToFavorite('https://s-style-hrd.appspot.com/show/s-style/hon/www.chikusaku-mansion.com/bkdata/article.html?media=web&id={{data.bkdata.bkID}}','千種区マンションサイト【お気に入り物件】{{data.bkdata.ttmnmi|default:""}}');"><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-bookmark.jpg" alt="この物件をブックマークする" width="194" height="24" border="0"></a></td>
+            </tr>
+        </table>
+        <br />
+		<!--2012.0813 article.html-->
+		<div class="mansionname-title">{{data.bkdata.ttmnmi|default:""}}</div>
+
+{% if data.bkdata.dtsyuri == "サンプル" %}
+<!--2012.1130 notsell.html-->
+		<img src="https://www.chikusaku-mansion.com/img-article/t-notsell01.jpg" alt="" width="815" height="150" border="0">
+		<br>
+		<br>
+
+		{% if not data.auth %}
+		<table width="815" border="0" cellspacing="0" cellpadding="0" background="https://www.chikusaku-mansion.com/img-article/t-notsell02.jpg" height="244">
+			<tr>
+				<td align="left" valign="top">
+					<table border="0" cellspacing="0" cellpadding="0" height="75">
+						<tr>
+							<td width="623"></td>
+							<td align="center" valign="middle" width="68"><span class="class40orange">20</span></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+		<br>
+		<br>
+
+		<img src="https://www.chikusaku-mansion.com/img-article/t-notsell03.jpg" alt="" width="815" height="60" border="0"><br>
+		<form action="https://s-style-hrd.appspot.com/regist" method="POST"  onSubmit="javascript:_gaq.push(['_linkByPost',this])">
+		<table width="100%" border="0" cellspacing="1" cellpadding="8" bgcolor="#a8a29f">
+			<tr>
+				<td class="class14white" align="left" valign="top" bgcolor="#ff8311" >入力して送信ボタンを押して下さい</td>
+			</tr>
+			<tr>
+				<td style="font-size: 1em" align="left" valign="top" bgcolor="white">ご希望のユーザーID：　　<input type="text" id="new_login_id" name="new_login_id" value="" size="53"><br>
+				<span class="class10rightgray2">（記入例）　yamada001</span></td>
+			</tr>
+			<tr>
+				<td style="font-size: 1em" align="left" valign="top" bgcolor="white">ご希望のパスワード：　　<input type="password" name="new_login_pwd" id="new_login_pwd" size="53"><br>
+				<span class="class10rightgray2">（記入例）　pwd@11dd</span></td>
+			</tr>
+			<tr>
+				<td style="font-size: 1em" align="left" valign="top" bgcolor="white">連絡先メールアドレス　　<input type="text" name="new_user_email" id="new_user_email" size="53"><br>
+				<span class="class10rightgray2">（記入例）　mansion@chikusaku-mansion.com</span></td>
+			</tr>
+		</table>
+		<br>
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr><input type="hidden" id="corp_name" name="corp_name" value="s-style">
+			<input type="hidden" id="branch_name" name="branch_name" value="hon">
+			<input type="hidden" id="sitename" name="sitename" value="www.chikusaku-mansion.com">
+			<input type="hidden" id="togo" name="togo" value="">
+			<input type="hidden" id="reqnum" name="reqnum" value="{{data.bkdata.bkID}}">
+			<input type="hidden" id="reqtext" name="reqtext" value="">
+			<td style="font-size: 1em" align="center"><input type="submit" id="new_regist" name="new_regist" value="この内容で送信する"></td>
+			</tr>
+		</table>
+		</form>
+	    <br />
+    	<br />
+		{% endif %}
+						<img src="https://www.chikusaku-mansion.com/img-article/t-notsell04.jpg" alt="" width="815" height="133" border="0">
+		<br />
+		<br />
+
+<!--2012.1130 notsell.html-->
+	{% include "articlebkdata.html" %}
+{% else %}
+
+{% if data.bkdata.dtsyuri == "事例" %}
+
+                     <br>
+                      <br>
+                       <br>
+                        <br>
+                    <img src="../img/soldout.jpg" width="508" height="108" alt="この物件は販売終了いたしました"><br>
+                     <br>
+                      <br>
+
+
+
+{% else %}
+
+<!--2012.1130 koukai.html-->
+		<img src="https://www.chikusaku-mansion.com/img-article/t-koukai01.jpg" alt="" width="815" height="350" border="0">
+		<div align="center">
+			<div class="article-koukai-Linkbotan">
+			<a href="javascript:_mailto();">この物件についてメールで問い合わせをする</a>
+			</div>
+		</div>
+<!--2012.1130 koukai.html-->
+	{% include "articlebkdata.html" %}
+
+{% endif %}
+{% endif %}
+
+
+
+{% if auth %}
+<!--
+
+            <p class="class-title-chikusa">メモ欄</p>
+            <table width="80%" border="0" cellspacing="10" cellpadding="0">
+				<tr>
+				<td><textarea name="textareaName" rows="4" cols="64"></textarea></td>
+				<td align="right" valign="bottom"><input type="submit" name="submitButtonName" value="お気に入りに保存"></td>
+				</tr>
+            </table>
+            <br />
+            <p class="class-title-chikusa">リクエストの送信</p>
+            <table width="80%" border="0" cellspacing="10" cellpadding="0">
+			<tr>
+			<td><textarea name="textareaName" rows="4" cols="64"></textarea><br>
+			  <br>
+			  <b>リクエスト内容を選択下さい</b><br>
+			  <hr size="1">
+				  <table border="0" cellspacing="0" cellpadding="0">
+				    <tr>
+				      <td><input type="radio" name="radiogroup" value="radioValue"> 資料請求<br>
+				        <input type="radio" name="radiogroup" value="radioValue"> 相談<br>
+				        <input type="radio" name="radiogroup" value="radioValue"> ローンについて　　</td>
+				      <td><input type="radio" name="radiogroup" value="radioValue"> 問い合わせ　　<br>
+				        <input type="radio" name="radiogroup" value="radioValue"> 物件確認<br>
+				        <input type="radio" name="radiogroup" value="radioValue"> クレーム</td>
+				      <td><input type="radio" name="radiogroup" value="radioValue"> 見学希望<br>
+				        <input type="radio" name="radiogroup" value="radioValue"> 場所が知りたい　　<br>
+				        <br>
+				      </td>
+				      <td><input type="radio" name="radiogroup" value="radioValue"> 検討中<br>
+				        <input type="radio" name="radiogroup" value="radioValue"> 契約について<br>
+				        <br>
+				      </td>
+				    </tr>
+	 			 </table>
+				</td>
+				<td align="right" valign="bottom"><input type="submit" name="submitButtonName" value="リクエストを送信する"></td>
+				</tr>
+            </table>
+-->
+
+
+
+{% else %}
+
+<img src="https://www.chikusaku-mansion.com/form/img/t01.jpg" alt="お問い合わせ・会員登録はこちら" width="815" height="48" border="0"><br>
+<span class="class14b">以下のフォームにメールアドレスをご記入の上送信ボタンを押して下さい。後ほど本登録用のメールを送信致します</span><br>
+						<img src="https://www.chikusaku-mansion.com/article/cmn_img/t-merit.jpg" alt="" width="815" height="64" border="0"><br>
+						<br>
+
+<form action="https://s-style-hrd.appspot.com/regist" method="POST" id="frm4" onSubmit="javascript:_gaq.push(['_linkByPost',this])">
+<table width="100%" border="0" cellspacing="1" cellpadding="8" bgcolor="#a8a29f">
+	<tr>
+	<td class="class14white" align="left" valign="top" bgcolor="#ff8311" >入力して送信ボタンを押して下さい</td>
+	</tr>
+	<tr>
+	<td style="font-size: 1em" align="left" valign="top" bgcolor="white">ご希望のユーザーID：　　<input type="text" id="new_login_id" name="new_login_id" value="" size="53"><br>
+	<span class="class10rightgray2">（記入例）　yamada001</span></td>
+	</tr>
+	<tr>
+	<td style="font-size: 1em" align="left" valign="top" bgcolor="white">ご希望のパスワード：　　<input type="password" name="new_login_pwd" id="new_login_pwd" size="53"><br>
+	<span class="class10rightgray2">（記入例）　pwd@11dd</span></td>
+	</tr>
+	<tr>
+	<td style="font-size: 1em" align="left" valign="top" bgcolor="white">連絡先メールアドレス　　<input type="text" name="new_user_email" id="new_user_email" size="53"><br>
+	<span class="class10rightgray2">（記入例）　mansion@chikusaku-mansion.com</span></td>
+	</tr>
+</table>
+<br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr><input type="hidden" id="corp_name" name="corp_name" value="s-style">
+	<input type="hidden" id="branch_name" name="branch_name" value="hon">
+	<input type="hidden" id="sitename" name="sitename" value="www.chikusaku-mansion.com">
+	<input type="hidden" id="togo" name="togo" value="https://s-style-hrd.appspot.com/show/s-style/hon/www.chikusaku-mansion.com/bkdata/article.html?media=web&id={{data.bkdata.bkID}}">
+	<input type="hidden" id="reqnum" name="reqnum" value="{{data.bkdata.bkID}}">
+	<input type="hidden" id="reqtext" name="reqtext" value="">
+	<td style="font-size: 1em" align="center"><input type="submit" id="new_regist" name="new_regist" value="この内容で送信する"></td>
+	</tr>
+</table>
+</form>
+
+<script src="https://www.google.com/recaptcha/api.js?render={{sitekey}}"></script>
+<script>
+var rc_form = document.getElementById('frm4');
+//フォーム要素にイベントハンドラを設定
+rc_form.onsubmit = function(event) {
+	//デフォルトの動作（送信）を停止
+	if (this.elements['new_login_id'].value){
+	  event.preventDefault();
+	  //トークンを取得
+	  grecaptcha.ready(function() {
+	    grecaptcha.execute('{{sitekey}}', {action: 'contact'}).then(function(token) {
+	      var token_input = document.createElement('input'); //input 要素を生成
+	      token_input.type = 'hidden';
+	      token_input.name = 'g-recaptcha-response';
+	      token_input.value = token; //トークンを値に設定
+	      rc_form.appendChild(token_input);
+	      var action_input = document.createElement('input'); //input 要素を生成
+	      action_input.type = 'hidden';
+	      action_input.name = 'action';
+	      action_input.value = 'contact';  //アクション名を値に設定
+	      rc_form.appendChild(action_input);
+	      var new_regist_input = document.createElement('input'); //input 要素を生成
+	      new_regist_input.type = 'hidden';
+	      new_regist_input.name = 'new_regist';
+	      new_regist_input.value = 'この内容で送信する';  //アクション名を値に設定
+	      rc_form.appendChild(new_regist_input);
+	      rc_form.submit();  //フォームを送信
+	    });
+	  });
+	}
+}
+</script>
+
+
+
+{% endif %}
+<br />
+<br />
+
+<img src="https://www.chikusaku-mansion.com/top_img/t-shitadori.jpg" alt="" width="815" height="50" border="0"><br>
+<span class="class14orange">お客様が安心してマンションの売却ができるようお手伝いするための弊社のサービスです。</span><br>
+<span class="class14red">【安心の下取保証・買取いたします】</span><br>
+良い物件が見つかったのに、自宅が売れなかったら……とご不安のある方に最適です。<br>
+現在のご自宅が、当社専任の仲介で一定期間内に売却できなかった場合、あらかじめ買取保証させて頂いた価額で買取らせていただきます。<br>
+お買換えの資金計画が確定しますので、気に入った、お住まいを見つけたときに、保証価格を基に自宅売却の前でも、ご購入の契約を締結でき、チャンスを逃すこともありません。しっかりサポートいたしますのでお任せください。<br>
+またお急ぎの方や特殊な物件は即日の買取もいたしております。<br>
+						<br>
+						<br><img src="https://www.chikusaku-mansion.com/cmn_img/kei-orange.jpg" alt="" width="815" height="4" border="0"><br>
+        <a onmouseover="document.images['b-baikyaku'].src='https://www.chikusaku-mansion.com/cmn_img/b-baikyaku02o.jpg'" onmouseout="document.images['b-baikyaku'].src='https://www.chikusaku-mansion.com/cmn_img/b-baikyaku02.jpg'" href="https://chikusaku-m.com/" target="_blank"><img src="https://www.chikusaku-mansion.com/cmn_img/b-baikyaku02.jpg" name="b-baikyaku" alt="" width="815" height="36" border="0" vspace="8"></a><br>
+						<br>
+
+{% endblock content %}

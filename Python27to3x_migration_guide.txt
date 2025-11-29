@@ -1,0 +1,531 @@
+================================================================================
+Google App Engine Python 2.7 から Python 3.x への移行手順書
+================================================================================
+作成日: 2025年11月13日
+プロジェクト: s-style-hrd
+
+================================================================================
+1. 現状分析
+================================================================================
+
+1.1 現在の構成
+--------------
+- ランタイム: Python 2.7 (app.yaml: runtime: python27)
+- メインフレームワーク: webapp2
+- テンプレートエンジン: Django 1.4
+- 使用しているApp Engine サービス:
+  * App Engine built-in services (appstats, remote_api, deferred)
+  * Datastore (google.appengine.ext.db)
+  * Blobstore
+  * Task Queue
+  * Cron jobs
+  * Inbound Mail
+  * MapReduce
+
+1.2 主要な課題
+--------------
+- webapp2はPython 3をサポートしていない → Flask等への移行が必要
+- builtins (remote_api, appstats, deferred) はPython 3で廃止
+- google.appengine.ext ライブラリがPython 3では使用不可
+- Datastoreクライアントライブラリの更新が必要 (db → ndb または Cloud Datastore)
+- MapReduceはPython 3での移行が困難
+- 約50ファイル以上でwebapp2とApp Engine APIを使用
+
+================================================================================
+2. 移行の全体方針
+================================================================================
+
+2.1 推奨される移行方法
+----------------------
+【推奨】段階的移行アプローチ:
+  1. Python 2.7環境でコードを2to3ツールで変換
+  2. webapp2 → Flask への移行
+  3. google.appengine.ext.db → google.cloud.ndb への移行
+  4. builtinsサービスの代替実装
+  5. Python 3.7/3.9/3.11 でテスト
+  6. 本番環境への段階的デプロイ
+
+2.2 移行目標ランタイム
+----------------------
+- Python 3.11 (推奨、2027年10月までサポート)
+- Python 3.9 (代替、2025年10月までサポート)
+- Python 3.7 (非推奨、サポート終了済みだが移行初期段階で使用可)
+
+================================================================================
+3. 詳細な移行手順
+================================================================================
+
+【フェーズ1】準備と環境構築
+----------------------------
+
+ステップ1.1: バックアップの作成
+  □ 現在のソースコードを完全にバックアップ
+  □ Git等のバージョン管理システムにコミット
+  □ データベース（Datastore）のバックアップを取得
+
+ステップ1.2: 開発環境の準備
+  □ Python 3.11 のインストール
+  □ Google Cloud SDK の最新版をインストール
+    - gcloud components update
+  □ 新しいApp Engine開発環境のセットアップ
+  □ 必要なPython 3パッケージのインストール準備
+
+ステップ1.3: 依存関係の確認
+  □ 現在使用している全てのライブラリをリストアップ
+  □ 各ライブラリのPython 3対応状況を確認
+  □ requirements.txt ファイルを作成
+
+
+【フェーズ2】app.yamlの更新
+----------------------------
+
+ステップ2.1: app.yamlの基本設定変更
+  現在の設定:
+    runtime: python27
+    api_version: 1
+    threadsafe: true
+
+  変更後:
+    runtime: python311  # または python39
+    entrypoint: gunicorn -b :$PORT main:app
+    # api_versionは削除（Python 3では不要）
+    # threadsafeは削除（Python 3ではデフォルト）
+
+ステップ2.2: builtinsの削除と代替
+  削除する項目:
+    builtins:
+    - remote_api: on      → Cloud Console または gcloud CLI を使用
+    - appstats: on        → Cloud Trace または Cloud Monitoring を使用
+    - deferred: on        → Cloud Tasks を使用
+
+  includes:
+    - mapreduce/include.yaml  → Cloud Dataflow への移行を検討
+
+ステップ2.3: handlerの更新
+  静的ファイルハンドラは維持可能
+  スクリプトハンドラの更新:
+    変更前: script: main.app
+    変更後: script: auto  # または entrypointで指定
+
+ステップ2.4: librariesの削除
+  libraries:
+    - name: django
+      version: "1.4"
+  → requirements.txt に移行
+
+
+【フェーズ3】requirements.txt の作成
+------------------------------------
+
+ステップ3.1: requirements.txt を作成
+  C:\Users\hrsuk\prj\s-style-hrd\src\requirements.txt
+
+  内容例:
+    Flask==3.0.0
+    gunicorn==21.2.0
+    google-cloud-ndb==2.3.0
+    google-cloud-datastore==2.19.0
+    google-cloud-storage==2.14.0
+    google-cloud-tasks==2.16.0
+    google-cloud-logging==3.9.0
+    requests==2.31.0
+    Jinja2==3.1.3
+    # その他、アプリケーションで使用しているライブラリ
+
+
+【フェーズ4】コードの変換 - webapp2からFlaskへ
+----------------------------------------------
+
+ステップ4.1: main.py の書き換え
+
+  現在の構造:
+    import webapp2
+
+    app = webapp2.WSGIApplication([
+        ('/', index),
+        ('/login', Login),
+        ...
+    ], debug=True)
+
+  変更後:
+    from flask import Flask
+
+    app = Flask(__name__)
+    app.config['DEBUG'] = True
+
+    # ルーティングの定義
+    from application.index import index_bp
+    from application.login import login_bp
+    ...
+
+    app.register_blueprint(index_bp)
+    app.register_blueprint(login_bp)
+    ...
+
+    if __name__ == '__main__':
+        app.run(host='0.0.0.0', port=8080)
+
+ステップ4.2: 各ハンドラファイルの書き換え例
+
+  webapp2のハンドラ:
+    import webapp2
+
+    class Login(webapp2.RequestHandler):
+        def get(self):
+            self.response.write('Login page')
+
+        def post(self):
+            username = self.request.get('username')
+            ...
+
+  Flaskへの変換:
+    from flask import Blueprint, request, render_template
+
+    login_bp = Blueprint('login', __name__)
+
+    @login_bp.route('/login', methods=['GET', 'POST'])
+    def login():
+        if request.method == 'GET':
+            return 'Login page'
+        elif request.method == 'POST':
+            username = request.form.get('username')
+            ...
+
+ステップ4.3: テンプレートの更新
+  □ Django 1.4テンプレート → Jinja2テンプレートへの移行
+  □ google.appengine.ext.webapp.template → flask.render_template
+
+  変更前:
+    from google.appengine.ext.webapp import template
+    template.render('template.html', {'var': value})
+
+  変更後:
+    from flask import render_template
+    render_template('template.html', var=value)
+
+
+【フェーズ5】Datastoreの移行
+----------------------------
+
+ステップ5.1: google.appengine.ext.db → google.cloud.ndb
+
+  変更前:
+    from google.appengine.ext import db
+
+    class MyModel(db.Model):
+        name = db.StringProperty()
+        created = db.DateTimeProperty(auto_now_add=True)
+
+  変更後:
+    from google.cloud import ndb
+
+    class MyModel(ndb.Model):
+        name = ndb.StringProperty()
+        created = ndb.DateTimeProperty(auto_now_add=True)
+
+ステップ5.2: クエリの更新
+
+  変更前:
+    results = MyModel.all().filter('name =', 'test').fetch(10)
+
+  変更後:
+    query = MyModel.query(MyModel.name == 'test')
+    results = query.fetch(10)
+
+ステップ5.3: ndbコンテキストの設定
+  Flaskアプリケーションでndbを使用する場合、コンテキストマネージャが必要:
+
+    from google.cloud import ndb
+
+    client = ndb.Client()
+
+    @app.before_request
+    def before_request():
+        request.ndb_context = client.context()
+        request.ndb_context.__enter__()
+
+    @app.teardown_request
+    def teardown_request(exception=None):
+        if hasattr(request, 'ndb_context'):
+            request.ndb_context.__exit__(None, None, None)
+
+
+【フェーズ6】Blobstoreの移行
+----------------------------
+
+ステップ6.1: Blobstore → Cloud Storage
+
+  変更前:
+    from google.appengine.ext import blobstore
+    upload_url = blobstore.create_upload_url('/upload')
+
+  変更後:
+    from google.cloud import storage
+
+    storage_client = storage.Client()
+    bucket = storage_client.bucket('your-bucket-name')
+    blob = bucket.blob('filename')
+    blob.upload_from_file(file_obj)
+
+
+【フェーズ7】Task Queueの移行
+------------------------------
+
+ステップ7.1: Deferred Library → Cloud Tasks
+
+  変更前:
+    from google.appengine.ext import deferred
+    deferred.defer(my_function, arg1, arg2)
+
+  変更後:
+    from google.cloud import tasks_v2
+
+    client = tasks_v2.CloudTasksClient()
+    parent = client.queue_path(project, location, queue)
+
+    task = {
+        'app_engine_http_request': {
+            'http_method': tasks_v2.HttpMethod.POST,
+            'relative_uri': '/tasks/my_function'
+        }
+    }
+    client.create_task(request={'parent': parent, 'task': task})
+
+
+【フェーズ8】メール機能の移行
+------------------------------
+
+ステップ8.1: Inbound Mail → Cloud Run または Pub/Sub
+
+  変更前:
+    from google.appengine.ext.webapp.mail_handlers import InboundMailHandler
+
+    class MailHandler(InboundMailHandler):
+        def receive(self, mail_message):
+            ...
+
+  変更後:
+    SendGridやMailgun等のサードパーティサービスを使用、
+    またはCloud Pub/Subでメールを受信
+
+
+【フェーズ9】Python 2から3への構文変更
+--------------------------------------
+
+ステップ9.1: print文 → print関数
+  変更前: print "Hello"
+  変更後: print("Hello")
+
+ステップ9.2: 文字列とバイト
+  変更前: u"Unicode文字列"
+  変更後: "Unicode文字列"  # Python 3ではデフォルトでUnicode
+
+ステップ9.3: 辞書のメソッド
+  変更前: dict.iteritems()
+  変更後: dict.items()
+
+ステップ9.4: 相対インポート
+  変更前: import module
+  変更後: from . import module  # パッケージ内の相対インポート
+
+ステップ9.5: エンコーディング宣言
+  全ての.pyファイルの先頭に:
+    # -*- coding: utf-8 -*-
+  は不要（Python 3ではデフォルトがUTF-8）
+
+ステップ9.6: 2to3ツールの使用
+  □ 2to3ツールで自動変換を試行
+    python -m lib2to3 -w src/
+  □ 変換結果を確認し、手動で修正
+
+
+【フェーズ10】テストとデバッグ
+------------------------------
+
+ステップ10.1: ローカル開発環境でのテスト
+  □ dev_appserver.pyの代わりにFlask開発サーバを使用:
+    python main.py
+
+  □ または gunicorn を使用:
+    gunicorn -b :8080 main:app
+
+ステップ10.2: 単体テストの実行
+  □ 全ての機能について単体テストを実行
+  □ 特に以下の機能を重点的にテスト:
+    - ログイン/ログアウト
+    - データベース操作（CRUD）
+    - ファイルアップロード
+    - メール送信
+    - タスクキューの実行
+    - Cronジョブ
+
+ステップ10.3: 統合テスト
+  □ エンドツーエンドのユーザーシナリオをテスト
+  □ パフォーマンステスト
+  □ 負荷テスト
+
+
+【フェーズ11】デプロイ
+----------------------
+
+ステップ11.1: テスト環境へのデプロイ
+  □ 新しいApp Engineバージョンとしてデプロイ:
+    gcloud app deploy --no-promote
+
+  □ トラフィックを新バージョンに一部だけ流す:
+    gcloud app services set-traffic default --splits=v1=90,v2=10
+
+ステップ11.2: 本番環境への段階的移行
+  □ 新バージョンの監視（エラーログ、パフォーマンス）
+  □ 問題がなければトラフィックを徐々に増やす:
+    gcloud app services set-traffic default --splits=v1=50,v2=50
+    gcloud app services set-traffic default --splits=v1=0,v2=100
+
+  □ 旧バージョンを一定期間保持（ロールバック用）
+
+
+【フェーズ12】MapReduceの対応
+------------------------------
+
+ステップ12.1: MapReduce の移行オプション
+  MapReduceはPython 3で公式サポートされていないため、以下の選択肢を検討:
+
+  オプション1: Cloud Dataflow への移行（推奨）
+    - Apache Beam を使用した並列処理
+    - より強力で柔軟な処理が可能
+
+  オプション2: Cloud Functions + Pub/Sub
+    - 軽量なバッチ処理に適している
+
+  オプション3: Compute Engine または Cloud Run
+    - カスタムバッチ処理スクリプトを実行
+
+  オプション4: 暫定措置
+    - MapReduceが必要な処理のみPython 2.7環境で実行
+    - 他の機能はPython 3に移行
+
+
+================================================================================
+4. 移行時の注意点とベストプラクティス
+================================================================================
+
+4.1 セキュリティ
+----------------
+- Python 3では文字列がデフォルトでUnicodeなので、セキュリティ上の問題が発生しやすい
+- SQLインジェクション、XSS等の脆弱性がないか再確認
+- 認証・認可の仕組みが正しく動作するか確認
+
+4.2 パフォーマンス
+------------------
+- Python 3はPython 2.7よりもメモリ使用量が多い場合がある
+- instance_classの調整が必要な場合がある
+- コールドスタート時間が変わる可能性がある
+
+4.3 コスト
+----------
+- Python 3環境では課金体系が異なる場合がある
+- basic_scalingやmanual_scalingの設定を見直す
+- 現在の設定: instance_class: B4, max_instances: 2
+
+4.4 後方互換性
+--------------
+- 既存のデータベーススキーマとの互換性を確認
+- 既存のBlobstoreデータの移行計画
+- 既存のTask Queueタスクの処理
+
+4.5 監視とログ
+--------------
+- Cloud Logging の設定
+- Cloud Monitoring のアラート設定
+- Error Reporting の有効化
+
+
+================================================================================
+5. 推定作業時間
+================================================================================
+
+規模: 約50ファイル以上、複雑なApp Engine機能を多用
+
+- フェーズ1（準備）: 1-2日
+- フェーズ2（app.yaml更新）: 1日
+- フェーズ3（requirements.txt作成）: 半日
+- フェーズ4（webapp2→Flask）: 5-10日 ★最大の作業
+- フェーズ5（Datastore移行）: 3-5日
+- フェーズ6（Blobstore移行）: 2-3日
+- フェーズ7（Task Queue移行）: 2-3日
+- フェーズ8（メール機能移行）: 1-2日
+- フェーズ9（Python 2→3構文）: 2-3日
+- フェーズ10（テスト）: 5-7日
+- フェーズ11（デプロイ）: 2-3日
+- フェーズ12（MapReduce移行）: 3-5日（オプションによる）
+
+合計: 約30-50営業日（1-2.5ヶ月）
+
+
+================================================================================
+6. リスクと対策
+================================================================================
+
+リスク1: webapp2からFlaskへの移行でバグが混入
+  対策: 十分なテストの実施、段階的なデプロイ
+
+リスク2: MapReduceの移行が困難
+  対策: 当面はPython 2.7環境で並行稼働、段階的に移行
+
+リスク3: パフォーマンスの劣化
+  対策: 負荷テストの実施、instance_classの調整
+
+リスク4: 予期しない互換性問題
+  対策: ロールバック計画の準備、旧バージョンの保持
+
+
+================================================================================
+7. 参考資料
+================================================================================
+
+- Google Cloud App Engine Python 3 Migration Guide:
+  https://cloud.google.com/appengine/docs/standard/python3/migrating-to-python3
+
+- webapp2 から Flask への移行:
+  https://cloud.google.com/appengine/docs/standard/python3/migrate-to-flask
+
+- Python 2 to 3 Migration Guide:
+  https://docs.python.org/3/howto/pyporting.html
+
+- google-cloud-ndb ドキュメント:
+  https://googleapis.dev/python/python-ndb/latest/
+
+
+================================================================================
+8. チェックリスト（移行完了時）
+================================================================================
+
+□ app.yaml が Python 3 ランタイムに更新されている
+□ requirements.txt が作成されている
+□ 全てのハンドラが Flask に移行されている
+□ Datastore アクセスが google.cloud.ndb を使用している
+□ Blobstore が Cloud Storage に移行されている
+□ Task Queue が Cloud Tasks に移行されている
+□ メール機能が代替サービスに移行されている
+□ Python 2 固有の構文が全て Python 3 に変換されている
+□ 全ての単体テストが合格している
+□ 統合テストが合格している
+□ テスト環境へのデプロイが成功している
+□ 本番環境への段階的デプロイが完了している
+□ 監視とアラートが設定されている
+□ ドキュメントが更新されている
+
+
+================================================================================
+9. 次のステップ
+================================================================================
+
+1. このドキュメントを関係者全員で確認
+2. 移行スケジュールの策定
+3. テスト環境の準備
+4. フェーズ1から順次実施
+
+
+================================================================================
+以上
+================================================================================

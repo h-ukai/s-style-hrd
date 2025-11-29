@@ -1,0 +1,357 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html lang="ja" xml:lang="ja" xmlns="https://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<title>メール送信リスト</title>
+<link href="css/styles.css" type="text/css" rel="stylesheet" media="all" />
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/ui-lightness/jquery-ui.css" type="text/css" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script type='text/javascript' src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js"></script>
+<script language="JavaScript" type="text/javascript" src="./js/jTPS.js"></script>
+
+<link rel="stylesheet" type="text/css" href="./css/jTPS.css">
+
+<style>
+
+body {
+	font-family: Tahoma;
+	font-size: 9pt;
+}
+#tbl thead th {
+	white-space: nowrap;
+	overflow-x:hidden;
+	padding: 3px;
+}
+#tbl tbody td {
+	padding: 3px;
+}
+
+#appended{
+	white-space: nowrap;
+}
+</style>
+
+<script type="text/javascript">
+
+var flist = new Array("メンバーID","ステータス","会社ID","支店ID","サイト名","氏名","読み仮名","郵便番号","住所","所在地１",
+"所在地２","電話","FAX","携帯電話","メールアドレス","ネットID","パスワード","登録年月日","担当","MNo","MR","売","買","貸","借",
+"媒介","成約","成約年月日","成約アンケート","年齢","勤続年数","同居大人","同居子供","勤め先","送信方法","自己資金 ",
+"返済予定額月々","返済予定額ボーナス","購入時期","年","区分","サービス","獲得媒体","初回アクセス","紹介業者","備考");
+
+
+$(document).ready(function(){
+
+	$("select#service").change(function(){
+			$("#tbl tbody").empty();
+			$(".sortableHeader").removeClass('sortDesc').removeClass('sortAsc');
+            $.ajax({
+                //url: "https://localhost:8080/jsonservice",
+                url: "https://s-style-hrd.appspot.com/jsonservice",
+                dataType: "jsonp",
+                data: {
+                    com: "memberservice",
+                    service:$("select#service").val(),
+                    status:$("select#status").val(),
+                    seiyaku:$("select#seiyaku").val()
+                },
+                success: function(rows) {
+                    //テーブルとして表示するため、htmlを構築
+					for (var i=0;i<rows.length;i++) {
+						$("#tbl tbody").append($("<tr/>").attr("id","tr" + i));
+						var row = rows[i];
+						for (var j=0;j<flist.length;j++) {
+							if(row[flist[j]]!=null){
+								if (flist[j] == "メンバーID"){
+									$("#tr" + i).append(
+										$("<td/>").append(
+											$("<a/>").attr("href","/memberedit.html?memberID=" + row[flist[j]]).text(row[flist[j]]).attr("target","_blank")
+										)
+									);
+								}
+								else {
+									$("#tr" + i).append($("<td/>").attr("id","appended").text(row[flist[j]].toString())) ;
+								}
+							}else{
+									$("#tr" + i).append($("<td/>").attr("id","appended")) ;
+							}
+						}
+					}
+					$('#tbl').jTPS( {perPages:[20,50,'ALL'],scrollStep:1,scrollDelay:30,
+						clickCallback:function () {	
+							// target table selector
+							var table = '#tbl';
+							// store pagination + sort in cookie 
+							//document.cookie = 'jTPS=sortasc:' + $(table + ' .sortableHeader').index($(table + ' .sortAsc')) + ',' +
+							//	'sortdesc:' + $(table + ' .sortableHeader').index($(table + ' .sortDesc')) + ',' +
+							//	'page:' + $(table + ' .pageSelector').index($(table + ' .hilightPageSelector')) + ';';
+						}
+					});
+/*
+					// reinstate sort and pagination if cookie exists
+					var cookies = document.cookie.split(';');
+					for (var ci = 0, cie = cookies.length; ci < cie; ci++) {
+						var cookie = cookies[ci].split('=');
+						if (cookie[0] == 'jTPS') {
+							var commands = cookie[1].split(',');
+							for (var cm = 0, cme = commands.length; cm < cme; cm++) {
+								var command = commands[cm].split(':');
+								if (command[0] == 'sortasc' && parseInt(command[1]) >= 0) {
+									$('#tbl .sortableHeader:eq(' + parseInt(command[1]) + ')').click();
+								} else if (command[0] == 'sortdesc' && parseInt(command[1]) >= 0) {
+									$('#tbl .sortableHeader:eq(' + parseInt(command[1]) + ')').click().click();
+								} else if (command[0] == 'page' && parseInt(command[1]) >= 0) {
+									$('#tbl .pageSelector:eq(' + parseInt(command[1]) + ')').click();
+								}
+							}
+						}
+					}
+					// bind mouseover for each tbody row and change cell (td) hover style
+					$('#tbl tbody tr:not(.stubCell)').live('mouseover mouseout',
+						function (e) {
+							// hilight the row
+							e.type == 'mouseover' ? $(this).children('td').addClass('hilightRow') : $(this).children('td').removeClass('hilightRow');
+						}
+					);
+*/
+                }
+            });
+       });
+	$('#tbl').jTPS( {perPages:[20,50,'ALL'],scrollStep:1,scrollDelay:30,
+		clickCallback:function () {	
+			// target table selector
+			var table = '#tbl';
+			// store pagination + sort in cookie 
+			document.cookie = 'jTPS=sortasc:' + $(table + ' .sortableHeader').index($(table + ' .sortAsc')) + ',' +
+				'sortdesc:' + $(table + ' .sortableHeader').index($(table + ' .sortDesc')) + ',' +
+				'page:' + $(table + ' .pageSelector').index($(table + ' .hilightPageSelector')) + ';';
+		}
+	});
+	// reinstate sort and pagination if cookie exists
+/*
+	var cookies = document.cookie.split(';');
+	for (var ci = 0, cie = cookies.length; ci < cie; ci++) {
+		var cookie = cookies[ci].split('=');
+		if (cookie[0] == 'jTPS') {
+			var commands = cookie[1].split(',');
+			for (var cm = 0, cme = commands.length; cm < cme; cm++) {
+				var command = commands[cm].split(':');
+				if (command[0] == 'sortasc' && parseInt(command[1]) >= 0) {
+					$('#tbl .sortableHeader:eq(' + parseInt(command[1]) + ')').click();
+				} else if (command[0] == 'sortdesc' && parseInt(command[1]) >= 0) {
+					$('#tbl .sortableHeader:eq(' + parseInt(command[1]) + ')').click().click();
+				} else if (command[0] == 'page' && parseInt(command[1]) >= 0) {
+					$('#tbl .pageSelector:eq(' + parseInt(command[1]) + ')').click();
+				}
+			}
+		}
+	}
+*/
+	// bind mouseover for each tbody row and change cell (td) hover style
+/*
+	$('#tbl tbody tr:not(.stubCell)').live('mouseover mouseout',
+		function (e) {
+			// hilight the row
+			e.type == 'mouseover' ? $(this).children('td').addClass('hilightRow') : $(this).children('td').removeClass('hilightRow');
+		}
+	);
+*/
+	$('#tbl tbody tr:not(.stubCell)').live('mouseover',
+		function (e) {
+			// hilight the row
+			$(this).children('td').addClass('hilightRow') ;
+		}
+	);
+
+	$('#tbl tbody tr:not(.stubCell)').live('mouseout',
+		function (e) {
+			// hilight the row
+			$(this).children('td').removeClass('hilightRow');
+		}
+	);
+
+});
+
+function sousin(){
+$('#com').val('メール送信');
+$("#mainform").submit();
+}
+function hozon(){
+$('#com').val('メール保存');
+$("#mainform").submit();
+}
+
+</script>
+
+</head>
+
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0">
+<div align="center">
+<form name="mainform" id="mainform" action="./mailinglist.html" method="post">
+<br />
+<table width="900" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td align="left">
+<h2>メール送信リスト</h2>　　　　メッセージID：<input type="txet" id="msgkey" name="msgkey" value="{{msgkey}}">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td align="left">
+      <table width="100%" border="0" cellspacing="1" cellpadding="5">
+      {% if error_msg %}
+        <tr>
+          <td>
+            <span class='class14red'>{{error_msg|escape}}</span>
+         </td>
+       </tr>
+      {% endif %}
+       <tr>
+         <td>サービス　<select id="service" name="service" size="1">
+            <option value="" selected></option>
+            {% for service in servicelist %}
+            <option value="{{service}}">{{service}}</option>
+            {% endfor %}
+            </select>
+
+        </td>
+        <td>区分　<select id="status" name="status" size="1">
+        <option value=""></option>
+        <option value="顧客" selected>顧客</option>
+        <option value="管理者">管理者</option>
+        <option value="業者">業者</option>
+        <option value="建築業者">建築業者</option>
+        <option value="紹介者">紹介者</option>
+        <option value="担当">担当</option>
+        <option value="その他">その他</option>
+        </select>
+        </td>
+        <td>成約　<select id="seiyaku" name="seiyaku" size="1">
+        <option value=""></option>
+        <option value="未成約" selected>未成約</option>
+        <option value="成約">成約</option>
+        <option value="契予">契予</option>
+        <option value="決予">決予</option>
+        <option value="辞退">辞退</option>
+        <option value="休止">休止</option>
+        <option value="ブラック">ブラック</option>
+        <option value="仮">仮</option>
+        <option value="その他">その他</option>
+        </select>
+        </td>
+    </tr>
+</table>
+</td>
+</tr>
+</table>
+<br />
+
+<div style="width:900px; overflow-x:scroll;">
+<table name="tbl" id ="tbl" style="border: 1px solid #ccc;" cellspacing="0" >
+	<thead id="tblthead">
+		<tr>
+		<th sort=メンバーID>メンバーID</th>
+		<th sort=ステータス>ステータス</th>
+		<th sort=会社ID>会社ID</th>
+		<th sort=支店ID>支店ID</th>
+		<th sort=サイト名>サイト名</th>
+		<th sort=氏名>氏名</th>
+		<th sort=読み仮名>読み仮名</th>
+		<th sort=郵便番号>郵便番号</th>
+		<th sort=住所>住所</th>
+		<th sort=所在地１>所在地１</th>
+		<th sort=所在地２>所在地２</th>
+		<th sort=電話>電話</th>
+		<th sort=FAX>FAX</th>
+		<th sort=携帯電話>携帯電話</th>
+		<th sort=メールアドレス>メールアドレス</th>
+		<th sort=ネットID>ネットID</th>
+		<th sort=パスワード>パスワード</th>
+		<th sort=登録年月日>登録年月日</th>
+		<th sort=担当>担当</th>
+		<th sort=MNo>MNo</th>
+		<th sort=MR>MR</th>
+		<th sort=売>売</th>
+		<th sort=買>買</th>
+		<th sort=貸>貸</th>
+		<th sort=借>借</th>
+		<th sort=媒介>媒介</th>
+		<th sort=成約>成約</th>
+		<th sort=成約年月日>成約年月日</th>
+		<th sort=成約アンケート>成約アンケート</th>
+		<th sort=年齢>年齢</th>
+		<th sort=勤続年数>勤続年数</th>
+		<th sort=同居大人>同居大人</th>
+		<th sort=同居子供>同居子供</th>
+		<th sort=勤め先>勤め先</th>
+		<th sort=送信方法>送信方法</th>
+		<th sort=自己資金 >自己資金 </th>
+		<th sort=返済予定額月々>返済予定額月々</th>
+		<th sort=返済予定額ボーナス>返済予定額ボーナス</th>
+		<th sort=購入時期>購入時期</th>
+		<th sort=年>年</th>
+		<th sort=区分>区分</th>
+		<th sort=サービス>サービス</th>
+		<th sort=獲得媒体>獲得媒体</th>
+		<th sort=初回アクセス>初回アクセス</th>
+		<th sort=紹介業者>紹介業者</th>
+		<th sort=備考>備考</th></tr>
+	</thead>
+	<tbody id="tbltbody">
+	</tbody>
+	<tfoot class="nav">
+		<tr>
+			<td colspan=8>
+				<div class="pagination"></div>
+				<div class="paginationTitle">Page</div>
+				<div class="selectPerPage"></div>
+				<div class="status"></div>
+			</td>
+		</tr>
+	</tfoot>
+
+</table>
+</div>
+
+</td>
+</tr>
+</td>
+<td>
+<br />
+<br />
+<br />
+<div name=maillistbox id=maillistbox style="width:900px; height:300px; overflow:scroll">
+
+<ul>
+{% for msg in msglist %}
+    <li><a href=automaticSearch.html?msgkey={{msg.key}}> {{msg.key.id}} {{ msg.subject }} {{ msg.done }} {{msg.reservation|default_if_none:""|date:"Y/m/d H:i:s"}}</a> </li>
+{% endfor %}
+</ul>
+
+</div>
+
+<br />
+メールタイトル：
+<br />
+<input type="text" id="subject" name="subject" size="60" value="{{subject}}">
+<br />
+メール本文：
+<br />
+<textarea name="body" id="body" rows="25" cols="125">
+{{body}}
+</textarea>
+<br />
+　　　<button onClick="sousin();" type="button" value="メール送信">メール送信</button>　　　
+<button onClick="hozon();" type="button" value="メール保存">メール保存</button>
+<input type="text" id="com" name="com" style="position:absolute;visibility:hidden">
+</form>
+</td>
+</tr>
+</table>
+</form>
+</div>
+<br />
+<br />
+
+</body>
+
+</html>

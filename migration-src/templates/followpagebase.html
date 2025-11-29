@@ -1,0 +1,444 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html lang="ja" xml:lang="ja" xmlns="https://www.w3.org/1999/xhtml">
+    <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <title>{% block titile %}顧客フォロー状況{% endblock titile %}</title>
+    <link href="../css/baselayout.css" type="text/css" rel="stylesheet" media="all" />
+    <!-- jquery UI のcss-->
+    <link href="../css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css"/>
+    <!-- jquery UI のcss-->
+    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script><!-- jquery　本体-->
+    <script type="text/javascript"  src="../js/jquery-ui-1.10.4.custom.min.js"></script><!-- jquery-UI　本体-->
+    <script type="text/javascript" src="../js/follow.js"></script>
+    <script type="text/javascript" src="../js/jQueryMultiCheckbox.js"></script>
+    <script type="text/javascript" src="../js/autocomletecustom.js"></script>
+    <link type="text/css" rel="stylesheet" href="../css/autocomletecustom.css">
+    <link type="text/css" rel="stylesheet" href="../css/follow.css">
+    <script type="text/javascript" src="../js/jTPS_follow.js"></script>
+    <link type="text/css" rel="stylesheet" href="../css/jTPS_follow.css">
+    <link type="text/css" rel="stylesheet" href="../css/mark.css">
+
+{% block addheder %}
+
+
+{% endblock addheder %}
+<style>
+.ui-autocomplete-loading {
+	background: white url('../img/ui-anim_basic_16x16.gif') right center no-repeat;
+}
+.ui-autocomplete {
+    max-height: 300px;
+    width: auto;
+    overflow-x: hidden;
+    padding-right: 20px;
+}
+#jquery-ui-autocomplete label {
+    float: left;
+    margin-right: 0.5em;
+    color: black;
+    font-size: 13px;
+}
+</style>
+
+<script type="text/javascript">
+
+var urlvar;
+var list = null;
+urlvar = getUrlVars();
+
+var d   = document;
+
+//var ajaxURL = "https://localhost:8080/jsonservice";
+var ajaxURL = "https://{{Domain|default_if_none:""}}/jsonservice";
+//var ajaxareaURL = "https://localhost:8080/jsonservice";
+var ajaxareaURL = "https://{{Domain|default_if_none:""}}/jsonservice";
+var bkeditFile = "https://{{Domain|default_if_none:""}}/bkedit.html?bkID=";
+var followFile = "follow.html?memberID=";
+
+var set_memberID = "{{memberID|default_if_none:""}}";
+var set_tantoID = "{{userID|default_if_none:""}}";
+// var set_memberID = $("hidden#memberID").val();
+// var set_memberID = "test111";
+var set_action = urlvar['set_action'];
+var thingCheckedID;
+
+var flist = new Array("key", "済","アクション","表題","本文","予定日","予定終了日","タイムスタンプ");
+var slist = new Array("物件番号","作成状況","メモ","送信済","送信日時","自社管理欄","業者名","代表電話番号","データ元","広告転載区分","売買賃貸区分","データ種類","物件種目","価格","所在地名1","所在地名2","所在地名3","建物名","部屋番号","建物面積1","専有面積","間取タイプ（1）","間取部屋数（1）","建物構造","築年月（西暦）","坪単価","登記簿地目","土地面積","現況有姿分譲地","接道方向1","接道方向2","接道状況","用途地域（1）","備考1","備考2","確認年月日","変更年月日","更新年月日","登録年月日","評価ポイント");
+var mlist = new Array("メンバーID", "氏名","電話","FAX");
+
+var app_list = new Array(
+	"マッチング","TEL","要フォロー","新規","FAX","条件確認","連絡", "訪問","案内","手渡し","検索結果","相談","商談",
+	"報告","打ち合わせ","査定報告","調査報告","媒介契約","契約","決済","ローン相談","送付依頼","重説"
+);
+var act_list = new Array(
+	"資料請求","問い合わせ","条件変更","見学希望","検討中","オープンハウス来場","住所変更","相談","他社にて契約","辞退",
+	"みあわせ","物件確認","商談中","売却希望","相談会来場","場所が知りたい","NET資料請求","査定について","契約について",
+	"決済について","ローンについて","休止","緊急事態","クレーム","買い付け証明","売却条件","買付条件","一覧資料請求","メール受信"
+);
+
+var reading_listf_flg = false;
+var reading_lists_flg = false;
+var reading_listm_flg = false;
+var reading_calendar_flg = false;
+var reading_still_flg = false;
+
+{% block script %}
+
+{% endblock script %}
+
+
+$(document).ready(function(){
+
+    if (! set_memberID ){
+        set_memberID = $("#userID").val()
+}
+{% block inready %}
+
+{% endblock inready %}
+
+    $("#trader_id").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: ajaxURL ,
+                dataType: "jsonp",
+                data: {
+                    com: "getmemID",
+                    memID: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label: item['メンバーID'] + ' (' + item['氏名'] + ')' + item['サイト名'],
+                            value: item['メンバーID'],
+                            id: item['メンバーID'],
+                            tel: item['電話'],
+                            name:item['氏名'],
+                            yomi:item['読み仮名'],
+                            site:item['サイト名'],
+                            mail:item['メールアドレス']
+                        }
+                    }));
+                 }
+             });
+         },
+        width: 200,
+		minChars: 5,
+		delay:1000,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+		select: function(ev, ui) {
+
+			// 選択項目の一覧を取得
+			$("#trader_fullname").html(ui.item.name);
+			$("#site").html(ui.item.site);
+		    $("#trader_id").val(ui.item.id);
+		    $("#memberID").val(ui.item.id);
+		    $("#trader_name").val(ui.item.yomi);
+		    $("#trader_tel").val(ui.item.tel);
+            $("#trader_mail").val(ui.item.mail);
+//			FollowList (ui.item.id);
+			goloc(GetFileName(window.location.href),'')
+		}
+    });
+
+    $("#trader_name").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: ajaxURL ,
+                dataType: "jsonp",
+                data: {
+                    com: "getmemName",
+                    search_key: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label: item['読み仮名'] + ' ' + item['氏名'] + ' (' + item['電話'] + ')' + item['サイト名'],
+                            value: item['読み仮名'],
+                            id: item['メンバーID'],
+                            tel: item['電話'],
+                            name:item['氏名'],
+                            yomi:item['読み仮名'],
+                            site:item['サイト名'],
+                            mail:item['メールアドレス']
+                        }
+                    }));
+                 }
+             });
+         },
+        width: 200,
+		minChars: 5,
+		delay:1000,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+		select: function(ev, ui) {
+			// 選択項目の一覧を取得
+			$("#trader_fullname").html(ui.item.name);
+			$("#site").html(ui.item.site);
+		    $("#trader_id").val(ui.item.id);
+		    $("#memberID").val(ui.item.id);
+		    $("#trader_name").val(ui.item.yomi);
+		    $("#trader_tel").val(ui.item.tel);
+            $("#trader_mail").val(ui.item.mail);
+//			FollowList (ui.item.id);
+			goloc(GetFileName(window.location.href),'')
+		}
+    });
+    $("#trader_tel").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: ajaxURL ,
+                dataType: "jsonp",
+                data: {
+                    com: "getmemTel",
+                    memTel: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label: item['電話']+ ' (' + item['氏名'] + ')' + item['サイト名'],
+                            value: item['電話'],
+                            id: item['メンバーID'],
+                            tel: item['電話'],
+                            name:item['氏名'],
+                            yomi:item['読み仮名'],
+                            site:item['サイト名'],
+                            mail:item['メールアドレス']
+                        }
+                    }));
+                 }
+             });
+         },
+        width: 200,
+		minChars: 5,
+		delay:1000,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+		select: function(ev, ui) {
+			// 選択項目の一覧を取得
+        	$("#trader_fullname").html(ui.item.name);
+	        $("#site").html(ui.item.site);
+            $("#trader_id").val(ui.item.id);
+		    $("#memberID").val(ui.item.id);
+            $("#trader_name").val(ui.item.yomi);
+            $("#trader_tel").val(ui.item.tel);
+            $("#trader_mail").val(ui.item.mail);
+//			FollowList (ui.item.id);
+			goloc(GetFileName(window.location.href),'')
+		}
+    });
+
+
+    $("#trader_mail").autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: ajaxURL ,
+                dataType: "jsonp",
+                data: {
+                    com: "getmemmail",
+                    mail: request.term,
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label: item['メールアドレス']+ ' (' + item['氏名'] + ')' + item['サイト名'],
+                            value: item['メールアドレス'],
+                            id: item['メンバーID'],
+                            tel: item['電話'],
+                            name:item['氏名'],
+                            yomi:item['読み仮名'],
+                            site:item['サイト名'],
+                            mail:item['メールアドレス']
+                        }
+                    }));
+                 }
+             });
+         },
+        width: 200,
+		minChars: 5,
+		delay:1000,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+		select: function(ev, ui) {
+			// 選択項目の一覧を取得
+        	$("#trader_fullname").html(ui.item.name);
+	        $("#site").html(ui.item.site);
+            $("#trader_id").val(ui.item.id);
+		    $("#memberID").val(ui.item.id);
+            $("#trader_name").val(ui.item.yomi);
+            $("#trader_tel").val(ui.item.tel);
+            $("#trader_mail").val(ui.item.mail);
+//			FollowList (ui.item.id);
+			goloc(GetFileName(window.location.href),'')
+		}
+    });
+
+
+	// カレンダーを表示
+	CalList(set_tantoID);
+	// 未フォローを表示
+	StillList(set_tantoID);
+
+
+
+//	$("#subject15").click(function(){ $("#dialog1").dialog("open"); });
+//	$("#button_test").click(function(){ $("#dialog1").dialog("open"); });
+
+    // スクロールに応じて、ポップアップダイアログの表示位置を調整
+	var win_scroll_top = $(window).scrollTop();
+	$(window).bind ("scroll",function(){
+		if ($("#glayLayer").css("display") == "block") {
+			$(window).scrollTop(win_scroll_top);
+		}
+		else {
+			win_scroll_top = $(window).scrollTop();
+		}
+	});
+
+});
+
+function getUrlVars() {
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++) {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        if (hash[1]){
+            var str1 = hash[1]
+            vars[hash[0]] = str1.replace("#", "");
+        }
+    }
+    return vars;
+}
+function goloc(locurl,action){
+    var hashes = GetFileName(window.location.href);
+    var locfile = GetFileName(locurl);
+    if (locurl==hashes){
+        if (hashes=='follow.html'){
+            if (action != "Search"){
+                FollowList ($("#trader_id").val());
+            }
+            else{
+                MemberList (set_tantoID,urlvar['action']);
+            }
+        }
+    }
+    document.location=locurl+"?memberID="+$("#trader_id").val()
+}
+function GetFileName(file_url){
+    file_url = file_url.substring(file_url.lastIndexOf("/")+1,file_url.length)
+    file_url = file_url.substring(0,file_url.indexOf("？"));
+    return file_url;
+}
+
+function selectgo(obj){
+  if (obj.val() != 0){
+    href = obj.val();
+    window.open(href,'_blank')
+//    document.location.href = href+"&target='_blank'";
+//    location.href = href + "target=_";
+  }
+}
+{% block function %}
+{% endblock function %}
+
+</script>
+{% block inlinecss %}
+
+{% endblock inlinecss %}
+
+</head>
+
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0">
+
+<div class="wrapper">
+
+<!--header-->
+<div class="header">{% block titile2 %}{% endblock titile2 %} {{CorpOrg_key_name|default_if_none:""}} {{Branch_Key_name|default_if_none:""}} {{name|default_if_none:""}}
+<a href="../login.html?logoff=true&corp_name={{CorpOrg_key_name|default_if_none:""}}&branch_name={{Branch_Key_name|default_if_none:""}}&sitename={{sitename|default_if_none:""}}&togo={{pagepath|default_if_none:""}}">ログオフ</a>
+<select name="selectName" size="1" onchange="window.open($(this).val(),'_balank');$(this).val(0);">
+<option selected="selected" value=0 >メニュー</option>
+<option value="../bkedit.html">物件登録</option>
+<option value="../csvupload/bkdata.html">レインズアップロード</option>
+<option value="../matching/{{CorpOrg_key_name|default_if_none:""}}/{{Branch_Key_name|default_if_none:""}}/{{sitename|default_if_none:""}}/matching.html">マッチング</option>
+<option value="../bkjoukyoulist.html">資料作成状況</option>
+<option value="../bkdchk.html">重複チェック</option>
+<option value="../memberSearchandMail/{{CorpOrg_key_name|default_if_none:""}}/{{Branch_Key_name|default_if_none:""}}/{{sitename|default_if_none:""}}/backoffice/memberSearchandMail.html">顧客検索・顧客グループ・メール一斉送信</option>
+<option value="../addresslist.html">アドレスリスト（小学校区）作成・編集</option>
+<option value="../csvupload/addressset.html">アドレスリスト（小学校区）アップロード</option>
+<option value="../tantochange/{{CorpOrg_key_name|default_if_none:""}}/{{Branch_Key_name|default_if_none:""}}/{{sitename|default_if_none:""}}/backoffice/tantochange.html">担当変更</option>
+</select>
+</div>
+<!--header End-->
+
+<form action="" method="post" name="frmbksearch" id="frmbksearch">
+<input type="hidden" name="usurID" id = "userID" value="{{userID|default_if_none:""}}"/>
+<input type="hidden" name="usurkey" id ="usurkey" value="{{userkey|default_if_none:""}}"/>
+<input type="hidden" name="key" id = "key" value="{{key|default_if_none:""}}"/>
+<input type="hidden" name="page" id= "page" value="{{page|default_if_none:""}}"/>
+
+<div class="container">
+  <div class="contents">
+
+
+
+  <!-- ここから本文記入 -->
+  <ul>
+  <!--contents-head01-->
+  <li class="contents-head01"><span id="site">{{sitename|default_if_none:""}}</span> <span id="trader_fullname">{{membername|default_if_none:""}}</span><br /> ID:<input type="text" name="trader_id" id="trader_id" size="5" value="{{memberID|default_if_none:""}}"/> yomi:<input type="text" name="trader_name" id="trader_name" size="16" value="{{memberyomi|default_if_none:""}}"/> tel:<input type="text" name="trader_tel" id="trader_tel" size="13" value="{{membertel|default_if_none:""}}"/> mail:<input type="text" name="trader_mail" id="trader_mail" size="20" value="{{membermail|default_if_none:""}}"/></li>
+  <!--contents-head01 END-->
+  <!--contents-head02-->
+  <li class="contents-head02"><button name="buttonName" type="button" onclick="goloc('../follow/{{CorpOrg_key_name}}/{{Branch_Key_name}}/{{sitename}}/follow.html','')">フォロー状況</button><button name="buttonName" type="button" onclick="goloc('../memberedit/{{CorpOrg_key_name}}/{{Branch_Key_name}}/{{sitename}}/memberedit.html','')">顧客台帳</button><button name="buttonName" type="button" onclick="goloc('../bksearch/{{CorpOrg_key_name}}/{{Branch_Key_name}}/{{sitename}}/bksearch.html','')">検索条件</button><button name="buttonName" type="button" onclick="document.location='../memberedit/{{CorpOrg_key_name}}/{{Branch_Key_name}}/{{sitename}}/memberedit.html'" >新規登録</button><button type="button" onclick="ModalFollowInput(set_key);">新規フォロー</button></li>
+  <!--contents-head02 END-->
+  </ul>
+
+  <!-- block maincontents -->
+  {% block maincontents %}
+  {% endblock maincontents %}
+  <!-- endblock maincontents -->
+
+  <!--leftcontent-->
+    <div class="leftcontent">
+      <div id="calendar" class="calendar">
+        <table id="tblc" border="0" cellspacing="1" cellpadding="1" width="100%" bgcolor="#F5F3F1" style="outline: solid 2px #DFD6C4">
+          <tbody id="tblcbody"></tbody>
+        </table>
+      </div>
+    </div>
+  <!--leftcontent End-->
+
+  <p class="container-clear">&nbsp;</p>
+</div><!-- // container END -->
+
+<!--rightcontent-->
+<div class="rightcontent">
+<div class="title">
+未フォロー
+</div>
+<div id="still" class="content">
+</div>
+</div>
+<!--rightcontent End-->
+
+<div class="footer">Database</div>
+
+</div><!--wrapper End-->
+
+</body>
+</html>

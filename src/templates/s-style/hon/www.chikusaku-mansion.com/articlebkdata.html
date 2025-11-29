@@ -1,0 +1,607 @@
+<!--2012.0813 article.html-->
+
+		<!--START Loansimulation-->
+						<div class="Loansimulation">
+						<table width="100%" border="0" cellspacing="0" cellpadding="7">
+							<tbody><tr>
+								<td align="left" bgcolor="#f18101"><font color="#f7a600"><span class="class14white">返済計画プラン</span></font></td>
+							</tr>
+							<tr>
+								<td align="left" bgcolor="#f4f4f4"><br>
+									<span class="class14red">自己資金・金利モデル・借入期間を入力して下さい。毎月のお支払金額が計算できます。</span><br>
+									<br>
+									<table width="100%" border="0" cellspacing="0" cellpadding="0">
+										<tbody><tr>
+											<td valign="top">
+												<table width="100%" border="0" cellspacing="1" cellpadding="5" bgcolor="#f7a600">
+													<tbody><tr>
+														<td align="left" bgcolor="#f9f6f1">この物件の価格</td>
+														<td align="left" id="kkkuCnryu" name="kkkuCnryu" bgcolor="white">{{data.kakakuM|default:""}} 万円<br>
+														</td>
+													</tr>
+													<tr>
+														<td align="left" bgcolor="#f9f6f1">その他の費用（概算）</td>
+														<td align="left" bgcolor="white" id="sonota" name="sonota" ></td>
+													</tr>
+													<tr>
+														<td align="left" bgcolor="#f9f6f1">購入する総金額</td>
+														<td align="left" bgcolor="white" id="kounyusogaku" name="kounyusogaku" ></td>
+													</tr>
+												</tbody></table>
+											</td>
+											<td><img src="https://www.chikusaku-mansion.com/cmn_img/yajirushi-lorn.gif" alt="" width="11" height="27" border="0" hspace="10"></td>
+											<td valign="top">
+												<table width="100%" border="0" cellspacing="1" cellpadding="5" bgcolor="#f7a600">
+													<tbody><tr>
+														<td align="left" bgcolor="#f9f6f1">自己資金</td>
+														<td align="left" bgcolor="white"><input type="text" name="zikosikin" id="zikosikin" value="0" size="15">万円</td>
+														<td rowspan="4" align="left" bgcolor="white">毎月のお支払い金額<br>
+															（ボーナス無し）<br>
+														<input type="hidden" id="kanri" name="kanri" value="{{data.bkdata.knrh}}">
+														<input type="hidden" id="txt_debtmoney" name="txt_debtmoney" value="">
+														<input type="hidden" id="syuzentumitate" name="syuzentumitate" value="{{data.bkdata.shznTmttkn}}">
+														<input type="hidden" name="txt_bonus" id="txt_bonus" maxlength="20" size="10" class="long" style="ime-mode: disabled;">
+														<input type="hidden" name="txt_repayment_everymonth" id="txt_repayment_everymonth" maxlength="30" size="10" class="medium" style="ime-mode: disabled;">
+														<input type="hidden" name="txt_repayment_year" id="txt_repayment_year" maxlength="30" size="10" class="medium" style="ime-mode: disabled;">
+
+														<span id="tukisiharaigaku" class="class20orange" >円</span></td>
+													</tr>
+													<tr>
+														<td align="left" bgcolor="#f9f6f1">借入金額</td>
+														<td align="left" bgcolor="white"><span name="txt_debtmoney2" id="txt_debtmoney2">万円</span> </td>
+													</tr>
+													<tr>
+														<td align="left" bgcolor="#f9f6f1">金利モデル</td>
+														<td align="left" bgcolor="white"><input type="text" name="txt_rate" id="txt_rate" value="0.975" size="15" style="ime-mode: disabled;">％</td>
+													</tr>
+													<tr>
+														<td align="left" bgcolor="#f9f6f1">借入期間</td>
+														<td align="left" bgcolor="white"><input type="text" name="txt_kikan" id="txt_kikan" value="35" size="15" style="ime-mode: disabled;">年(変動)</td>
+													</tr>
+												</tbody></table>
+											</td>
+										</tr>
+									</tbody></table>
+									<br>
+									<table width="100%" border="0" cellspacing="0" cellpadding="0">
+										<tbody><tr>
+											<td align="right" width="366"><img src="https://www.chikusaku-mansion.com/cmn_img/plus.gif" alt="" width="69" height="69" border="0"></td>
+											<td align="right">
+												<table width="95%" border="0" cellspacing="1" cellpadding="5" bgcolor="#f7a600">
+													<tbody><tr>
+														<td align="left" bgcolor="#f9f6f1">管理費</td>
+														<td rowspan="2" align="left" bgcolor="white">
+														<span id="kanrisyuzen" class="class20orange">円</span></td>
+													</tr>
+													<tr>
+														<td align="left" bgcolor="#f9f6f1">修繕積立金</td>
+													</tr>
+												</tbody></table>
+											</td>
+										</tr>
+									</tbody></table>
+								</td>
+							</tr>
+						</tbody></table>
+						</div>
+<!--END Loansimulation-->
+
+      <br />
+      <br />
+        
+        <br>
+        <br>
+        <p class="class-title-article">【{{data.bkdata.bkID}}】{{data.bkdata.ttmnmi|default:""}}　{{data.bkdata.tdufknmi|default:""}}{{data.bkdata.shzicmi1|default:""}}{{data.bkdata.shzicmi2|default:""}}{{data.bkdata.shzicmi3|default:""}}</p>
+        
+        <!--<p class="class-title-article2">● この物件には購入希望者が{{data.hikiai|default:"**"}}人います</p>--> 
+        <br>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td><img src="https://www.chikusaku-mansion.com/article/cmn_img/icon-tokucho.jpg" alt="ココが 特徴!" width="75" height="67" border="0"></td>
+            <td align="left"><span class="class14red">{{data.bkdata.kkkybku|join:"<br />"}}<br />{{data.bkdata.bku3|default:""}}<br />{{data.bkdata.bku4|default:""}}</span></td>
+          </tr>
+        </table>
+        <br>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td align="center" valign="top">
+
+				<!-- Start Advanced Gallery Html Containers -->
+				<div id="gallery" class="content" style="background-color:white;position:relative">
+					<div id="controls" class="controls"></div>
+					<div class="slideshow-container">
+						<div id="loading" class="loader"></div>
+						<div id="slideshow" class="slideshow"></div>
+					</div>
+					<div id="caption" class="caption-container"></div>
+				</div>
+
+              <p class="class-title-article3">物件概要</p>
+              <br>
+              <table width="100%" border="0" cellspacing="1" cellpadding="10" bgcolor="#d1cec9">
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">名　称</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white">{{data.bkdata.dtsyuri|default:""}}{{data.bkdata.bkknShmk|default:""}} {{data.bkdata.ttmnmi|default:""}}</td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">物件所在地</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white">{{data.bkdata.tdufknmi|default:""}}{{data.bkdata.shzicmi1|default:""}}{{data.bkdata.shzicmi2|default:""}}{{data.bkdata.shzicmi3|default:""}}</td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">価　格</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white">{{data.kakakuM|default:""}} 万円（税込） </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">間　取</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white">{{data.bkdata.mdrHysu1|floatformat|default:""}}{{data.bkdata.mdrTyp1|default:""}}
+                    
+                    {% if data.bkdata.stTyp11%}
+                    {% if data.bkdata.stHrs11 %}
+                    {{data.bkdata.stHrs11}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu11 %}
+                    ×{{data.bkdata.stsu11}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if data.bkdata.stTyp21 %}
+                    {% if data.bkdata.stHrs21 %}
+                    {{data.bkdata.stHrs21}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu21 %}
+                    ×{{data.bkdata.stsu21}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if data.bkdata.stTyp31 %}
+                    {% if data.bkdata.stHrs31 %}
+                    {{data.bkdata.stHrs31}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu31 %}
+                    ×{{data.bkdata.stsu31}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if data.bkdata.stTyp41 %}
+                    {% if data.bkdata.stHrs41 %}
+                    {{data.bkdata.stHrs41}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu41 %}
+                    ×{{data.bkdata.stsu41}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if data.bkdata.stTyp51 %}
+                    {% if data.bkdata.stHrs51 %}
+                    {{data.bkdata.stHrs51}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu51 %}
+                    ×{{data.bkdata.stsu51}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if data.bkdata.stShziki61 %}
+                    {% if data.bkdata.stHrs61 %}
+                    {{data.bkdata.stHrs61}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu61 %}
+                    ×{{data.bkdata.stsu61}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if data.bkdata.stTyp71 %}
+                    {% if data.bkdata.stHrs71 %}
+                    {{data.bkdata.stHrs71}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu71 %}
+                    ×{{data.bkdata.stsu71}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">最寄駅</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white">{{data.bkdata.ekmi1|default:""}} {{data.bkdata.ekmi2|default:""}} {{data.bkdata.ekmi3|default:""}} 駅</td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">交　通</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white">
+                  {% if data.bkdata.ekmi1 %} <br />
+                    {{data.bkdata.ensnmi1}}
+                    {{data.bkdata.ekmi1}}駅
+                    {% if data.bkdata.thHn11 %}
+                    徒歩約{{data.bkdata.thHn11|floatformat}}分
+                    {% endif %}
+                    {% if data.bkdata.thM21 %}
+                    徒歩約{{data.bkdata.thM21|floatformat}}ｍ
+                    {% endif %}
+                    {% if data.bkdata.bs1 %}
+                    {{data.bkdata.bs1|floatformat}}
+                    {% endif %}
+                    {% if data.bkdata.bsRsnmi1 %}
+                    {{data.bkdata.bsRsnmi1|floatformat}}
+                    {% endif %}
+                    {% if data.bkdata.bstiMishu1 %}
+                    {{data.bkdata.bstiMishu1|floatformat}}
+                    {% endif %}
+                    {% if data.bkdata.tihHn1 %}
+                    徒歩 {{data.bkdata.tihHn1|floatformat}} 分
+                    {% endif %}
+                    {% if data.bkdata.tihM1 %}
+                    徒歩 {{data.bkdata.tihM1|floatformat}} ｍ
+                    {% endif %}
+                    {% if data.bkdata.krmKm1 %}
+                    車 {{data.bkdata.krmKm1|floatformat}} km
+                    {% endif %}
+                  {% endif %}
+                  {% if data.bkdata.ekmi2 %} <br />
+                    {{data.bkdata.ensnmi2}}
+                    {{data.bkdata.ekmi2}}駅
+                    {% if data.bkdata.thHn12 %}
+                    徒歩約{{data.bkdata.thHn12|floatformat}}分
+                    {% endif %}
+                    {% if data.bkdata.thM22 %}
+                    徒歩約{{data.bkdata.thM22|floatformat}}ｍ
+                    {% endif %}
+                    {% if data.bkdata.bs2 %}
+                    {{data.bkdata.bs2}}
+                    {% endif %}
+                    {% if data.bkdata.bsRsnmi2 %}
+                    {{data.bkdata.bsRsnmi2}}
+                    {% endif %}
+                    {% if data.bkdata.bstiMishu2%}
+                    {{data.bkdata.bstiMishu2}}
+                    {% endif %}
+                    {% if data.bkdata.tihHn2 %}
+                    徒歩 {{data.bkdata.tihHn2|floatformat}} 分
+                    {% endif %}
+                    {% if data.bkdata.tihM2 %}
+                    徒歩 {{data.bkdata.tihM2|floatformat}} ｍ
+                    {% endif %}
+                    {% if data.bkdata.krmKm2 %}
+                    車 {{data.bkdata.krmKm2|floatformat}} km
+                    {% endif %}
+                  {% endif %}
+                  {% if data.bkdata.ekmi3 %} <br />
+                    {{data.bkdata.ensnmi3}}
+                    {{data.bkdata.ekmi3}}駅
+                    {% if data.bkdata.thHn13 %}
+                    徒歩約{{data.bkdata.thHn13|floatformat}}分
+                    {% endif %}
+                    {% if data.bkdata.thM23 %}
+                    徒歩約{{data.bkdata.thM23|floatformat}}ｍ
+                    {% endif %}
+                    {% if data.bkdata.bs3 %}
+                    {{data.bkdata.bs3}}
+                    {% endif %}
+                    {% if data.bkdata.bsRsnmi3 %}
+                    {{data.bkdata.bsRsnmi3}}
+                    {% endif %}
+                    {% if data.bkdata.bstiMishu3%}
+                    {{data.bkdata.bstiMishu3}}
+                    {% endif %}
+                    {% if data.bkdata.tihHn3 %}
+                    徒歩 {{data.bkdata.tihHn3|floatformat}} 分
+                    {% endif %}
+                    {% if data.bkdata.tihM3 %}
+                    徒歩 {{data.bkdata.tihM3|floatformat}} ｍ
+                    {% endif %}
+                    {% if data.bkdata.krmKm3 %}
+                    車 {{data.bkdata.krmKm3|floatformat}} km
+                    {% endif %}
+                    {% endif %}
+                    {% if data.bkdata.sntKutuShdn %} <br />
+                    {{data.bkdata.sntKutuShdn}}
+                    {% endif %}
+                    {% if data.bkdata.kutuHn %}
+                    {{data.bkdata.kutuHn|floatformat}}分
+                    {% endif %}
+                    {% if data.bkdata.kutuM %}
+                    {{data.bkdata.kutuM|floatformat}}ｍ
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5"> 管理費　 </td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.knrh %}
+                    {{data.bkdata.knrh}}円／月
+                    {% endif %} </td>
+                  <td align="left" valign="top" bgcolor="#f5f4e5"> 修繕積立金　 </td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.shznTmttkn %}
+                    {{data.bkdata.shznTmttkn}}円／月
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">築年月</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.cknngtSirk %}
+                    {{data.tknngtG}}
+                    {{data.bkdata.cknngtSirk|date:"n"|default_if_none:""}}月
+                    {% endif %} </td>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">ペット</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.ptflg %}
+                    可
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">建物面積</td>
+                  <td align="left" valign="top" bgcolor="white"> 
+                  
+                  
+                  {% if data.bkdata.snyuMnskSyuBbnMnsk2 %}
+                  専有面積：{{data.bkdata.snyuMnskSyuBbnMnsk2|floatformat:"-2"}}m<sup>2</sup>
+                  {% endif %}
+                            
+                  {% if data.bkdata.ttmnMnsk1 %}
+                    延{{data.bkdata.ttmnMnsk1|floatformat:"-2"}}
+                    m<sup>2</sup>　
+                    {% endif %}
+                    {% if data.bkdata.ttmnMnsk2 %}
+                    延{{data.bkdata.ttmnMnsk2|floatformat:"-2"}}
+                    m<sup>2</sup>　
+                    {% endif %} </td>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">バルコニー面積</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.blcnyTrsMnsk %}
+                    {{data.bkdata.blcnyTrsMnsk|floatformat:"-2"}}
+                    m<sup>2</sup>　
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">建蔽率</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.knpirt %}
+                    {{data.bkdata.knpirt|floatformat}}
+                    ％
+                    {% endif %} </td>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">容積率</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.yuskrt %}
+                    {{data.bkdata.yuskrt|floatformat}}
+                    ％
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">現　況</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.gnkyu %}
+                    {{data.bkdata.gnkyu}}
+                    {% endif %} </td>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">引渡日</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.hkwtsNyukyJk %}
+                    {{data.bkdata.hkwtsNyukyJk}}
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">都市計画</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.tskikk %}
+                    {{data.bkdata.tskikk}}
+                    {% endif %} </td>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">用途地域</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.yutCik1 %}
+                    {{data.bkdata.yutCik1}}
+                    {% endif %}
+                    {% if data.bkdata.yutCik2 %}
+                    ・{{data.bkdata.yutCik2}}
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">建物構造</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white"> {% if data.bkdata.ttmnKuzu %}
+                    {{data.bkdata.ttmnKuzu}}<br />
+                    {% endif %}
+                    {% if data.bkdata.ttmnKisk %}
+                    {{data.bkdata.ttmnKisk}}<br />
+                    {% endif %}
+                    {% if data.bkdata.cjyuKisou %}
+                    {{data.bkdata.cjyuKisou|floatformat}}階建
+                    {% endif %}
+                    {% if data.bkdata.shziki %}
+                    {{data.bkdata.shziki|floatformat}}階部分
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5"><p>土地権利</p></td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white"> {% if data.bkdata.tcKenr %}
+                    {{data.bkdata.tcKenr}}
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">学　区</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white"> {% if data.gakkuS %}
+                    学区は所在地からの類推です。<br />
+                    {{data.gakkuS|join:"または"}}
+                    {% endif %}
+                    {% if data.gakkuC %}
+                    {{data.gakkuC|join:"または"}}
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">駐車場</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white"> {% if data.bkdata.chushjyuZih %}
+                    {{data.bkdata.chushjyuZih}}
+                    {% endif %}
+                    {% if data.bkdata.chushjyuGtgk %}
+                    （{{data.bkdata.chushjyuGtgk}}円／月）
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">設　備</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white"> {% if data.bkdata.stbFrespc %}
+                    {{data.bkdata.stbFrespc}}
+                    {% endif %} </td>
+                </tr>
+
+                {% if data.bkdata.shuhnKnkyu1Fre %}
+                <tr>
+                  <td align="left" valign="top" nowrap="nowrap" bgcolor="#f5f4e5">周辺環境1</td>
+
+                  <td colspan="3" align="left" valign="top" bgcolor="white">
+                    {{data.bkdata.shuhnKnkyu1Fre}} 
+                    {% if data.bkdata.kyr1 %}
+                      {{data.bkdata.kyr1}}ｍ
+                    {% endif %} 
+                    {% if data.bkdata.jkn1 %}
+                      {{data.bkdata.shuhnAccs1}}　{{data.bkdata.jkn1|floatformat:"-2"|default_if_none:""}} 分
+                    {% endif %} 
+                  </td>
+                </tr>
+                {% endif %}
+
+                {% if data.bkdata.shuhnKnkyu2Fre %}
+                <tr>
+                  <td align="left" valign="top" nowrap="nowrap" bgcolor="#f5f4e5">周辺環境2</td>
+
+                  <td colspan="3" align="left" valign="top" bgcolor="white">
+                    {{data.bkdata.shuhnKnkyu2Fre}} 
+                    {% if data.bkdata.kyr2 %}
+                      {{data.bkdata.kyr2}}ｍ
+                    {% endif %} 
+                    {% if data.bkdata.jkn2 %}
+                      {{data.bkdata.shuhnAccs2}}　{{data.bkdata.jkn2|floatformat:"-2"|default_if_none:""}} 分
+                    {% endif %} 
+                  </td>
+                </tr>
+                {% endif %}
+                {% if data.bkdata.shuhnKnkyu3Fre %}
+                <tr>
+                  <td align="left" valign="top" nowrap="nowrap" bgcolor="#f5f4e5">周辺環境3</td>
+
+                  <td colspan="3" align="left" valign="top" bgcolor="white">
+                    {{data.bkdata.shuhnKnkyu3Fre}} 
+                    {% if data.bkdata.kyr3 %}
+                      {{data.bkdata.kyr3}}ｍ
+                    {% endif %} 
+                    {% if data.bkdata.jkn3 %}
+                      {{data.bkdata.shuhnAccs3}}　{{data.bkdata.jkn3|floatformat:"-2"|default_if_none:""}} 分
+                    {% endif %} 
+                  </td>
+                </tr>
+                {% endif %}
+                {% if data.bkdata.shuhnKnkyu4Fre %}
+                <tr>
+                  <td align="left" valign="top" nowrap="nowrap" bgcolor="#f5f4e5">周辺環境4</td>
+
+                  <td colspan="3" align="left" valign="top" bgcolor="white">
+                    {{data.bkdata.shuhnKnkyu4Fre}} 
+                    {% if data.bkdata.kyr4 %}
+                      {{data.bkdata.kyr4}}ｍ
+                    {% endif %} 
+                    {% if data.bkdata.jkn4 %}
+                      {{data.bkdata.shuhnAccs4}}　{{data.bkdata.jkn4|floatformat:"-2"|default_if_none:""}} 分
+                    {% endif %} 
+                  </td>
+                </tr>
+                {% endif %}
+                {% if data.bkdata.shuhnKnkyu5Fre %}
+                <tr>
+                  <td align="left" valign="top" nowrap="nowrap" bgcolor="#f5f4e5">周辺環境5</td>
+
+                  <td colspan="3" align="left" valign="top" bgcolor="white">
+                    {{data.bkdata.shuhnKnkyu5Fre}} 
+                    {% if data.bkdata.kyr5 %}
+                      {{data.bkdata.kyr5}}ｍ
+                    {% endif %} 
+                    {% if data.bkdata.jkn5 %}
+                      {{data.bkdata.shuhnAccs5}}　{{data.bkdata.jkn5|floatformat:"-2"|default_if_none:""}} 分
+                    {% endif %} 
+                  </td>
+                </tr>
+                {% endif %}
+
+
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">備　考</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white"> {% if data.bkdata.bku1 %}
+                    {{data.bkdata.bku1}}
+                    {% endif %}
+                    {% if data.bkdata.bku2 %}
+                    {{data.bkdata.bku2}}
+                    {% endif %} </td>
+                </tr>
+              </table></td>
+            <td width="30"></td>
+            <td align="center" valign="top"><table width="100%" border="0" cellspacing="10" cellpadding="5" bgcolor="#eae5e3">
+                <tr>
+                  <td align="center">画像をクリックすると拡大表示がご覧頂けます<br>
+				<div id="thumbs" class="navigation">
+
+                    {% regroup data.picdata by title as title_list %}
+                      <ul class="thumbs noscript">
+                      {% for title in title_list %}
+                        {% ifchanged %}
+                        </ul>
+                          <p class="class-title-article3" style="clear:both;">{{title.grouper|default:""}}</p>
+                        <ul class="thumbs noscript">
+                        {% endifchanged %}
+                          {% for item in title.list %}
+                            <li> <a href="{{item.bloburl|default:""}}" name="A{{item.pos|default:""}}" class="thumb" title="{{item.content|default:""}}" > <img src="{{item.bloburl|default:""}}=s100" alt="{{item.title|default:""}}" name="imgB{{item.pos|default:""}}" id="imgB{{item.pos|default:""}}" alt="{{item.title|default:""}}" title="{{item.content|default:""}}" width="60" height="38" border="0" > </a> 
+                                 <div class="caption">
+                                    <div class="image-desc">{{item.content|default:""}}</div>
+                                 </div>
+                            </li>
+                          {% endfor %}
+                        {% endfor %}
+                      </ul>
+                </div>
+                    </td>
+                </tr>
+              </table>
+              <br>
+              <br>
+              <p class="class-title-article3">平面図</p>
+              <br>
+              {% if data.heimenzu %} <a href="{{data.heimenzu.bloburl|default:""}}" name="A{{data.heimenzu.pos|default:""}}" id="A{{data.heimenzu.pos|default:""}}" class="thickbox" title="{{data.heimenzu.content|default:""}}" target="_blank"> <img src="{{data.heimenzu.bloburl|default:""}}" alt="{{data.heimenzu.title|default:""}}" name="imgB{{data.heimenzu.pos|default:""}}" id="imgB{{data.heimenzu.pos|default:""}}" alt="{{data.heimenzu.title|default:""}}" title="{{data.heimenzu.content|default:""}}" style="width:250px; height:" border="0" > </a> {% endif %} <br>
+              <br>
+              <br>
+              <p class="class-title-article3">ご案内図</p>
+              <br>
+              <div id="map_canvas" style="width:300px; height:300px" ></div>
+              <br>
+              <a href="https://maps.google.co.jp/maps?hl=ja&amp;q={{data.bkdata.idkd}}({{data.bkdata.ttmnmi}})&amp;ie=UTF8&amp;z=14&amp;source=embed"><span class="class10">大きな地図で見る</span></a></td>
+
+
+				<!--
+				https://imakoko.didit.jp/imakoko_html/memo/parameters_google.html
+				https://mapki.com/wiki/Google_Map_Parameters
+
+				f	左枠について、
+				q:通常（デフォルト）
+				d:乗換案内。現在地と目的地を記入するダイアログが表示される。	 
+				hl	言語。	
+				ja:日本。
+				en:英語
+				※ デフォルトではユーザーの環境に合わせる。＞日本だとja	 
+				q	マーカー、吹き出しがつく。地名か、緯度経度（カンマ区切り）で指定。日本語の場合はURLエンコードで入力。	 %E6%96%B0%E5%AE%BF
+				（新宿）
+				ie	入力文字コード。UTF8（デフォルト）Shift-JIS、EUC-JP、など利用可能。	 
+				oe	出力文字コード。UTF8（デフォルト）Shift-JIS、EUC-JP、など利用可能。	 
+				ll	地図の中心の緯度経度。世界測地系、十進、カンマ区切り。	35.68923,139.693995
+				spn	表示範囲をDegree単位で指定。zパラメータが無いときに有効。
+				カンマ区切り	0.029488,0.083942
+				z	ズーム。0～20くらい（20以上が見れる地域もあるし、18以降は見れない地域もある。）0が縮小、20が拡大	14
+				t	m:マップ（デフォルト）k:サテライトh:デュアルp:地形	 
+				om	地図右下に表示されるオーバービュー。0:なし（デフォルト）1:あり	 
+				layer	ストリートビューなどの指示
+				t:トラフィックビュー（デフォルト）
+				c:ストリートビュー
+				 
+				cbll	ストリートビューで、ポイントの緯度経度。
+				世界測地系、十進、カンマ区切り。	 35.689186,139.693836
+				cbp	ストリートビューで、各種表示の指定。
+				カンマ区切りで、
+				1つめ:　1:小さい画面　2:全画面
+				2つめ:　ローテーションアングルをDegreeで
+				3つめ:　チルトアングル。-90（真上）～90（真下）←？意味不明
+				4つめ:　ズーム。0～2
+				5つめ:　ピッチ。-90（真上）～90（真下）	 2,123.38858745822836,,0,-24.070358768546704
+				-->
+
+          </tr>
+        </table>
+        <br>
+        <br>
+
+<!--2012.0813 article.html-->
+	<div align="center">
+		<div class="article-koukai-Linkbotan">
+			<a href="javascript:_mailto();">この物件についてメールで問い合わせをする</a>
+		</div>
+	</div>
+
+<!--2012.0813 article.html-->

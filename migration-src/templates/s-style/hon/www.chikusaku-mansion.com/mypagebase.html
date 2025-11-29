@@ -1,0 +1,78 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "https://www.w3.org/TR/html4/frameset.dtd">
+
+<html lang="ja">
+
+<head>
+        <title>{% block title %}{% endblock %}</title>
+		<meta http-equiv="content-type" content="text/html;charset=utf-8">
+		<script type="text/javascript" src="../js/smooth.pack.js"></script>
+		<link href="../css/s-style/hon/www.chikusaku-mansion.com/mypage.css" rel="stylesheet" type="text/css" media="all">
+		{% block head %}{% endblock %}
+	</head>
+
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0">
+    <div align="center">
+        <a id="pagetop" name="pagetop"></a>
+        <!--headerbox-->
+        <div class="headerbox">
+            <!--header-->
+            <div class="header">
+                <div class="login">
+                    <a href="#">ログイン</a>　　<a href="#">ログアウト</a>
+                </div>
+            </div>
+            <!--header-END-->
+            <!--menu-->
+            <div class="menu">
+                <div class="link">
+                    <a href="mypagetop.html">マイページトップ</a>　　<a href="mypagesearch.html">検索・条件登録</a>　　<a href="mypagesearchlist.html">検索条件リスト</a>　　<a href="mypagefav.html">お気に入り</a>
+                    <a href="mypagenewlist.html">新着物件</a>　　<a href="mypagemydata.html">登録内容の変更</a>　<a href="mypageResign.html">会員登録の解除</a>
+                </div>
+            </div>
+            <!--menu-END-->
+        </div>
+        <!--headerbox-END-->
+    <form action="" method="post" name="mypagefrm" id="mypagefrm">
+    <!--container-->
+        <div class="container">
+        {% block container %}
+        {% endblock %}
+        </div>
+    <!--container-END-->
+    </form>
+        <!--pagetop-->
+        <div class="pagetop">
+            <a href="#pagetop">ページの一番上へ</a>
+        </div>
+        <!--pagetopEND-->
+
+        <!--footer-->
+            <div class="footer">
+            {% block footer %}
+            株式会社 S-Style　〒464-0821 名古屋市千種区末盛通一丁目1番地 弘法屋本店ビル3Ｂ　TEL 052-751-5900　FAX 052-751-8100
+            　　Copyright(C)2006 S-Style All rights reserved.
+            {% endblock %}
+            </div>
+        <!--footerEND-->
+    </div>
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-7545989-12']);
+  _gaq.push(['_setDomainName', 'none']);
+  _gaq.push(['_setAllowLinker', true]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+</body>
+
+
+</html>

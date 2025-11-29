@@ -1,0 +1,108 @@
+# application: s-style-hrd
+# version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+#エラーだらけになる月額１万円設定
+#instance_class: B2
+#basic_scaling:
+#  max_instances: 3
+#  idle_timeout: 5m
+
+
+#月額２万以上になる設定
+#instance_class: F4
+#automatic_scaling:
+#  min_idle_instances: 0
+#  max_instances: 2
+#  min_pending_latency: 15s
+#  max_pending_latency: 15s
+#  max_concurrent_requests: 50
+
+#月額１．５万円になる設定
+instance_class: B4
+basic_scaling:
+  max_instances: 2
+  idle_timeout: 5m
+
+builtins:
+- remote_api: on
+- appstats: on
+- deferred: on
+#- datastore_admin: on
+
+inbound_services:
+- mail
+
+
+includes:
+- mapreduce/include.yaml
+#ソースを確認したら  script: mapreduce.main.APPを呼ぼうとしてエラーを出していた
+#2.7で解決
+
+handlers:
+
+#- url: /mapreduce(/.*)?
+#  script: mapreduce/main.py
+#  login: admin
+
+- url: /remote_api
+  script: google.appengine.ext.remote_api.handler.application
+  login: admin
+
+- url: /_ah/queue/deferred
+  script: google.appengine.ext.deferred.deferred.application
+  login: admin
+
+- url: /stats.*
+  script: google.appengine.ext.appstats.ui.app
+
+- url: /js
+  static_dir: static_dir/js
+
+- url: /css
+  static_dir: static_dir/css
+
+- url: /img
+  static_dir: static_dir/img
+
+- url: /example_12.json
+  static_dir: static_dir/example_12.json
+
+- url: /test2.html
+  static_files: static_dir/test2.html
+  upload: static_dir/test2.html
+
+- url: /robots.txt
+  static_files: static_dir/robots.txt
+  upload: static_dir/robots.txt
+
+- url: /favicon.ico
+  static_files: static_dir/favicon.ico
+  upload: static_dir/favicon.ico
+
+- url: /googlecdbb673c96dbc903.html
+  static_files: static_dir/html/googlecdbb673c96dbc903.html
+  upload: static_dir/html/googlecdbb673c96dbc903.html
+
+- url: /_ah/mail/.*
+  script: main.app
+
+- url: /show/.*
+  script: main.app
+
+- url: /.*
+  script: main.app
+
+#SDKのバージョン上げたら使うといいかも
+libraries:
+- name: django
+  version: "1.4"
+
+
+#グローバル変数
+env_variables:
+  # reCAPTCHA
+  RECAPTCHA_SITE_KEY: '6LfRxU4aAAAAAD6BDE23lHzfDy3OX2h8qqV-bH2Q'
+  RECAPTCHA_SECRET_KEY: '6LfRxU4aAAAAAB-Dk4Hj0knERSxCPDmStgE24xyD'

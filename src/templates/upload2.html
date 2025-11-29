@@ -1,0 +1,52 @@
+<html>
+<head>
+  <title>File Hangar: Upload file</title>
+  <link rel="stylesheet" type="text/css" href="/js/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css">
+<script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+  <script type="text/javascript" src="/js/plupload/plupload.full.js"></script>
+  <script type="text/javascript" src="/js/plupload/jquery.plupload.queue/jquery.plupload.queue.js"></script>
+
+  <script type="text/javascript" src="/js/plupload/i18n/ja.js"></script>
+  <script type="text/javascript">
+    vars = getUrlVars();
+    urlops = "CorpOrg_key=" + vars["CorpOrg_key"] + "&Branch_Key=" + vars["Branch_Key"] + "&bkID=" + vars["bkID"]
+    $(function() {
+    var uploader = $("#uploader").pluploadQueue({
+        runtimes: 'html5,flash,html4,',
+		use_query_string: true,
+		multipart: true,
+		flash_swf_url: '/js/plupload/plupload.flash.swf',
+		filters: [{title:'*', extensions:'*'}]
+      }).pluploadQueue();
+
+      uploader.bind('UploadFile', function(up, file) {
+        $.ajax({
+            url: '/FileUploadFormHandler/generate_upload_url?' + urlops ,
+            async: false,
+            success: function(data) {
+              up.settings.url = data;
+            }
+        });
+      });
+    });
+    function getUrlVars() 
+    { 
+        var vars = [], hash; 
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&'); 
+        for(var i = 0; i < hashes.length; i++) { 
+            hash = hashes[i].split('='); 
+            vars.push(hash[0]); 
+            vars[hash[0]] = hash[1]; 
+        } 
+    return vars; 
+    }
+  </script>
+</head>
+<body>
+  <h1>Upload a file to App Engine File Hangar</h1>
+	<form>
+		<div id="uploader">
+		</div>
+	</form>
+</body>
+</html>

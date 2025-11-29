@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "https://www.w3.org/TR/html4/frameset.dtd">
+<html lang="ja">
+<head>
+<title>{% block title %}{% endblock %}in application</title>
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="content-type" content="text/html;charset=utf-8">
+<link href="/css/styles.css" rel="stylesheet" type="text/css" media="all">
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<script type="text/javascript" src="/js/smooth.pack.js"></script>
+</head>
+
+<style type="text/css"><!--body{background-image:url(/img/back01.jpg); background-repeat:repeat-x;}--></style>
+
+<body leftmargin="0" marginheight="0" marginwidth="0" topmargin="0">
+<div align="center">
+<a id="pagetop" name="pagetop"></a>
+
+<table width="815" border="0" cellspacing="0" cellpadding="0" background="/img/back-head.jpg" height="79">
+    <tr>
+        <td align="left" valign="top">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td align="left">
+                <table border="0" cellspacing="3" cellpadding="0">
+                    <tr>
+                        <td><img src="/img/yajirushi01.gif" alt="" height="10" width="14" border="0"></td>
+                        <td><a href="https://www.chikusaku-mansion.com/" target="_blank" onclick="_gaq.push(['_link',this.href]); return false;">トップページへ</a></td>
+						<td width="20"></td>
+					    <td><img src="/img/yajirushi01.gif" alt="" height="10" width="14" border="0"></td>
+						<td><a href="https://www.chikusaku-mansion.com/index.html#form" target="_blank" onclick="_gaq.push(['_link',this.href]); return false;">お問い合せ</a></td>
+					</tr>
+                </table>
+                </td>
+                <td align="right">
+                <table border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                        <td class="class14white" valign="top"><img src="/img/login-side01.jpg" alt="" height="29" width="13" border="0"></td>
+                        <td class="class14white" background="/img/login-back.jpg">ゲストさん</td>
+                        <td valign="top" background="/img/login-back.jpg"><a href="{% block loginurl %}{% endblock %}"><img src="/img/b-login.jpg" alt="ログイン" height="25" width="100" border="0"></a></td>
+                        <td valign="top" background="/img/login-back.jpg"><a href="../index.html#form" target="_top"><img src="/img/b-touroku.jpg" alt="会員登録" height="25" width="95" border="0"></a></td>
+                        <td valign="top"><img src="/img/login-side02.jpg" alt="" height="29" width="13" border="0"></td>
+                    </tr>
+                </table>
+                </td>
+            </tr>
+        </table>
+        </td>
+    </tr>
+</table>
+<table width="815" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+        <td>
+{% block content %}{% endblock %}
+        </td>
+    </tr>
+</table>
+
+			<table width="815" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td align="right">
+						<table border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td><img src="/img/yajirushi02.gif" alt="" width="7" height="5" border="0" hspace="4"></td>
+								<td class="class10"><a href="#pagetop">ページの一番上へ</a></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+			<br>
+			<br>
+			<table width="815" border="0" cellspacing="0" cellpadding="3" bgcolor="#703700">
+				<tr>
+					<td class="class10white" align="left">株式会社 S-Style　〒464-0821 名古屋市千種区末盛通一丁目1番地 弘法屋本店ビル3Ｂ　TEL 052-751-5900　FAX 052-751-8100</td>
+					<td class="class10white" align="right">Copyright(C)2006 S-Style All rights reserved.</td>
+				</tr>
+			</table>
+		</div>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-7545989-12']);
+  _gaq.push(['_setDomainName', 'none']);  
+  _gaq.push(['_setAllowLinker', true]);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'https://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+</body>
+
+</html>

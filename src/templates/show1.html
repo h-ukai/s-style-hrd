@@ -1,0 +1,690 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "https://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="ja">
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8">
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<meta name="keywords" content="千種区,マンション,売却,査定,任意売却,相談無料,不動産,買取り,売却,司法書士,税理士,弁護士,売却.net">
+<title>{{data.bkdata.ttmnmi}}　{{data.bkdata.tdufknmi|default:""}}{{data.bkdata.shzicmi1|default:""}}{{data.bkdata.shzicmi2|default:""}}{{data.bkdata.shzicmi3|default:""}}　｜　【千種区マンション探し.com】</title>
+<link href="../css/styles.css" rel="stylesheet" type="text/css" media="all">
+<link rel="stylesheet" href="../css/galleriffic-3.css" type="text/css" />
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB3Pj9gP_x_Gjdgg2GqXaGHQnB5hNaw3no&sensor=false"></script>
+<script type="text/javascript" src="../js/smooth.pack.js"></script>
+<script language="javascript" src="../js/navi2.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+<script type="text/javascript" src="../js/jquery.history.js"></script>
+<script type="text/javascript" src="../js/jquery.galleriffic.js"></script>
+<script type="text/javascript" src="../js/jquery.opacityrollover.js"></script>
+<!-- We only want the thunbnails to display when javascript is disabled -->
+<script type="text/javascript">
+    document.write('<style>.noscript { display: none; }</style>');
+</script>
+
+<script type="text/javascript">
+  var map;
+  function initialize() {
+    var latlng = new google.maps.LatLng({{data.bkdata.idkd}});
+    var myOptions = {
+      zoom: 17,
+      center: latlng,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+    createMarker();
+  }
+  function createMarker(){
+        var lat = (map.getCenter()).lat();
+        var lng = (map.getCenter()).lng();
+        marker1 = new google.maps.Marker({
+            position: new google.maps.LatLng(lat,lng),
+            map: map,
+            title: "{{data.bkdata.ttmnmi|default:""}}",
+            draggable: false //なんかV3での動作が超遅いきがする
+        });
+/*     
+        google.maps.event.addListener(marker1,'mouseup',function(){
+            echoPoint(marker1.position);
+        });     
+        google.maps.event.addListener(map,'dblclick',function(event){
+            marker1.setPosition(event.latLng);
+            echoPoint(marker1.position);
+        }); 
+*/
+    }
+    
+</script>
+<script type="text/javascript">
+	$(window).load(function() {
+
+        initialize();//googleマップ表示
+
+
+				// We only want these styles applied when javascript is enabled
+				$('div.navigation').css({'width' : '355px', 'float' : 'left'});
+				$('div.content').css('display', 'block');
+
+				// Initially set opacity on thumbs and add
+				// additional styling for hover effect on thumbs
+				var onMouseOutOpacity = 0.67;
+				$('#thumbs ul.thumbs li').opacityrollover({
+					mouseOutOpacity:   onMouseOutOpacity,
+					mouseOverOpacity:  1.0,
+					fadeSpeed:         'fast',
+					exemptionSelector: '.selected'
+				});
+				
+				// Initialize Advanced Galleriffic Gallery
+				var gallery = $('#thumbs').galleriffic({
+					delay:                     3500,
+					numThumbs:                 100,
+					preloadAhead:              0,
+					enableTopPager:            false,
+					enableBottomPager:         false,
+					maxPagesToShow:            10,
+					imageContainerSel:         '#slideshow',
+					controlsContainerSel:      '#controls',
+					captionContainerSel:       '#caption',
+					loadingContainerSel:       '#loading',
+					renderSSControls:          true,
+					renderNavControls:         true,
+					playLinkText:              'Play Slideshow',
+					pauseLinkText:             'Pause Slideshow',
+					prevLinkText:              '&lsaquo; Previous Photo',
+					nextLinkText:              'Next Photo &rsaquo;',
+					nextPageLinkText:          'Next &rsaquo;',
+					prevPageLinkText:          '&lsaquo; Prev',
+					enableHistory:             false,
+					autoStart:                 true,
+					syncTransitions:           true,
+					defaultTransitionDuration: 900,
+					onSlideChange:             function(prevIndex, nextIndex) {
+						// 'this' refers to the gallery, which is an extension of $('#thumbs')
+						this.find('ul.thumbs').children()
+							.eq(prevIndex).fadeTo('fast', onMouseOutOpacity).end()
+							.eq(nextIndex).fadeTo('fast', 1.0);
+					},
+					onPageTransitionOut:       function(callback) {
+						this.fadeTo('fast', 0.0, callback);
+					},
+					onPageTransitionIn:        function() {
+						this.fadeTo('fast', 1.0);
+					}
+				});
+
+				/**** Functions to support integration of galleriffic with the jquery.history plugin ****/
+
+				// PageLoad function
+				// This function is called when:
+				// 1. after calling $.historyInit();
+				// 2. after calling $.historyLoad();
+				// 3. after pushing "Go Back" button of a browser
+				function pageload(hash) {
+					// alert("pageload: " + hash);
+					// hash doesn't contain the first # character.
+					if(hash) {
+						$.galleriffic.gotoImage(hash);
+					} else {
+						gallery.gotoIndex(0);
+					}
+				}
+
+				// Initialize history plugin.
+				// The callback is called at once by present location.hash. 
+				$.historyInit(pageload, "advanced.html");
+
+				// set onlick event for buttons using the jQuery 1.3 live method
+				$(document).on('click', "a[rel='history']", function(e) {
+					if (e.button != 0) return true;
+
+					var hash = this.href;
+					hash = hash.replace(/^.*#/, '');
+
+					// moves to a new page.
+					// pageload is called at once.
+					// hash don't contain "#", "?"
+					$.historyLoad(hash);
+
+					return false;
+				});
+
+
+		
+	});
+
+</script>
+
+<style type="text/css">
+<!--
+body {
+	background-image:url(../cmn_img/back01.jpg);
+	background-repeat:repeat-x;
+}
+-->
+</style>
+</head>
+
+<body onload="preloadImages('../cmn_img/menu01o.jpg','../cmn_img/menu02o.jpg','../cmn_img/menu03o.jpg','../cmn_img/menu04o.jpg','../cmn_img/menu05o.jpg','../cmn_img/menu06o.jpg')"  leftmargin="0" marginheight="0" marginwidth="0" topmargin="0">
+<div align="center"> <a id="pagetop" name="pagetop"></a>
+  <iframe src="../head.html" frameborder="0" scrolling="no" height="80" width="990"></iframe>
+  
+  <!--/*  Menu[Start] */-->
+  <table width="990" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><ul id="dd">
+          <li><a id="mmenu1" class="menu" onmouseover="mopen(1);" onmouseout="mclosetime();" href="../"><img onmouseover="swapImage('menu01','','../cmn_img/menu01o.jpg',1);" onmouseout="swapImgRestore()" src="../cmn_img/menu01.jpg" alt="トップページ" name="menu01" height="43" width="165" border="0"></a>
+            <div class="submenu" id="menu1" onmouseover="mcancelclosetime()" onmouseout="mclosetime();"> </div>
+          <li><a id="mmenu2" class="menu" onmouseover="mopen(2);" onmouseout="mclosetime();" href="../ninki/"><img onmouseover="swapImage('menu02','','../cmn_img/menu02o.jpg',1);" onmouseout="swapImgRestore()" src="../cmn_img/menu02.jpg" alt="人気マンションのご紹介" name="menu02" height="43" width="165" border="0"></a>
+            <div class="submenu" id="menu2" onmouseover="mcancelclosetime()" onmouseout="mclosetime();"> <a href="../ninki/index01.html">人気物件一覧</a> <a href="../ninki/index02.html">ペットの飼える物件</a></div>
+          <li><a id="mmenu3" class="menu" onmouseover="mopen(3);" onmouseout="mclosetime();" href="../article/"><img onmouseover="swapImage('menu03','','../cmn_img/menu03o.jpg',1);" onmouseout="swapImgRestore()" src="../cmn_img/menu03.jpg" alt="おすすめマンション情報" name="menu03" height="43" width="165" border="0"></a>
+            <div class="submenu" id="menu3" onmouseover="mcancelclosetime()" onmouseout="mclosetime();"> 
+              <!--<a href="../article/index01.html">リノベーション物件</a>
+<a href="../article/index02.html">リフォーム済み物件</a>
+<a href="../article/index03.html">アウトレットマンション</a>--></div>
+          <li><a id="mmenu4" class="menu" onmouseover="mopen(4);" onmouseout="mclosetime();" href="../buy/"><img onmouseover="swapImage('menu04','','../cmn_img/menu04o.jpg',1);" onmouseout="swapImgRestore()" src="../cmn_img/menu04.jpg" alt="マンション購入の流れ" name="menu04" height="43" width="165" border="0"></a>
+            <div class="submenu" id="menu4" onmouseover="mcancelclosetime()" onmouseout="mclosetime();"> <a href="../buy/index01.html">売却の流れ</a> 
+              <!--<a href="../buy/index02.html">ご購入の流れ</a>--> 
+              <a href="../buy/index03.html">ご購入時の諸費用</a> <a href="../buy/index04.html">ご購入時にかかる税金</a> <a href="../buy/index05.html">ご購入時の注意点</a> <a href="../buy/index06.html">買い替えの手順</a></div>
+          <li><a id="mmenu5" class="menu" onmouseover="mopen(5);" onmouseout="mclosetime();" href="../simulation/"><img onmouseover="swapImage('menu05','','../cmn_img/menu05o.jpg',1);" onmouseout="swapImgRestore()" src="../cmn_img/menu05.jpg" alt="ローンシミュレーション" name="menu05" height="43" width="165" border="0"></a>
+            <div class="submenu" id="menu5" onmouseover="mcancelclosetime()" onmouseout="mclosetime();"></div>
+          <li><a id="mmenu6" class="menu" onmouseover="mopen(6);" onmouseout="mclosetime();" href="../profile/"><img onmouseover="swapImage('menu06','','../cmn_img/menu06o.jpg',1);" onmouseout="swapImgRestore()" src="../cmn_img/menu06.jpg" alt="運営会社紹介" name="menu06" height="43" width="165" border="0"></a>
+            <div class="submenu" id="menu6" onmouseover="mcancelclosetime()" onmouseout="mclosetime();"> <a href="../profile/">運営会社紹介</a> <a href="../profile/index2.html">当社までのご案内</a></div>
+        </ul></td>
+    </tr>
+  </table>
+  <!--/*  Menu[Start] */-->
+  <table width="990" border="0" cellspacing="0" cellpadding="0" background="../cmn_img/menu-under.jpg" height="15">
+    <tr>
+      <td></td>
+    </tr>
+  </table>
+  <table width="990" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="right"><table border="0" cellspacing="3" cellpadding="0">
+          <tr>
+            <td><img src="../cmn_img/yajirushi01.gif" alt="" width="14" height="10" border="0"></td>
+            <td class="class10"><a href="../">トップページ</a></td>
+            <td width="15"></td>
+            <td><img src="../cmn_img/yajirushi01.gif" alt="" width="14" height="10" border="0"></td>
+            <td class="class10"><a href="">{{data.bkdata.ttmnmi|default:""}}　{{data.bkdata.tdufknmi|default:""}}{{data.bkdata.shzicmi1|default:""}}{{data.bkdata.shzicmi2|default:""}}</a></td>
+          </tr>
+        </table></td>
+    </tr>
+  </table>
+  <table width="990" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td valign="top"><iframe src="../sidemenu.html" frameborder="0" scrolling="no" height="1265" width="175"></iframe></td>
+      <td align="left" valign="top" width="815"><table width="100%" border="0" cellspacing="5" cellpadding="0" background="cmn_img/t01.jpg" height="42">
+          <tr>
+            <td class="class14orange" width="240"></td>
+            <!--<td class="class14b" align="left" width="560"><span class="class-aka">● </span>探したい地区をお選び下さい　<select name="ken">
+<option value="value">選択して下さい</option>
+<option value="">千種</option>
+<option value="">今池</option>
+<option value="">池下</option>
+<option value="">覚王山</option>
+<option value="">本山</option>
+<option value="">東山</option>
+<option value="">星ヶ丘</option>
+</select></td>--> 
+          </tr>
+        </table>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr> 
+            <!--<td align="left">
+<table width="180" border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td><a onmouseover="document.images['articlemenu01'].src='cmn_img/articlemenu01o.jpg'" onmouseout="document.images['articlemenu01'].src='cmn_img/articlemenu01.jpg'" href="index01.html"><img src="cmn_img/articlemenu01.jpg" name="articlemenu01" alt="リノベーション物件" width="168" height="36" border="0"></a></td>
+<td><a onmouseover="document.images['articlemenu02'].src='cmn_img/articlemenu02o.jpg'" onmouseout="document.images['articlemenu02'].src='cmn_img/articlemenu02.jpg'" href="index02.html"><img src="cmn_img/articlemenu02.jpg" name="articlemenu02" alt="リフォーム済み物件" width="168" height="36" border="0"></a></td>
+<td><a onmouseover="document.images['articlemenu03'].src='cmn_img/articlemenu03o.jpg'" onmouseout="document.images['articlemenu03'].src='cmn_img/articlemenu03.jpg'" href="index03.html"><img src="cmn_img/articlemenu03.jpg" name="articlemenu03" alt="アウトレットマンション" width="168" height="36" border="0"></a></td>
+</tr>
+</table>
+</td>-->
+            <td align="right"><a href="javascript:window.external.addFavorite('https://www.yahoo.co.jp/','千種区マンションサイト【お気に入り物件】')"><img src="cmn_img/b-bookmark.jpg" alt="この物件をブックマークする" width="194" height="24" border="0"></a></td>
+          </tr>
+        </table>
+        <br>
+        <br>
+        <p class="class-title-article">{{data.bkdata.ttmnmi|default:""}}　{{data.bkdata.tdufknmi|default:""}}{{data.bkdata.shzicmi1|default:""}}{{data.bkdata.shzicmi2|default:""}}{{data.bkdata.shzicmi3|default:""}}</p>
+        
+        <!--<p class="class-title-article2">● この物件には購入希望者が{{data.hikiai|default:""}}人います</p>--> 
+        <br>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td><img src="cmn_img/icon-tokucho.jpg" alt="ココが 特徴!" width="75" height="67" border="0"></td>
+            <td align="left">{{data.bkdata.bku3|default:""}}{{data.bkdata.bku4|default:""}}</td>
+          </tr>
+        </table>
+        <br>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td align="center" valign="top">
+
+				<!-- Start Advanced Gallery Html Containers -->
+				<div id="gallery" class="content" style="background-color:white">
+					<div id="controls" class="controls"></div>
+					<div class="slideshow-container">
+						<div id="loading" class="loader"></div>
+						<div id="slideshow" class="slideshow"></div>
+					</div>
+					<div id="caption" class="caption-container"></div>
+				</div>
+
+              <br>
+              <br>
+              <br>
+              <p class="class-title-article3">物件概要</p>
+              <br>
+              <table width="100%" border="0" cellspacing="1" cellpadding="10" bgcolor="#d1cec9">
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">名　称</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white">{{data.bkdata.ttmnmi|default:""}}</td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">物件所在地</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white">{{data.bkdata.tdufknmi|default:""}}{{data.bkdata.shzicmi1|default:""}}{{data.bkdata.shzicmi2|default:""}}{{data.bkdata.shzicmi3|default:""}}</td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">価　格</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white">{{data.kakakuM|default:""}} 万円（税込） </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">間　取</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white">{{data.bkdata.mdrHysu1|floatformat|default:""}}{{data.bkdata.mdrTyp1|default:""}}
+                    
+                    {% if data.bkdata.stTyp11%}
+                    {% if data.bkdata.stHrs11 %}
+                    {{data.bkdata.stHrs11}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu11 %}
+                    ×{{data.bkdata.stsu11}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if data.bkdata.stTyp21 %}
+                    {% if data.bkdata.stHrs21 %}
+                    {{data.bkdata.stHrs21}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu21 %}
+                    ×{{data.bkdata.stsu21}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if data.bkdata.stTyp31 %}
+                    {% if data.bkdata.stHrs31 %}
+                    {{data.bkdata.stHrs31}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu31 %}
+                    ×{{data.bkdata.stsu31}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if data.bkdata.stTyp41 %}
+                    {% if data.bkdata.stHrs41 %}
+                    {{data.bkdata.stHrs41}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu41 %}
+                    ×{{data.bkdata.stsu41}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if data.bkdata.stTyp51 %}
+                    {% if data.bkdata.stHrs51 %}
+                    {{data.bkdata.stHrs51}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu51 %}
+                    ×{{data.bkdata.stsu51}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if data.bkdata.stShziki61 %}
+                    {% if data.bkdata.stHrs61 %}
+                    {{data.bkdata.stHrs61}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu61 %}
+                    ×{{data.bkdata.stsu61}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if data.bkdata.stTyp71 %}
+                    {% if data.bkdata.stHrs71 %}
+                    {{data.bkdata.stHrs71}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu71 %}
+                    ×{{data.bkdata.stsu71}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">最寄駅</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white">{{data.bkdata.ekmi1|default:""}} {{data.bkdata.ekmi2|default:""}} {{data.bkdata.ekmi3|default:""}} 駅</td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">交　通</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white">
+                  {% if data.bkdata.ekmi1 %} <br />
+                    {{data.bkdata.ensnmi1}}
+                    {{data.bkdata.ekmi1}}駅
+                    {% if data.bkdata.thHn11 %}
+                    徒歩約{{data.bkdata.thHn11|floatformat}}分
+                    {% endif %}
+                    {% if data.bkdata.thM21 %}
+                    徒歩約{{data.bkdata.thM21|floatformat}}ｍ
+                    {% endif %}
+                    {% if data.bkdata.bs1 %}
+                    {{data.bkdata.bs1|floatformat}}
+                    {% endif %}
+                    {% if data.bkdata.bsRsnmi1 %}
+                    {{data.bkdata.bsRsnmi1|floatformat}}
+                    {% endif %}
+                    {% if data.bkdata.bstiMishu1 %}
+                    {{data.bkdata.bstiMishu1}}
+                    {% endif %}
+                    {% if data.bkdata.tihHn1 %}
+                    徒歩 {{data.bkdata.tihHn1|floatformat}} 分
+                    {% endif %}
+                    {% if data.bkdata.tihM1 %}
+                    徒歩 {{data.bkdata.tihM1|floatformat}} ｍ
+                    {% endif %}
+                    {% if data.bkdata.krmKm1 %}
+                    車 {{data.bkdata.krmKm1|floatformat}} km
+                    {% endif %}
+                  {% endif %}
+                  {% if data.bkdata.ekmi2 %} <br />
+                    {{data.bkdata.ensnmi2}}
+                    {{data.bkdata.ekmi2}}駅
+                    {% if data.bkdata.thHn12 %}
+                    徒歩約{{data.bkdata.thHn12|floatformat}}分
+                    {% endif %}
+                    {% if data.bkdata.thM22 %}
+                    徒歩約{{data.bkdata.thM22|floatformat}}ｍ
+                    {% endif %}
+                    {% if data.bkdata.bs2 %}
+                    {{data.bkdata.bs2}}
+                    {% endif %}
+                    {% if data.bkdata.bsRsnmi2 %}
+                    {{data.bkdata.bsRsnmi2}}
+                    {% endif %}
+                    {% if data.bkdata.bstiMishu2%}
+                    {{data.bkdata.bstiMishu2}}
+                    {% endif %}
+                    {% if data.bkdata.tihHn2 %}
+                    徒歩 {{data.bkdata.tihHn2|floatformat}} 分
+                    {% endif %}
+                    {% if data.bkdata.tihM2 %}
+                    徒歩 {{data.bkdata.tihM2|floatformat}} ｍ
+                    {% endif %}
+                    {% if data.bkdata.krmKm2 %}
+                    車 {{data.bkdata.krmKm2|floatformat}} km
+                    {% endif %}
+                  {% endif %}
+                  {% if data.bkdata.ekmi3 %} <br />
+                    {{data.bkdata.ensnmi3}}
+                    {{data.bkdata.ekmi3}}駅
+                    {% if data.bkdata.thHn13 %}
+                    徒歩約{{data.bkdata.thHn13|floatformat}}分
+                    {% endif %}
+                    {% if data.bkdata.thM23 %}
+                    徒歩約{{data.bkdata.thM23|floatformat}}ｍ
+                    {% endif %}
+                    {% if data.bkdata.bs3 %}
+                    {{data.bkdata.bs3}}
+                    {% endif %}
+                    {% if data.bkdata.bsRsnmi3 %}
+                    {{data.bkdata.bsRsnmi3}}
+                    {% endif %}
+                    {% if data.bkdata.bstiMishu3%}
+                    {{data.bkdata.bstiMishu3}}
+                    {% endif %}
+                    {% if data.bkdata.tihHn3 %}
+                    徒歩 {{data.bkdata.tihHn3|floatformat}} 分
+                    {% endif %}
+                    {% if data.bkdata.tihM3 %}
+                    徒歩 {{data.bkdata.tihM3|floatformat}} ｍ
+                    {% endif %}
+                    {% if data.bkdata.krmKm3 %}
+                    車 {{data.bkdata.krmKm3|floatformat}} km
+                    {% endif %}
+                    {% endif %}
+                    {% if data.bkdata.sntKutuShdn %} <br />
+                    {{data.bkdata.sntKutuShdn}}
+                    {% endif %}
+                    {% if data.bkdata.kutuHn %}
+                    {{data.bkdata.kutuHn|floatformat}}分
+                    {% endif %}
+                    {% if data.bkdata.kutuM %}
+                    {{data.bkdata.kutuM|floatformat}}ｍ
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5"> 管理費　 </td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.knrh %}
+                    {{data.bkdata.knrh}}円／月
+                    {% endif %} </td>
+                  <td align="left" valign="top" bgcolor="#f5f4e5"> 修繕積立金　 </td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.shznTmttkn %}
+                    {{data.bkdata.shznTmttkn}}円／月
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">築年月</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.cknngtSir %}
+                    {{data.tknngtG}}
+                    {{data.bkdata.cknngtSirk|date:"n"|default_if_none:""}}月
+                    {% endif %} </td>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">ペット</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.ptflg %}
+                    可
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">建物面積</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.ttmnMnsk1 %}
+                    延{{data.bkdata.ttmnMnsk1|floatformat}}
+                    m<sup>2</sup>　
+                    {% endif %}
+                    {% if data.bkdata.ttmnMnsk2 %}
+                    延{{data.bkdata.ttmnMnsk2|floatformat}}
+                    m<sup>2</sup>　
+                    {% endif %} </td>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">バルコニー面積</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.blcnyTrsMnsk %}
+                    {{data.bkdata.blcnyTrsMnsk|floatformat}}
+                    m<sup>2</sup>　
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">建蔽率</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.knpirt %}
+                    {{data.bkdata.knpirt|floatformat}}
+                    ％
+                    {% endif %} </td>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">容積率</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.yuskrt %}
+                    {{data.bkdata.yuskrt|floatformat}}
+                    ％
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">現　況</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.gnkyu %}
+                    {{data.bkdata.gnkyu}}
+                    {% endif %} </td>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">引渡日</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.hkwtsNyukyJk %}
+                    {{data.bkdata.hkwtsNyukyJk}}
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">都市計画</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.tskikk %}
+                    {{data.bkdata.tskikk}}
+                    {% endif %} </td>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">用途地域</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.yutCik1 %}
+                    {{data.bkdata.yutCik1}}
+                    {% endif %}
+                    {% if data.bkdata.yutCik2 %}
+                    ・{{data.bkdata.yutCik2}}
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">建物構造</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white"> {% if data.bkdata.ttmnKuzu %}
+                    {{data.bkdata.ttmnKuzu}}<br />
+                    {% endif %}
+                    {% if data.bkdata.ttmnKisk %}
+                    {{data.bkdata.ttmnKisk}}<br />
+                    {% endif %}
+                    {% if data.bkdata.cjyuKisou %}
+                    {{data.bkdata.cjyuKisou|floatformat}}階建
+                    {% endif %}
+                    {% if data.bkdata.shziki %}
+                    {{data.bkdata.shziki|floatformat}}階部分
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5"><p>土地権利</p></td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white"> {% if data.bkdata.tcKenr %}
+                    {{data.bkdata.tcKenr}}
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">学　区</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white"> {% if gakkuS %}
+                    学区は所在地からの類推です。<br />
+                    {{gakkuS}}
+                    {% endif %}
+                    {% if gakkuC %}
+                    {{gakkuC}}
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">駐車場</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white"> {% if data.bkdata.hushjyuZih %}
+                    {{data.bkdata.hushjyuZih}}
+                    {% endif %}
+                    {% if data.bkdata.hushjyuGtgk %}
+                    （{{data.bkdata.hushjyuGtgk}}円／月）
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">設　備</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white"> {% if data.bkdata.tbFrespc %}
+                    {{data.bkdata.tbFrespc}}
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">備　考</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white"> {% if data.bkdata.bku1 %}
+                    {{data.bkdata.bku1}}
+                    {% endif %}
+                    {% if data.bkdata.bku2 %}
+                    {{data.bkdata.bku2}}
+                    {% endif %} </td>
+                </tr>
+              </table></td>
+            <td width="30"></td>
+            <td align="center" valign="top"><table width="100%" border="0" cellspacing="10" cellpadding="5" bgcolor="#eae5e3">
+                <tr>
+                  <td align="center">画像をクリックすると拡大表示がご覧頂けます<br>
+				<div id="thumbs" class="navigation">
+
+                    {% regroup data.picdata by title as title_list %}
+                      <ul class="thumbs noscript"> {% for title in title_list %}
+                        {% ifchanged %}
+                        </ul>
+                          <p class="class-title-article3" style="clear:both;">{{title.grouper|default:""}}</p>
+                        <ul class="thumbs noscript">
+                        {% endifchanged %}
+                          {% for item in title.list %}
+                            <li> <a href="{{item.bloburl|default:""}}" name="A{{item.pos|default:""}}" class="thumb" title="{{item.content|default:""}}" > <img src="{{item.bloburl|default:""}}=s100" alt="{{item.title|default:""}}" name="imgB{{item.pos|default:""}}" id="imgB{{item.pos|default:""}}" alt="{{item.title|default:""}}" title="{{item.content|default:""}}" width="60" height="38" border="0" > </a> 
+     							<div class="caption">
+    								<div class="image-desc">{{item.content|default:""}}</div>
+    							</div>
+
+                            </li>
+                          {% endfor %}
+                        {% endfor %}
+                      </ul>
+                </div>
+                    </td>
+                </tr>
+              </table>
+              <br>
+              <br>
+              <p class="class-title-article3">平面図</p>
+              <br>
+              {% if heimenzu %} <a href="{{heimenzu.bloburl|default:""}}" name="A{{heimenzu.pos|default:""}}" id="A{{heimenzu.pos|default:""}}" class="thickbox" title="{{heimenzu.content|default:""}}" rel="gallery1"> <img src="{{heimenzu.thumbnailurl|default:""}}" alt="{{heimenzu.title|default:""}}" name="imgB{{heimenzu.pos|default:""}}" id="imgB{{heimenzu.pos|default:""}}" alt="{{heimenzu.title|default:""}}" title="{{heimenzu.content|default:""}}" width="60" height="38" border="0" > </a> {% endif %} <br>
+              <br>
+              <br>
+              <p class="class-title-article3">ご案内図</p>
+              <br>
+              <div id="map_canvas" style="width:300px; height:300px" ></div>
+              <br>
+              <a href="https://maps.google.co.jp/maps?hl=ja&amp;q={{data.bkdata.idkd}}({{data.bkdata.ttmnmi}})&amp;ie=UTF8&amp;z=14&amp;source=embed"><span class="class10">大きな地図で見る</span></a></td>
+
+
+<!--
+https://imakoko.didit.jp/imakoko_html/memo/parameters_google.html
+https://mapki.com/wiki/Google_Map_Parameters
+
+f	左枠について、
+q:通常（デフォルト）
+d:乗換案内。現在地と目的地を記入するダイアログが表示される。	 
+hl	言語。	
+ja:日本。
+en:英語
+※ デフォルトではユーザーの環境に合わせる。＞日本だとja	 
+q	マーカー、吹き出しがつく。地名か、緯度経度（カンマ区切り）で指定。日本語の場合はURLエンコードで入力。	 %E6%96%B0%E5%AE%BF
+（新宿）
+ie	入力文字コード。UTF8（デフォルト）Shift-JIS、EUC-JP、など利用可能。	 
+oe	出力文字コード。UTF8（デフォルト）Shift-JIS、EUC-JP、など利用可能。	 
+ll	地図の中心の緯度経度。世界測地系、十進、カンマ区切り。	35.68923,139.693995
+spn	表示範囲をDegree単位で指定。zパラメータが無いときに有効。
+カンマ区切り	0.029488,0.083942
+z	ズーム。0～20くらい（20以上が見れる地域もあるし、18以降は見れない地域もある。）0が縮小、20が拡大	14
+t	m:マップ（デフォルト）k:サテライトh:デュアルp:地形	 
+om	地図右下に表示されるオーバービュー。0:なし（デフォルト）1:あり	 
+layer	ストリートビューなどの指示
+t:トラフィックビュー（デフォルト）
+c:ストリートビュー
+ 
+cbll	ストリートビューで、ポイントの緯度経度。
+世界測地系、十進、カンマ区切り。	 35.689186,139.693836
+cbp	ストリートビューで、各種表示の指定。
+カンマ区切りで、
+1つめ:　1:小さい画面　2:全画面
+2つめ:　ローテーションアングルをDegreeで
+3つめ:　チルトアングル。-90（真上）～90（真下）←？意味不明
+4つめ:　ズーム。0～2
+5つめ:　ピッチ。-90（真上）～90（真下）	 2,123.38858745822836,,0,-24.070358768546704
+
+
+-->
+
+          </tr>
+        </table>
+        <br>
+        <br>
+        <img src="../cmn_img/kei-orange.jpg" alt="" width="815" height="4" border="0"><br>
+        <a onmouseover="document.images['b-baikyaku'].src='../cmn_img/b-baikyaku02o.jpg'" onmouseout="document.images['b-baikyaku'].src='../cmn_img/b-baikyaku02.jpg'" href="https://chikusaku-m.com/" target="_blank"><img src="../cmn_img/b-baikyaku02.jpg" name="b-baikyaku" alt="" width="815" height="36" border="0" vspace="8"></a></td>
+    </tr>
+  </table>
+  <br>
+  <br>
+  <table width="990" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="right"><table border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td><img src="../cmn_img/yajirushi02.gif" alt="" width="7" height="5" border="0" hspace="4"></td>
+            <td class="class10"><a href="#pagetop">ページの一番上へ</a></td>
+          </tr>
+        </table></td>
+    </tr>
+  </table>
+  <iframe src="../footer.html" frameborder="0" scrolling="no" height="112" width="990"></iframe>
+</div>
+</body>
+</html>

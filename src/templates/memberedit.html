@@ -1,0 +1,680 @@
+{% extends "followpagebase.html" %}
+
+
+{% block titile %}顧客台帳{% endblock titile %}
+{% block titile2 %}顧客台帳{% endblock titile2 %}
+
+
+{% block inready %}
+
+    $("#service").multicheckbox({show:'show'});
+
+	// オートコンプリート　https://jqueryui.com/demos/autocomplete/#remote-jsonp
+	//リファレンス　https://semooh.jp/jquery/api/ajax/jQuery.ajax/options/
+
+    $("#zip").autocomplete({
+        source: function(request, response) {
+
+            $.ajax({
+                url: ajaxURL,
+                dataType: "jsonp",
+                data: {
+                    com: "zip2address",
+                    search_key: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label: item['郵便番号'] + " " + item['所在地'],
+                            value: item['郵便番号'],
+                            adress:item['所在地'],
+                            ad1:item['市区町村名'],
+                            ad2:item['町域名']
+                        }
+                    }));
+                }
+            });
+        },
+        
+		minLength: 4,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+        select: function(ev, ui) {
+			//　イベント処理
+            $("#address1").val(ui.item.ad1);
+            $("#address2").val(ui.item.ad2);
+            $("#address").val(ui.item.adress);
+        }
+    });
+
+	// オートコンプリート　https://jqueryui.com/demos/autocomplete/#remote-jsonp
+	//リファレンス　https://semooh.jp/jquery/api/ajax/jQuery.ajax/options/
+
+    $("#address").autocomplete({
+        source: function(request, response) {
+
+            $.ajax({
+                url: ajaxURL,
+                dataType: "jsonp",
+                data: {
+                    com: "address2zip",
+                    search_key: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label: item['郵便番号'] + " " + item['所在地'],
+                            value: item['所在地'],
+                            adress:item['所在地'],
+                            ad1:item['市区町村名'],
+                            ad2:item['町域名'],
+                            zip:item['郵便番号']
+                        }
+                    }));
+                }
+            });
+        },
+        
+		minLength: 4,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+        select: function(ev, ui) {
+			//　イベント処理
+            $("#address1").val(ui.item.ad1);
+            $("#address2").val(ui.item.ad2);
+            $("#zip").val(ui.item.zip);
+        }
+    });
+
+	// オートコンプリート　https://jqueryui.com/demos/autocomplete/#remote-jsonp
+	//リファレンス　https://semooh.jp/jquery/api/ajax/jQuery.ajax/options/
+
+    $("#CorpOrg_zip").autocomplete({
+        source: function(request, response) {
+
+            $.ajax({
+                url: ajaxURL,
+                dataType: "jsonp",
+                data: {
+                    com: "zip2address",
+                    search_key: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label: item['郵便番号'] + " " + item['所在地'],
+                            value: item['郵便番号'],
+                            adress:item['所在地'],
+                            ad1:item['市区町村名'],
+                            ad2:item['町域名']
+                        }
+                    }));
+                }
+            });
+        },
+        
+		minLength: 4,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+        select: function(ev, ui) {
+			//　イベント処理
+            $("#CorpOrg_address1").val(ui.item.ad1);
+            $("#CorpOrg_address2").val(ui.item.ad2);
+            $("#CorpOrg_address").val(ui.item.adress);
+        }
+    });
+
+
+	// オートコンプリート　https://jqueryui.com/demos/autocomplete/#remote-jsonp
+	//リファレンス　https://semooh.jp/jquery/api/ajax/jQuery.ajax/options/
+
+    $("#CorpOrg_address").autocomplete({
+        source: function(request, response) {
+
+            $.ajax({
+                url: ajaxURL,
+                dataType: "jsonp",
+                data: {
+                    com: "address2zip",
+                    search_key: request.term
+                },
+                success: function(data) {
+                    response($.map(data, function(item) {
+                        return {
+                            label: item['郵便番号'] + " " + item['所在地'],
+                            value: item['所在地'],
+                            adress:item['所在地'],
+                            ad1:item['市区町村名'],
+                            ad2:item['町域名'],
+                            zip:item['郵便番号']
+                        }
+                    }));
+                }
+            });
+        },
+        
+		minLength: 4,
+		open: function() {
+			$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+		},
+		close: function() {
+			$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+		},
+        select: function(ev, ui) {
+			//　イベント処理
+            $("#CorpOrg_address1").val(ui.item.ad1);
+            $("#CorpOrg_address2").val(ui.item.ad2);
+            $("#CorpOrg_zip").val(ui.item.zip);
+        }
+    });
+
+
+
+$(function(){
+    // 日本語入力モードONにするname属性
+    var activeName = {
+        search:1,
+        name:1,
+        yomi:1,
+        tutomesaki:1,
+        address:1,
+        address1:1,
+        address2:1,
+        service:1,
+        bikou:1
+    };
+
+    $("input:visible[type!='password'],textarea").each(function(){
+        if(activeName[$(this).attr("name")] != undefined) {
+            $(this).css("ime-mode", "active");
+        } else {
+            $(this).css("ime-mode", "inactive");
+        }
+    });
+
+//==============================
+// キー項入力 イベント
+//==============================
+	$(document).keydown(function(e){
+		//入力キーコード
+		var	keyCode		=	e.keyCode;	
+		//shift alt ctrl 押下フラグ
+		var	altKey		=	e.altKey;
+		var	shiftKey	=	e.shiftKey;
+		var	ctrlKey		=	e.ctrlKey;
+		//Keyイベント伝播フラグ
+		//	true:ブラウザで処理	false:ユーザで処理
+		var	blKey		=	true;
+		//キーが押された時のオブジェクト
+		var	srcObj		=	e.target;
+
+		//Keyメッセージ表示用
+		var	Key		=	"keyCode:"+keyCode+":";
+
+		if (keyCode == 13 ||keyCode == 9){
+		//Enter tabによるフォーカス移動
+			switch(srcObj.tagName){
+			case "TEXTAREA":
+				if (keyCode!=13) blKey = false;
+				break;
+			case "INPUT":	case "SELECT":
+				//fileは巧く動かないので除外
+				if (srcObj.type!="file")	blKey = false;
+				break;
+			default:
+			}
+			//keyイベントを処理するもののみ抽出
+			if (!blKey){
+				//フォームオブジェクトが何番目か探す
+				var df = d.forms[0];
+				var ln = df.length;
+				var i;
+				for (i=0;i<ln;i++){
+					if (df[i]==srcObj) break;
+				}
+				//次のフォームオブジェクト探す
+				srcObj = Focus_Move(df,i,ln,shiftKey);
+			}
+		}
+
+		if (!blKey){
+			//イベントを伝播しない
+			if (srcObj.type!="file"){
+				//IE規定の動作キャンセル
+				if(d.all) window.event.keyCode = 0;
+				srcObj.focus();
+				if (srcObj.select && srcObj.type!="button")
+					srcObj.select();
+			}else{
+				blKey = true;
+			}
+		}
+
+		if(shiftKey)	Key += "+[Shift]";
+		if(ctrlKey)	Key += "+[Ctrl]";
+		if(altKey)	Key += "+[Alt]";
+
+		$("#lb_msg").text(Key);
+		
+		//blKey true:ブラウザで処理 false:
+		return blKey;
+	});
+
+	//==============================
+	// フォーカス移動　https://d.hatena.ne.jp/Hidepyon/20090903/1251988911
+	//==============================
+	var Focus_Move = function(df,i,ln,shift){
+		//フォーカスを取得できないものは飛ばします
+
+		var FcsObj;
+		if (shift){
+			//Shiftが押されていると当然フォーカスが前へ戻る
+			while (--i >= 0){
+			
+				FcsObj	=	df[i];
+				if	(FcsObj.type!="hidden" && 
+					!FcsObj.disabled && 
+					FcsObj.style.visibility!="hidden" && 
+					FcsObj.tabIndex!=-1){
+					//対象のオブジェクトを戻す
+					return FcsObj;
+				}
+			}
+			//Hitしない場合
+			return Focus_Move(df,ln,ln,shift);
+		}else{
+			//フォーカス進む
+			while (++i < ln){
+			
+				FcsObj	=	df[i];
+				if	(FcsObj.type!="hidden" && 
+					!FcsObj.disabled && 
+					FcsObj.style.visibility!="hidden" && 
+					FcsObj.tabIndex!=-1){
+					return FcsObj;
+				}
+			}
+			//Hitしない場合
+			return Focus_Move(df,-1,ln,shift);
+		}
+	}
+	
+	
+	
+	//初期Focus設定
+	d.forms[0][0].focus();
+
+});
+
+{% endblock inready %}
+
+{% block maincontents %}
+
+<!--contents-input-->
+<div class="contents-input">
+<input type="submit" name="" value="保存する" src="">
+</div>
+<!--contents-input End-->
+
+<!--contents-input-->
+<div class="contents-input">
+
+<div class="space02">
+区分 
+<select name="status" id="status" size="1">
+<option value="顧客" {% ifequal memdb.status "顧客" %} selected{% endifequal %}{{memdb.status|default_if_none:" selected"}}>顧客</option>
+<option value="業者" {% ifequal memdb.status "業者" %} selected{% endifequal %}>業者</option>
+<option value="建築業者" {% ifequal memdb.status "建築業者" %} selected{% endifequal %}>建築業者</option>
+<option value="紹介者" {% ifequal memdb.status "紹介者" %} selected{% endifequal %}>紹介者</option>
+<option value="担当" {% ifequal memdb.status "担当" %} selected{% endifequal %}>担当</option>
+<option value="管理者" {% ifequal memdb.status "管理者" %} selected{% endifequal %}>管理者</option>
+<option value="その他" {% ifequal memdb.status "その他" %} selected{% endifequal %}>その他</option>
+</select> 
+　登録年月日:
+<input type="text" name="tourokunengappi" id="tourokunengappi" value="{{memdb.tourokunengappi|default_if_none:""|date:"Y/m/d H:i:s"}}" size="11" />
+　担当 <select name="tanto" size="1">
+<option value="" ></option>
+{% for e in tanto %}
+<option value="{{e.key}}" {% ifequal e.key tankey %} selected {% endifequal %}>{{e.name}}</option>
+{% endfor %}
+</select>
+<br>サイト名
+<input type="text" name="sitename" id="sitename" value="{{memdb.sitename|default_if_none:""}}">
+</div>
+
+<div class="space01">
+売<input type="checkbox" name="uri" value="1" {% if memdb.uri %}
+checked {% endif %}/>
+買<input type="checkbox" name="kai" value="1" {% if memdb.kai %}
+checked {% endif %}/>
+貸<input type="checkbox" name="kashi" value="1" {% if memdb.kashi %}
+checked {% endif %}/>
+借<input type="checkbox" name="kari" value="1" {% if memdb.kari %}
+checked {% endif %}/>
+　媒介種類 <select name="baikai" size="1">
+<option {{memdb.baikai|default_if_none:" selected"}} value=""></option>
+<option value="一般" {% ifequal memdb.baikai "一般" %} selected{% endifequal %}>
+一般
+</option>
+<option value="専任" {% ifequal memdb.baikai "専任" %} selected{% endifequal %}>
+専任
+</option>
+<option value="専属専任" {% ifequal memdb.baikai "専属専任" %} selected{% endifequal %}>
+専属専任
+</option>
+<option value="その他" {% ifequal memdb.baikai "その他" %} selected{% endifequal %}>
+その他
+</option>
+</select>
+</div>
+
+<div class="space01">
+成約
+<select name="seiyaku" size="1">
+<option value="未成約" {% ifequal memdb.seiyaku "未成約" %} selected{% endifequal %}>
+未成約
+</option>
+<option value="成約" {% ifequal memdb.seiyaku "成約" %} selected{% endifequal %}>
+成約
+</option>
+<option value="契予" {% ifequal memdb.seiyaku "契予" %} selected{% endifequal %}>
+契予
+</option>
+<option value="決予" {% ifequal memdb.seiyaku "決予" %} selected{% endifequal %}>
+決予
+</option>
+<option value="辞退" {% ifequal memdb.seiyaku "辞退" %} selected{% endifequal %}>
+辞退
+</option>
+<option value="休止" {% ifequal memdb.seiyaku "休止" %} selected{% endifequal %}>
+休止
+</option>
+<option value="ブラック" {% ifequal memdb.seiyaku "ブラック" %} selected{% endifequal %}>
+ブラック
+</option>
+<option value="仮" {% ifequal memdb.seiyaku "仮" %} selected{% endifequal %}>
+仮
+</option>
+<option value="その他" {% ifequal memdb.seiyaku "その他" %} selected{% endifequal %}>
+その他
+</option>
+
+</select>
+　成約年月日 
+<input type="text" name="seiyakunengappi" id="seiyakunengappi"
+value="{{memdb.seiyakunengappi|default_if_none:""|date:"Y/m/d H:i:s"}}" size="11" />
+　成約アンケート
+<INPUT value="1" type="checkbox" id="seiyakuankeito" name="seiyakuankeito" {% if memdb.seiyakuankeito %} checked {% endif %}>
+</div>
+
+<div class="space01">
+メンバーID <input type="text" name="memberID" id="memberID"
+value="{{memberID|default_if_none:""}}" size="11" />　　
+メンバー名 
+<input type="text" name="name" id="name"
+value="{{memdb.name|default_if_none:""}}" size="11" />　　
+読み仮名 
+<input type="text" name="yomi" id="yomi"
+value="{{memdb.yomi|default_if_none:""}}" size="11" />
+</div>
+
+<div class="space02">
+年齢 <input type="text" name="age" id="age" value="{{memdb.age|floatformat|default_if_none:""}}" size="11" />
+　　勤続年数 <input type="text" name="kinzoku" id="kinzoku" value="{{memdb.kinzoku|floatformat|default_if_none:""}}" size="11" />
+</div>
+
+<div class="space01">
+入居大人 <input type="text" name="otona" id="otona" value="{{memdb.otona|floatformat|default_if_none:""}}" size="11" />
+　　入居子供 <input type="text" name="kodomo" id="kodomo" value="{{memdb.kodomo|floatformat|default_if_none:""}}" size="11" />
+</div>
+
+<div class="space02">
+郵便番号 <input type="text" name="zip" id="zip"value="{{memdb.zip|default_if_none:""}}" size="11" />
+</div>
+<div class="space02">
+住所　　 <input type="text" name="address" id="address" style="width: 400px;" value="{{memdb.address|default_if_none:""}}"/>
+</div>
+<div class="space01">
+所在地1 <input type="text" name="address1" id="address1" value="{{memdb.address1|default_if_none:""}}" style="width: 200px;" />
+　所在地2 <input type="text" name="address2" id="address2" value="{{memdb.address2|default_if_none:""}}" size="11" />
+</div>
+
+<div class="space01">
+電話番号 <input type="text" name="phone" id="phone" value="{{memdb.phone|default_if_none:""}}" size="11" />
+　　FAX番号 <input type="text" name="fax" id="fax" value="{{memdb.fax|default_if_none:""}}" size="11" />
+　　携帯番号 <input type="text" name="mobilephone" id="mobilephone" value="{{memdb.mobilephone|default_if_none:""}}" size="11" />
+</div>
+
+<div class="space02">
+勤め先
+</div>
+<div class="space02">
+社名 　　<input type="text" name="tutomesaki" id="tutomesaki" value="{{memdb.tutomesaki|default_if_none:""}}" size="35" />　　
+</div>
+<div class="space02">
+読み仮名 <input type="text" name="CorpOrg_yomi" id="CorpOrg_yomi" value="{{memdb.CorpOrg_yomi|default_if_none:""}}" size="35" />　　
+</div>
+<div class="space02">
+役職　　 <input type="text" name="CorpOrg_yaku" id="CorpOrg_yaku" value="{{memdb.CorpOrg_yaku|default_if_none:""}}" size="20" />
+</div>
+<div class="space02">
+郵便番号 <input type="text" name="CorpOrg_zip" id="CorpOrg_zip" value="{{memdb.CorpOrg_zip|default_if_none:""}}" size="11" />  
+所在地 <input type="text" name="CorpOrg_address" id="CorpOrg_address" value="{{memdb.CorpOrg_address|default_if_none:""}}" size="50" />
+</div>
+<div class="space02">
+所在地1 <input type="text" name="CorpOrg_address1" id="CorpOrg_address1" value="{{memdb.CorpOrg_address1|default_if_none:""}}" size="20" />
+　　所在地2 <input type="text" name="CorpOrg_address2" id="CorpOrg_address2" value="{{memdb.CorpOrg_address2|default_if_none:""}}" size="20" />
+</div>
+<div class="space01">
+電話番号 <input type="text" name="CorpOrg_phone" id="CorpOrg_phone" value="{{memdb.CorpOrg_phone|default_if_none:""}}" size="11" />  
+　　FAX番号 <input type="text" name="CorpOrg_fax" id="CorpOrg_fax" value="{{memdb.CorpOrg_fax|default_if_none:""}}" size="11" />
+</div>
+
+<div class="space02">
+送信方法 
+<select name="access" size="1">
+<option {{memdb.access|default_if_none:" selected"}} value=""></option>
+<option value="メール" {% ifequal memdb.access "メール" %} selected{% endifequal %}>
+メール
+</option>
+<option value="FAX" {% ifequal memdb.access "FAX" %} selected{% endifequal %}>
+FAX
+</option>
+<option value="郵送" {% ifequal memdb.access "郵送" %} selected{% endifequal %}>
+郵送
+</option>
+<option value="手渡し" {% ifequal memdb.access "手渡し" %} selected{% endifequal %}>
+手渡し
+</option>
+<option value="その他" {% ifequal memdb.access "その他" %} selected{% endifequal %}>
+その他
+</option>
+</select>
+　　メール 
+<input type="text" name="mail" id="mail" value="{{memdb.mail|default_if_none:""}}" size="20" />
+</div>
+<div class="space01">
+ネットID 
+<input type="text" name="netID" id="netID" value="{{memdb.netID|default_if_none:""}}" size="11" />
+　　パスワード 
+<input type="text" name="netPass" id="netPass" value="{{memdb.netPass|default_if_none:""}}" size="11" />
+</div>
+
+<div class="space02">
+自己資金 <input type="text" name="zikoshikin" id="zikoshikin" value="{{memdb.zikoshikin|floatformat|default_if_none:""}}" size="11" />
+　　返済予定額月々 <input type="text" name="heisaituki" id="heisaituki" value="{{memdb.heisaituki|floatformat|default_if_none:""}}" size="11" />
+</div>
+<div class="space01">
+返済予定額ボーナス <input type="text" name="heisaibonasu" id="heisaibonasu" value="{{memdb.heisaibonasu|floatformat|default_if_none:""}}" size="11" />
+　　購入時期 <input type="text" name="kounyuziki" id="kounyuziki" value="{{memdb.kounyuziki|default_if_none:""}}" size="11" />年
+</div>
+
+<div class="space02">
+区分 
+<select name="rank" size="1">
+                      <option {{memdb.rank|default_if_none:" selected"}} value=""></option>
+                      <option value="A" {% ifequal memdb.rank "A" %} selected{% endifequal %}>
+                      A
+                      </option>
+                      <option value="B" {% ifequal memdb.rank "B" %} selected{% endifequal %}>
+                      B
+                      </option>
+                      <option value="C" {% ifequal memdb.rank "C" %} selected{% endifequal %}>
+                      C
+                      </option>
+                      <option value="D" {% ifequal memdb.rank "D" %} selected{% endifequal %}>
+                      D
+                      </option>
+                      <option value="E" {% ifequal memdb.rank "E" %} selected{% endifequal %}>
+                      E
+                      </option>
+                      <option value="F" {% ifequal memdb.rank "F" %} selected{% endifequal %}>
+                      F
+                      </option>
+                      <option value="G" {% ifequal memdb.rank "G" %} selected{% endifequal %}>
+                      G
+                      </option>
+                      <option value="H" {% ifequal memdb.rank "H" %} selected{% endifequal %}>
+                      H
+                      </option>
+                      <option value="I" {% ifequal memdb.rank "I" %} selected{% endifequal %}>
+                      I
+                      </option>
+                      <option value="J" {% ifequal memdb.rank "J" %} selected{% endifequal %}>
+                      J
+                      </option>
+                      <option value="K" {% ifequal memdb.rank "K" %} selected{% endifequal %}>
+                      K
+                      </option>
+                      <option value="L" {% ifequal memdb.rank "L" %} selected{% endifequal %}>
+                      L
+                      </option>
+                      <option value="M" {% ifequal memdb.rank "M" %} selected{% endifequal %}>
+                      M
+                      </option>
+                      <option value="N" {% ifequal memdb.rank "N" %} selected{% endifequal %}>
+                      N
+                      </option>
+                      <option value="O" {% ifequal memdb.rank "O" %} selected{% endifequal %}>
+                      O
+                      </option>
+                      <option value="P" {% ifequal memdb.rank "P" %} selected{% endifequal %}>
+                      P
+                      </option>
+                      <option value="Q" {% ifequal memdb.rank "Q" %} selected{% endifequal %}>
+                      Q
+                      </option>
+                      <option value="R" {% ifequal memdb.rank "R" %} selected{% endifequal %}>
+                      R
+                      </option>
+                      <option value="S" {% ifequal memdb.rank "S" %} selected{% endifequal %}>
+                      S
+                      </option>
+                      <option value="T" {% ifequal memdb.rank "T" %} selected{% endifequal %}>
+                      T
+                      </option>
+                      <option value="U" {% ifequal memdb.rank "U" %} selected{% endifequal %}>
+                      U
+                      </option>
+                      <option value="V" {% ifequal memdb.rank "V" %} selected{% endifequal %}>
+                      V
+                      </option>
+                      <option value="W" {% ifequal memdb.rank "W" %} selected{% endifequal %}>
+                      W
+                      </option>
+                      <option value="X" {% ifequal memdb.rank "X" %} selected{% endifequal %}>
+                      X
+                      </option>
+                      <option value="Y" {% ifequal memdb.rank "Y" %} selected{% endifequal %}>
+                      Y
+                      </option>
+                      <option value="Z" {% ifequal memdb.rank "Z" %} selected{% endifequal %}>
+                      Z
+                      </option>
+                    </select>
+　　サービス 
+<input type="text" name="service" id="service" size="28" title="{% if servicelist %}{{ servicelist|join:"," }}{% endif %}" value="{% if memdb.service %}{{ memdb.service|join:"," }}{% endif %}"/>
+</div>
+
+<div class="space01">
+MNo 
+<input type="text" name="mno" id="mno" value="{{memdb.mno|floatformat|default_if_none:""}}" size="11" />
+　　MR 
+<input type="text" name="mr" value="{{memdb.mr|floatformat|default_if_none:""}}"  size="11" />
+</div>
+
+<div class="space01">
+獲得媒体 
+<select name="baitai" size="1">
+<option {{memdb.baitai|default_if_none:" selected"}} value=""></option>
+<option value="★" {% ifequal memdb.baitai "★" %} selected{% endifequal %}>
+★
+</option>
+<option value="★" {% ifequal memdb.baitai "★" %} selected{% endifequal %}>
+★
+</option>
+<option value="★" {% ifequal memdb.baitai "★" %} selected{% endifequal %}>
+★
+</option>
+<option value="★" {% ifequal memdb.baitai "★" %} selected{% endifequal %}>
+★
+</option>
+</select>　　
+　　初回アクセス 
+<select name="syokai" size="1">
+<option {{memdb.syokai|default_if_none:" selected"}} value=""></option>
+<option value="★" {% ifequal memdb.syokai "★" %} selected{% endifequal %}>
+★
+</option>
+<option value="★" {% ifequal memdb.syokai "★" %} selected{% endifequal %}>
+★
+</option>
+<option value="★" {% ifequal memdb.syokai "★" %} selected{% endifequal %}>
+★
+</option>
+<option value="★" {% ifequal memdb.syokai "★" %} selected{% endifequal %}>
+★
+</option>
+</select>　　
+　　紹介業者 
+<select name="gyosya" size="1">
+<option {{memdb.gyosya|default_if_none:" selected"}} value=""></option>
+<option value="★" {% ifequal memdb.gyosya "★" %} selected{% endifequal %}>
+★
+</option>
+<option value="★" {% ifequal memdb.gyosya "★" %} selected{% endifequal %}>
+★
+</option>
+<option value="★" {% ifequal memdb.gyosya "★" %} selected{% endifequal %}>
+★
+</option>
+<option value="★" {% ifequal memdb.gyosya "★" %} selected{% endifequal %}>
+★
+</option>
+</select>　　
+</div>
+<br>
+
+<ul>
+<li>備考</li>
+									<textarea name="bikou" rows="4" cols="79">{{memdb.bikou|default_if_none:""}}</textarea>
+								</ul>
+
+</div><!--contents-input End-->
+
+</div><!--contents END-->
+
+{% endblock maincontents %}
+

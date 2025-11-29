@@ -1,0 +1,1003 @@
+{% extends applicationpagebase %}
+
+{% block title %}
+{{data.bkdata.ttmnmi}}　{{data.bkdata.tdufknmi|default:""}}{{data.bkdata.shzicmi1|default:""}}{{data.bkdata.shzicmi2|default:""}}{{data.bkdata.shzicmi3|default:""}}　｜　【千種区マンション探し.com】
+{% endblock title %}
+
+{% block head %}
+<link rel="stylesheet" href="https://www.chikusaku-mansion.com/css/galleriffic-3.css" type="text/css" />
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB3Pj9gP_x_Gjdgg2GqXaGHQnB5hNaw3no&sensor=false"></script>
+<script language="javascript" src="https://www.chikusaku-mansion.com/js/navi2.js"></script>
+<script type="text/javascript" src="https://www.chikusaku-mansion.com/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="https://www.chikusaku-mansion.com/js/jquery.history.js"></script>
+<script type="text/javascript" src="https://www.chikusaku-mansion.com/js/jquery.galleriffic.js"></script>
+<script type="text/javascript" src="https://www.chikusaku-mansion.com/js/jquery.opacityrollover.js"></script>
+<script type="text/javascript" src="https://www.chikusaku-mansion.com/js/thickbox.js"></script>
+<script type="text/javascript" src="https://www.chikusaku-mansion.com/js/jquery.cookie.js"></script>
+<script type="text/javascript" src="https://www.chikusaku-mansion.com/js/simulation.js"></script>
+<link rel="stylesheet" href="https://www.chikusaku-mansion.com/css/thickbox.css" type="text/css" media="all" />  
+<!-- We only want the thunbnails to display when javascript is disabled -->
+<script type="text/javascript">
+    document.write('<style>.noscript { display: none; }</style>');
+</script>
+<script type="text/javascript">
+
+//String.fromCharCode(64) //アットマークの文字コード表現 https://www.red.oit-net.jp/tatsuya/java/prompt2.htm 
+function _mailto(){
+	ad = 's-style' + String.fromCharCode(32+14) + 's8'; 
+	dm = 'nifty' + String.fromCharCode(32+14) + 'com';
+	sb = '?subject=' + '【{{data.bkdata.bkID}}】{{data.bkdata.ttmnmi}}について'
+	bd = '&body=【{{data.bkdata.bkID}}】{{data.bkdata.ttmnmi}}について'
+	location.href = 'mailto:' + ad + String.fromCharCode(64) + dm + sb + bd;
+
+	//location.href='mailto:aaaa@ne.jp';
+	//というようにlocation.hrefで代用できます。
+	//ちなみにmailtoはmailto:メールアドレス?subject=タイトル&body=本文
+	//というように内容を設定できますが、本文に改行を入れたい場合は改行したいところに%0D%0Aを入れれば改行されます。
+	return false
+
+}
+</script>
+
+<script type="text/javascript">
+  var map;
+  function initialize() {
+    var latlng = new google.maps.LatLng({{data.bkdata.idkd}});
+    var myOptions = {
+      zoom: 17,
+      center: latlng,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+    createMarker();
+  }
+  function createMarker(){
+        var lat = (map.getCenter()).lat();
+        var lng = (map.getCenter()).lng();
+        marker1 = new google.maps.Marker({
+            position: new google.maps.LatLng(lat,lng),
+            map: map,
+            title: "{{data.bkdata.ttmnmi|default:""}}",
+            draggable: false //なんかV3での動作が超遅いきがする
+        });
+/*     
+        google.maps.event.addListener(marker1,'mouseup',function(){
+            echoPoint(marker1.position);
+        });     
+        google.maps.event.addListener(map,'dblclick',function(event){
+            marker1.setPosition(event.latLng);
+            echoPoint(marker1.position);
+        }); 
+*/
+    }
+    
+</script>
+<script type="text/javascript">
+
+function gocal(){
+        var kakaku = parseFloat(fig2num("{{data.bkdata.kkkuCnryu}}"));
+        if(! isNaN(kakaku)){
+            var sonota = Math.floor(kakaku * 0.08);
+            $("#sonota").text(number_format(sonota)+"円");
+            var sogaku = kakaku + sonota;
+            $("#kounyusogaku").text(number_format(sogaku)+"円");
+            var zikosikin = Number($("#zikosikin").val()*10000);
+            // zikosikin = Number(zikosikin.split("万円")[0]);
+            var syakunyugaku = sogaku - zikosikin;
+            $("#txt_debtmoney").val(syakunyugaku/10000);
+            $("#txt_debtmoney2").text(number_format(syakunyugaku/10000)+"万円");
+            CalcRepaymentMoney();
+            $("#tukisiharaigaku").text($("#txt_repayment_everymonth").val() + "円");
+        }
+        $.cookie("zikosikin",$("#zikosikin").val(),{ expires: 30 });
+        $.cookie("txt_rate",$("#txt_rate").val(),{ expires: 30 });
+        $.cookie("txt_kikan",$("#txt_kikan").val(),{ expires: 30 });
+}
+
+$(window).load(function() {
+
+    initialize();//googleマップ表示
+    if($.cookie("zikosikin")){
+        $("#zikosikin").val($.cookie("zikosikin"))
+    }
+    if($.cookie("txt_rate")){
+        $("#txt_rate").val($.cookie("txt_rate"))
+    }
+    if($.cookie("txt_kikan")){
+        $("#txt_kikan").val($.cookie("txt_kikan"))
+    }
+
+    $("#zikosikin").change(gocal);
+    $("#txt_rate").change(gocal);
+    $("#txt_kikan").change(gocal);
+
+    gocal();
+    $("#kanrisyuzen").text(number_format(parseFloat(fig2num($("#kanri").val())) + parseFloat(fig2num($("#syuzentumitate").val())))+"円");
+    
+	// We only want these styles applied when javascript is enabled
+	$('div.navigation').css({'width' : '355px', 'float' : 'left'});
+	$('div.content').css('display', 'block');
+
+	// Initially set opacity on thumbs and add
+	// additional styling for hover effect on thumbs
+	var onMouseOutOpacity = 0.67;
+	$('#thumbs ul.thumbs li').opacityrollover({
+    	mouseOutOpacity:   onMouseOutOpacity,
+		mouseOverOpacity:  1.0,
+		fadeSpeed:         'fast',
+		exemptionSelector: '.selected'
+	});
+
+	// Initialize Advanced Galleriffic Gallery
+	var gallery = $('#thumbs').galleriffic({
+	    delay:                     3500,
+		numThumbs:                 100,
+		preloadAhead:              0,
+		enableTopPager:            false,
+		enableBottomPager:         false,
+		maxPagesToShow:            10,
+		imageContainerSel:         '#slideshow',
+		controlsContainerSel:      '#controls',
+		captionContainerSel:       '#caption',
+		loadingContainerSel:       '#loading',
+		renderSSControls:          true,
+		renderNavControls:         true,
+		playLinkText:              'Play Slideshow',
+		pauseLinkText:             'Pause Slideshow',
+		prevLinkText:              '&lsaquo; Previous Photo',
+		nextLinkText:              'Next Photo &rsaquo;',
+		nextPageLinkText:          'Next &rsaquo;',
+		prevPageLinkText:          '&lsaquo; Prev',
+		enableHistory:             false,
+		autoStart:                 true,
+		syncTransitions:           true,
+		defaultTransitionDuration: 900,
+		onSlideChange:             function(prevIndex, nextIndex) {
+		// 'this' refers to the gallery, which is an extension of $('#thumbs')
+		    this.find('ul.thumbs').children()
+		        .eq(prevIndex).fadeTo('fast', onMouseOutOpacity).end()
+		        .eq(nextIndex).fadeTo('fast', 1.0);
+			},
+			onPageTransitionOut:       function(callback) {
+				this.fadeTo('fast', 0.0, callback);
+			},
+			onPageTransitionIn:        function() {
+				this.fadeTo('fast', 1.0);
+			}
+			});
+				/**** Functions to support integration of galleriffic with the jquery.history plugin ****/
+				// PageLoad function
+				// This function is called when:
+				// 1. after calling $.historyInit();
+				// 2. after calling $.historyLoad();
+				// 3. after pushing "Go Back" button of a browser
+
+function pageload(hash) {
+	// alert("pageload: " + hash);
+	// hash doesn't contain the first # character.
+	if(hash) {
+		$.galleriffic.gotoImage(hash);
+	} else {
+		gallery.gotoIndex(0);
+	}
+}
+
+				// Initialize history plugin.
+				// The callback is called at once by present location.hash. 
+				$.historyInit(pageload, "advanced.html");
+
+				// set onlick event for buttons using the jQuery 1.3 live method
+				$("a[rel='history']").live('click', function(e) {
+					if (e.button != 0) return true;
+					
+					var hash = this.href;
+					hash = hash.replace(/^.*#/, '');
+
+					// moves to a new page. 
+					// pageload is called at once. 
+					// hash don't contain "#", "?"
+					$.historyLoad(hash);
+
+					return false;
+				});
+
+
+		
+	});
+
+</script>
+
+
+<style type="text/css">
+<!--
+body {
+	background-image:url(https://www.chikusaku-mansion.com/cmn_img/back01.jpg);
+	background-repeat:repeat-x;
+}
+-->
+</style>
+
+{% endblock head %}
+
+{% block content %}
+
+
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr> 
+            <td align="right">
+            <a href="javascript:window.external.addFavorite('s-style-hrd.appspot.com/show/s-style/hon/www.chikusaku-mansion.com/bkdata/article.html?media=web&id={{data.bkdata.bkID}}','千種区マンションサイト【お気に入り物件】{{data.bkdata.ttmnmi|default:""}}')"><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-bookmark.jpg" alt="この物件をブックマークする" width="194" height="24" border="0"></a></td>
+            </tr>
+        </table>
+        <br />
+		<!--2012.0813 article.html-->
+		<div class="mansionname-title">{{data.bkdata.ttmnmi|default:""}}</div>
+
+{% ifequal data.bkdata.dtsyuri "サンプル" %}
+<!--2012.1130 notsell.html-->
+		<img src="https://www.chikusaku-mansion.com/img-article/t-notsell01.jpg" alt="" width="815" height="150" border="0">
+		<br>
+		<br>
+
+		{% if not data.auth %}
+		<table width="815" border="0" cellspacing="0" cellpadding="0" background="https://www.chikusaku-mansion.com/img-article/t-notsell02.jpg" height="244">
+			<tr>
+				<td align="left" valign="top">
+					<table border="0" cellspacing="0" cellpadding="0" height="75">
+						<tr>
+							<td width="623"></td>
+							<td align="center" valign="middle" width="68"><span class="class40orange">20</span></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+		<br>
+		<br>
+
+		<img src="https://www.chikusaku-mansion.com/img-article/t-notsell03.jpg" alt="" width="815" height="60" border="0"><br>
+		<form action="https://s-style-hrd.appspot.com/regist" method="POST"  onSubmit="javascript:_gaq.push(['_linkByPost',this])">
+		<table width="100%" border="0" cellspacing="1" cellpadding="8" bgcolor="#a8a29f">
+			<tr>
+				<td class="class14white" align="left" valign="top" bgcolor="#ff8311" >入力して送信ボタンを押して下さい</td>
+			</tr>
+			<tr>
+				<td style="font-size: 1em" align="left" valign="top" bgcolor="white">ご希望のユーザーID：　　<input type="text" id="new_login_id" name="new_login_id" value="" size="53"><br>
+				<span class="class10rightgray2">（記入例）　yamada001</span></td>
+			</tr>
+			<tr>
+				<td style="font-size: 1em" align="left" valign="top" bgcolor="white">ご希望のパスワード：　　<input type="password" name="new_login_pwd" id="new_login_pwd" size="53"><br>
+				<span class="class10rightgray2">（記入例）　pwd@11dd</span></td>
+			</tr>
+			<tr>
+				<td style="font-size: 1em" align="left" valign="top" bgcolor="white">連絡先メールアドレス　　<input type="text" name="new_user_email" id="new_user_email" size="53"><br>
+				<span class="class10rightgray2">（記入例）　mansion@chikusaku-mansion.com</span></td>
+			</tr>
+		</table>
+		<br>
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr><input type="hidden" id="corp_name" name="corp_name" value="s-style">
+			<input type="hidden" id="branch_name" name="branch_name" value="hon">
+			<input type="hidden" id="sitename" name="sitename" value="www.chikusaku-mansion.com">
+			<input type="hidden" id="togo" name="togo" value="">
+			<input type="hidden" id="reqnum" name="reqnum" value="{{data.bkdata.bkID}}">
+			<input type="hidden" id="reqtext" name="reqtext" value="">
+			<td style="font-size: 1em" align="center"><input type="submit" id="new_regist" name="new_regist" value="この内容で送信する"></td>
+			</tr>
+		</table>
+		</form>
+	    <br />
+    	<br />
+		{% endif %}
+						<img src="https://www.chikusaku-mansion.com/img-article/t-notsell04.jpg" alt="" width="815" height="133" border="0">
+		<br />
+		<br />
+
+<!--2012.1130 notsell.html-->
+{% else %}
+
+
+{% if data.webkkkk %} 
+
+<!--2012.1130 koukai.html-->
+		<img src="https://www.chikusaku-mansion.com/img-article/t-koukai01.jpg" alt="" width="815" height="350" border="0">
+		<div align="center">
+			<div class="article-koukai-Linkbotan">
+				<a href="#" onclick="_mailto();return false;">この物件についてメールで問い合わせをする</a>
+			</div>
+		</div>
+<!--2012.1130 koukai.html-->
+
+{% else %}
+{% if data.auth %}
+
+<!--2012.1130 member.html-->
+		<img src="https://www.chikusaku-mansion.com/img-article/t-login01.jpg" alt="" width="815" height="279" border="0">
+		<div align="center">
+			<div class="article-koukai-Linkbotan">
+			<a href="#" onclick="_mailto();return false;">この物件についてメールで問い合わせをする</a>
+			</div>
+		</div>
+<!--2012.1130 member.html-->
+
+{% else %}
+
+<!--2012.1130 login.html-->
+		<img src="https://www.chikusaku-mansion.com/img-article/t-menber01.jpg" alt="" width="815" height="135" border="0">
+		<br />
+		<br />
+		<div class="article-menber-Linkbotan">
+		<a href="/login?corp_name=s-style&branch_name=hon&sitename=www.chikusaku-mansion.com&togo=%2Fshow%2Fs-style%2Fhon%2Fwww.chikusaku-mansion.com%2Fbkdata%2Farticle.html%3Fmedia%3Dweb%26id%3D{{data.bkdata.bkID}}" ></a>
+		</div>
+		<img src="https://www.chikusaku-mansion.com/img-article/t-menber03.jpg" alt="" width="815" height="100" border="0">
+		<br />
+		<br />
+		<div align="center">
+		<img src="https://www.chikusaku-mansion.com/img-article/t-menber02.jpg" alt="" width="815" height="300" border="0">
+		</div>
+		<br />
+		<br />
+		<img src="https://www.chikusaku-mansion.com/img-article/t-notsell03.jpg" alt="" width="815" height="60" border="0">
+		<br />
+		<br />
+		<form action="https://s-style-hrd.appspot.com/regist" method="POST"  onSubmit="javascript:_gaq.push(['_linkByPost',this])">
+		<table width="100%" border="0" cellspacing="1" cellpadding="8" bgcolor="#a8a29f">
+			<tr>
+				<td class="class14white" align="left" valign="top" bgcolor="#ff8311" >入力して送信ボタンを押して下さい</td>
+			</tr>
+			<tr>
+				<td style="font-size: 1em" align="left" valign="top" bgcolor="white">ご希望のユーザーID：　　<input type="text" id="new_login_id" name="new_login_id" value="" size="53"><br>
+				<span class="class10rightgray2">（記入例）　yamada001</span></td>
+			</tr>
+			<tr>
+				<td style="font-size: 1em" align="left" valign="top" bgcolor="white">ご希望のパスワード：　　<input type="password" name="new_login_pwd" id="new_login_pwd" size="53"><br>
+				<span class="class10rightgray2">（記入例）　pwd@11dd</span></td>
+			</tr>
+			<tr>
+				<td style="font-size: 1em" align="left" valign="top" bgcolor="white">連絡先メールアドレス　　<input type="text" name="new_user_email" id="new_user_email" size="53"><br>
+				<span class="class10rightgray2">（記入例）　mansion@chikusaku-mansion.com</span></td>
+			</tr>
+		</table>
+		<br />
+		<br />
+		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+			<tr><input type="hidden" id="corp_name" name="corp_name" value="s-style">
+			<input type="hidden" id="branch_name" name="branch_name" value="hon">
+			<input type="hidden" id="sitename" name="sitename" value="www.chikusaku-mansion.com">
+			<input type="hidden" id="togo" name="togo" value="https://s-style-hrd.appspot.com/show/s-style/hon/www.chikusaku-mansion.com/bkdata/article.html?media=web&id={{data.bkdata.bkID}}">
+			<input type="hidden" id="reqnum" name="reqnum" value="{{data.bkdata.bkID}}">
+			<input type="hidden" id="reqtext" name="reqtext" value="">
+			<td style="font-size: 1em" align="center"><input type="submit" id="new_regist" name="new_regist" value="この内容で送信する"></td>
+			</tr>
+		</table>
+		</form>
+
+<!--2012.1130 login.html-->
+
+{% endif %}
+{% endif %}
+{% endifequal %}
+
+<!--2012.0813 article.html-->
+
+		<!--START Loansimulation-->
+						<div class="Loansimulation">
+						<table width="100%" border="0" cellspacing="0" cellpadding="7">
+							<tbody><tr>
+								<td align="left" bgcolor="#f18101"><font color="#f7a600"><span class="class14white">返済計画プラン</span></font></td>
+							</tr>
+							<tr>
+								<td align="left" bgcolor="#f4f4f4"><br>
+									<span class="class14red">自己資金・金利モデル・借入期間を入力して下さい。毎月のお支払金額が計算できます。</span><br>
+									<br>
+									<table width="100%" border="0" cellspacing="0" cellpadding="0">
+										<tbody><tr>
+											<td valign="top">
+												<table width="100%" border="0" cellspacing="1" cellpadding="5" bgcolor="#f7a600">
+													<tbody><tr>
+														<td align="left" bgcolor="#f9f6f1">この物件の価格</td>
+														<td align="left" id="kkkuCnryu" name="kkkuCnryu" bgcolor="white">{{data.kakakuM|default:""}} 万円<br>
+														</td>
+													</tr>
+													<tr>
+														<td align="left" bgcolor="#f9f6f1">その他の費用（概算）</td>
+														<td align="left" bgcolor="white" id="sonota" name="sonota" ></td>
+													</tr>
+													<tr>
+														<td align="left" bgcolor="#f9f6f1">購入する総金額</td>
+														<td align="left" bgcolor="white" id="kounyusogaku" name="kounyusogaku" ></td>
+													</tr>
+												</tbody></table>
+											</td>
+											<td><img src="https://www.chikusaku-mansion.com/cmn_img/yajirushi-lorn.gif" alt="" width="11" height="27" border="0" hspace="10"></td>
+											<td valign="top">
+												<table width="100%" border="0" cellspacing="1" cellpadding="5" bgcolor="#f7a600">
+													<tbody><tr>
+														<td align="left" bgcolor="#f9f6f1">自己資金</td>
+														<td align="left" bgcolor="white"><input type="text" name="zikosikin" id="zikosikin" value="0" size="15">万円</td>
+														<td rowspan="4" align="left" bgcolor="white">毎月のお支払い金額<br>
+															（ボーナス無し）<br>
+														<input type="hidden" id="kanri" name="kanri" value="{{data.bkdata.knrh}}">
+														<input type="hidden" id="txt_debtmoney" name="txt_debtmoney" value="">
+														<input type="hidden" id="syuzentumitate" name="syuzentumitate" value="{{data.bkdata.shznTmttkn}}">
+														<input type="hidden" name="txt_bonus" id="txt_bonus" maxlength="20" size="10" class="long" style="ime-mode: disabled;">
+														<input type="hidden" name="txt_repayment_everymonth" id="txt_repayment_everymonth" maxlength="30" size="10" class="medium" style="ime-mode: disabled;">
+														<input type="hidden" name="txt_repayment_year" id="txt_repayment_year" maxlength="30" size="10" class="medium" style="ime-mode: disabled;">
+
+														<span id="tukisiharaigaku" class="class20orange" >円</span></td>
+													</tr>
+													<tr>
+														<td align="left" bgcolor="#f9f6f1">借入金額</td>
+														<td align="left" bgcolor="white"><span name="txt_debtmoney2" id="txt_debtmoney2">万円</span> </td>
+													</tr>
+													<tr>
+														<td align="left" bgcolor="#f9f6f1">金利モデル</td>
+														<td align="left" bgcolor="white"><input type="text" name="txt_rate" id="txt_rate" value="0.975" size="15" style="ime-mode: disabled;">％</td>
+													</tr>
+													<tr>
+														<td align="left" bgcolor="#f9f6f1">借入期間</td>
+														<td align="left" bgcolor="white"><input type="text" name="txt_kikan" id="txt_kikan" value="35" size="15" style="ime-mode: disabled;">年(変動)</td>
+													</tr>
+												</tbody></table>
+											</td>
+										</tr>
+									</tbody></table>
+									<br>
+									<table width="100%" border="0" cellspacing="0" cellpadding="0">
+										<tbody><tr>
+											<td align="right" width="366"><img src="https://www.chikusaku-mansion.com/cmn_img/plus.gif" alt="" width="69" height="69" border="0"></td>
+											<td align="right">
+												<table width="95%" border="0" cellspacing="1" cellpadding="5" bgcolor="#f7a600">
+													<tbody><tr>
+														<td align="left" bgcolor="#f9f6f1">管理費</td>
+														<td rowspan="2" align="left" bgcolor="white">
+														<span id="kanrisyuzen" class="class20orange">円</span></td>
+													</tr>
+													<tr>
+														<td align="left" bgcolor="#f9f6f1">修繕積立金</td>
+													</tr>
+												</tbody></table>
+											</td>
+										</tr>
+									</tbody></table>
+								</td>
+							</tr>
+						</tbody></table>
+						</div>
+<!--END Loansimulation-->
+
+      <br />
+      <br />
+        
+        <br>
+        <br>
+        <p class="class-title-article">【{{data.bkdata.bkID}}】{{data.bkdata.ttmnmi|default:""}}　{{data.bkdata.tdufknmi|default:""}}{{data.bkdata.shzicmi1|default:""}}{{data.bkdata.shzicmi2|default:""}}{{data.bkdata.shzicmi3|default:""}}</p>
+        
+        <!--<p class="class-title-article2">● この物件には購入希望者が{{data.hikiai|default:"**"}}人います</p>--> 
+        <br>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td><img src="https://www.chikusaku-mansion.com/article/cmn_img/icon-tokucho.jpg" alt="ココが 特徴!" width="75" height="67" border="0"></td>
+            <td align="left"><span class="class14red">{{data.bkdata.kkkybku|join:"<br />"}}<br />{{data.bkdata.bku3|default:""}}<br />{{data.bkdata.bku4|default:""}}</span></td>
+          </tr>
+        </table>
+        <br>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td align="center" valign="top">
+
+				<!-- Start Advanced Gallery Html Containers -->
+				<div id="gallery" class="content" style="background-color:white;position:relative">
+					<div id="controls" class="controls"></div>
+					<div class="slideshow-container">
+						<div id="loading" class="loader"></div>
+						<div id="slideshow" class="slideshow"></div>
+					</div>
+					<div id="caption" class="caption-container"></div>
+				</div>
+
+              <p class="class-title-article3">物件概要</p>
+              <br>
+              <table width="100%" border="0" cellspacing="1" cellpadding="10" bgcolor="#d1cec9">
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">名　称</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white">{{data.bkdata.ttmnmi|default:""}}</td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">物件所在地</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white">{{data.bkdata.tdufknmi|default:""}}{{data.bkdata.shzicmi1|default:""}}{{data.bkdata.shzicmi2|default:""}}{{data.bkdata.shzicmi3|default:""}}</td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">価　格</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white">{{data.kakakuM|default:""}} 万円（税込） </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">間　取</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white">{{data.bkdata.mdrHysu1|floatformat|default:""}}{{data.bkdata.mdrTyp1|default:""}}
+                    
+                    {% if data.bkdata.stTyp11%}
+                    {% if data.bkdata.stHrs11 %}
+                    {{data.bkdata.stHrs11}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu11 %}
+                    ×{{data.bkdata.stsu11}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if data.bkdata.stTyp21 %}
+                    {% if data.bkdata.stHrs21 %}
+                    {{data.bkdata.stHrs21}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu21 %}
+                    ×{{data.bkdata.stsu21}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if data.bkdata.stTyp31 %}
+                    {% if data.bkdata.stHrs31 %}
+                    {{data.bkdata.stHrs31}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu31 %}
+                    ×{{data.bkdata.stsu31}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if data.bkdata.stTyp41 %}
+                    {% if data.bkdata.stHrs41 %}
+                    {{data.bkdata.stHrs41}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu41 %}
+                    ×{{data.bkdata.stsu41}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if data.bkdata.stTyp51 %}
+                    {% if data.bkdata.stHrs51 %}
+                    {{data.bkdata.stHrs51}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu51 %}
+                    ×{{data.bkdata.stsu51}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if data.bkdata.stShziki61 %}
+                    {% if data.bkdata.stHrs61 %}
+                    {{data.bkdata.stHrs61}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu61 %}
+                    ×{{data.bkdata.stsu61}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    {% if data.bkdata.stTyp71 %}
+                    {% if data.bkdata.stHrs71 %}
+                    {{data.bkdata.stHrs71}}帖
+                    {% endif %}
+                    {% if data.bkdata.stsu71 %}
+                    ×{{data.bkdata.stsu71}}
+                    {% endif %}
+                    {% endif %}
+                    
+                    </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">最寄駅</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white">{{data.bkdata.ekmi1|default:""}} {{data.bkdata.ekmi2|default:""}} {{data.bkdata.ekmi3|default:""}} 駅</td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">交　通</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white">
+                  {% if data.bkdata.ekmi1 %} <br />
+                    {{data.bkdata.ensnmi1}}
+                    {{data.bkdata.ekmi1}}駅
+                    {% if data.bkdata.thHn11 %}
+                    徒歩約{{data.bkdata.thHn11|floatformat}}分
+                    {% endif %}
+                    {% if data.bkdata.thM21 %}
+                    徒歩約{{data.bkdata.thM21|floatformat}}ｍ
+                    {% endif %}
+                    {% if data.bkdata.bs1 %}
+                    {{data.bkdata.bs1|floatformat}}
+                    {% endif %}
+                    {% if data.bkdata.bsRsnmi1 %}
+                    {{data.bkdata.bsRsnmi1|floatformat}}
+                    {% endif %}
+                    {% if data.bkdata.bstiMishu1 %}
+                    {{data.bkdata.bstiMishu1|floatformat}}
+                    {% endif %}
+                    {% if data.bkdata.tihHn1 %}
+                    徒歩 {{data.bkdata.tihHn1|floatformat}} 分
+                    {% endif %}
+                    {% if data.bkdata.tihM1 %}
+                    徒歩 {{data.bkdata.tihM1|floatformat}} ｍ
+                    {% endif %}
+                    {% if data.bkdata.krmKm1 %}
+                    車 {{data.bkdata.krmKm1|floatformat}} km
+                    {% endif %}
+                  {% endif %}
+                  {% if data.bkdata.ekmi2 %} <br />
+                    {{data.bkdata.ensnmi2}}
+                    {{data.bkdata.ekmi2}}駅
+                    {% if data.bkdata.thHn12 %}
+                    徒歩約{{data.bkdata.thHn12|floatformat}}分
+                    {% endif %}
+                    {% if data.bkdata.thM22 %}
+                    徒歩約{{data.bkdata.thM22|floatformat}}ｍ
+                    {% endif %}
+                    {% if data.bkdata.bs2 %}
+                    {{data.bkdata.bs2}}
+                    {% endif %}
+                    {% if data.bkdata.bsRsnmi2 %}
+                    {{data.bkdata.bsRsnmi2}}
+                    {% endif %}
+                    {% if data.bkdata.bstiMishu2%}
+                    {{data.bkdata.bstiMishu2}}
+                    {% endif %}
+                    {% if data.bkdata.tihHn2 %}
+                    徒歩 {{data.bkdata.tihHn2|floatformat}} 分
+                    {% endif %}
+                    {% if data.bkdata.tihM2 %}
+                    徒歩 {{data.bkdata.tihM2|floatformat}} ｍ
+                    {% endif %}
+                    {% if data.bkdata.krmKm2 %}
+                    車 {{data.bkdata.krmKm2|floatformat}} km
+                    {% endif %}
+                  {% endif %}
+                  {% if data.bkdata.ekmi3 %} <br />
+                    {{data.bkdata.ensnmi3}}
+                    {{data.bkdata.ekmi3}}駅
+                    {% if data.bkdata.thHn13 %}
+                    徒歩約{{data.bkdata.thHn13|floatformat}}分
+                    {% endif %}
+                    {% if data.bkdata.thM23 %}
+                    徒歩約{{data.bkdata.thM23|floatformat}}ｍ
+                    {% endif %}
+                    {% if data.bkdata.bs3 %}
+                    {{data.bkdata.bs3}}
+                    {% endif %}
+                    {% if data.bkdata.bsRsnmi3 %}
+                    {{data.bkdata.bsRsnmi3}}
+                    {% endif %}
+                    {% if data.bkdata.bstiMishu3%}
+                    {{data.bkdata.bstiMishu3}}
+                    {% endif %}
+                    {% if data.bkdata.tihHn3 %}
+                    徒歩 {{data.bkdata.tihHn3|floatformat}} 分
+                    {% endif %}
+                    {% if data.bkdata.tihM3 %}
+                    徒歩 {{data.bkdata.tihM3|floatformat}} ｍ
+                    {% endif %}
+                    {% if data.bkdata.krmKm3 %}
+                    車 {{data.bkdata.krmKm3|floatformat}} km
+                    {% endif %}
+                    {% endif %}
+                    {% if data.bkdata.sntKutuShdn %} <br />
+                    {{data.bkdata.sntKutuShdn}}
+                    {% endif %}
+                    {% if data.bkdata.kutuHn %}
+                    {{data.bkdata.kutuHn|floatformat}}分
+                    {% endif %}
+                    {% if data.bkdata.kutuM %}
+                    {{data.bkdata.kutuM|floatformat}}ｍ
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5"> 管理費　 </td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.knrh %}
+                    {{data.bkdata.knrh}}円／月
+                    {% endif %} </td>
+                  <td align="left" valign="top" bgcolor="#f5f4e5"> 修繕積立金　 </td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.shznTmttkn %}
+                    {{data.bkdata.shznTmttkn}}円／月
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">築年月</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.cknngtSirk %}
+                    {{data.tknngtG}}
+                    {{data.bkdata.cknngtSirk|date:"n"|default_if_none:""}}月
+                    {% endif %} </td>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">ペット</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.ptflg %}
+                    可
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">建物面積</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.ttmnMnsk1 %}
+                    延{{data.bkdata.ttmnMnsk1|floatformat}}
+                    m<sup>2</sup>　
+                    {% endif %}
+                    {% if data.bkdata.ttmnMnsk2 %}
+                    延{{data.bkdata.ttmnMnsk2|floatformat}}
+                    m<sup>2</sup>　
+                    {% endif %} </td>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">バルコニー面積</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.blcnyTrsMnsk %}
+                    {{data.bkdata.blcnyTrsMnsk|floatformat}}
+                    m<sup>2</sup>　
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">建蔽率</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.knpirt %}
+                    {{data.bkdata.knpirt|floatformat}}
+                    ％
+                    {% endif %} </td>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">容積率</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.yuskrt %}
+                    {{data.bkdata.yuskrt|floatformat}}
+                    ％
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">現　況</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.gnkyu %}
+                    {{data.bkdata.gnkyu}}
+                    {% endif %} </td>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">引渡日</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.hkwtsNyukyJk %}
+                    {{data.bkdata.hkwtsNyukyJk}}
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">都市計画</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.tskikk %}
+                    {{data.bkdata.tskikk}}
+                    {% endif %} </td>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">用途地域</td>
+                  <td align="left" valign="top" bgcolor="white"> {% if data.bkdata.yutCik1 %}
+                    {{data.bkdata.yutCik1}}
+                    {% endif %}
+                    {% if data.bkdata.yutCik2 %}
+                    ・{{data.bkdata.yutCik2}}
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">建物構造</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white"> {% if data.bkdata.ttmnKuzu %}
+                    {{data.bkdata.ttmnKuzu}}<br />
+                    {% endif %}
+                    {% if data.bkdata.ttmnKisk %}
+                    {{data.bkdata.ttmnKisk}}<br />
+                    {% endif %}
+                    {% if data.bkdata.cjyuKisou %}
+                    {{data.bkdata.cjyuKisou|floatformat}}階建
+                    {% endif %}
+                    {% if data.bkdata.shziki %}
+                    {{data.bkdata.shziki|floatformat}}階部分
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5"><p>土地権利</p></td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white"> {% if data.bkdata.tcKenr %}
+                    {{data.bkdata.tcKenr}}
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">学　区</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white"> {% if gakkuS %}
+                    学区は所在地からの類推です。<br />
+                    {{gakkuS}}
+                    {% endif %}
+                    {% if gakkuC %}
+                    {{gakkuC}}
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">駐車場</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white"> {% if data.bkdata.hushjyuZih %}
+                    {{data.bkdata.hushjyuZih}}
+                    {% endif %}
+                    {% if data.bkdata.hushjyuGtgk %}
+                    （{{data.bkdata.hushjyuGtgk}}円／月）
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">設　備</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white"> {% if data.bkdata.tbFrespc %}
+                    {{data.bkdata.tbFrespc}}
+                    {% endif %} </td>
+                </tr>
+                <tr>
+                  <td align="left" valign="top" bgcolor="#f5f4e5">備　考</td>
+                  <td colspan="3" align="left" valign="top" bgcolor="white"> {% if data.bkdata.bku1 %}
+                    {{data.bkdata.bku1}}
+                    {% endif %}
+                    {% if data.bkdata.bku2 %}
+                    {{data.bkdata.bku2}}
+                    {% endif %} </td>
+                </tr>
+              </table></td>
+            <td width="30"></td>
+            <td align="center" valign="top"><table width="100%" border="0" cellspacing="10" cellpadding="5" bgcolor="#eae5e3">
+                <tr>
+                  <td align="center">画像をクリックすると拡大表示がご覧頂けます<br>
+				<div id="thumbs" class="navigation">
+
+                    {% regroup data.picdata by title as title_list %}
+                      <ul class="thumbs noscript">
+                      {% for title in title_list %}
+                        {% ifchanged %}
+                        </ul>
+                          <p class="class-title-article3" style="clear:both;">{{title.grouper|default:""}}</p>
+                        <ul class="thumbs noscript">
+                        {% endifchanged %}
+                          {% for item in title.list %}
+                            <li> <a href="{{item.bloburl|default:""}}" name="A{{item.pos|default:""}}" class="thumb" title="{{item.content|default:""}}" > <img src="{{item.bloburl|default:""}}=s100" alt="{{item.title|default:""}}" name="imgB{{item.pos|default:""}}" id="imgB{{item.pos|default:""}}" alt="{{item.title|default:""}}" title="{{item.content|default:""}}" width="60" height="38" border="0" > </a> 
+                                 <div class="caption">
+                                    <div class="image-desc">{{item.content|default:""}}</div>
+                                 </div>
+                            </li>
+                          {% endfor %}
+                        {% endfor %}
+                      </ul>
+                </div>
+                    </td>
+                </tr>
+              </table>
+              <br>
+              <br>
+              <p class="class-title-article3">平面図</p>
+              <br>
+              {% if data.heimenzu %} <a href="{{data.heimenzu.bloburl|default:""}}" name="A{{data.heimenzu.pos|default:""}}" id="A{{data.heimenzu.pos|default:""}}" class="thickbox" title="{{data.heimenzu.content|default:""}}"> <img src="{{data.heimenzu.bloburl|default:""}}" alt="{{data.heimenzu.title|default:""}}" name="imgB{{data.heimenzu.pos|default:""}}" id="imgB{{data.heimenzu.pos|default:""}}" alt="{{data.heimenzu.title|default:""}}" title="{{data.heimenzu.content|default:""}}" style="width:250px; height:" border="0" > </a> {% endif %} <br>
+              <br>
+              <br>
+              <p class="class-title-article3">ご案内図</p>
+              <br>
+              <div id="map_canvas" style="width:300px; height:300px" ></div>
+              <br>
+              <a href="https://maps.google.co.jp/maps?hl=ja&amp;q={{data.bkdata.idkd}}({{data.bkdata.ttmnmi}})&amp;ie=UTF8&amp;z=14&amp;source=embed"><span class="class10">大きな地図で見る</span></a></td>
+
+
+<!--
+https://imakoko.didit.jp/imakoko_html/memo/parameters_google.html
+https://mapki.com/wiki/Google_Map_Parameters
+
+f	左枠について、
+q:通常（デフォルト）
+d:乗換案内。現在地と目的地を記入するダイアログが表示される。	 
+hl	言語。	
+ja:日本。
+en:英語
+※ デフォルトではユーザーの環境に合わせる。＞日本だとja	 
+q	マーカー、吹き出しがつく。地名か、緯度経度（カンマ区切り）で指定。日本語の場合はURLエンコードで入力。	 %E6%96%B0%E5%AE%BF
+（新宿）
+ie	入力文字コード。UTF8（デフォルト）Shift-JIS、EUC-JP、など利用可能。	 
+oe	出力文字コード。UTF8（デフォルト）Shift-JIS、EUC-JP、など利用可能。	 
+ll	地図の中心の緯度経度。世界測地系、十進、カンマ区切り。	35.68923,139.693995
+spn	表示範囲をDegree単位で指定。zパラメータが無いときに有効。
+カンマ区切り	0.029488,0.083942
+z	ズーム。0～20くらい（20以上が見れる地域もあるし、18以降は見れない地域もある。）0が縮小、20が拡大	14
+t	m:マップ（デフォルト）k:サテライトh:デュアルp:地形	 
+om	地図右下に表示されるオーバービュー。0:なし（デフォルト）1:あり	 
+layer	ストリートビューなどの指示
+t:トラフィックビュー（デフォルト）
+c:ストリートビュー
+ 
+cbll	ストリートビューで、ポイントの緯度経度。
+世界測地系、十進、カンマ区切り。	 35.689186,139.693836
+cbp	ストリートビューで、各種表示の指定。
+カンマ区切りで、
+1つめ:　1:小さい画面　2:全画面
+2つめ:　ローテーションアングルをDegreeで
+3つめ:　チルトアングル。-90（真上）～90（真下）←？意味不明
+4つめ:　ズーム。0～2
+5つめ:　ピッチ。-90（真上）～90（真下）	 2,123.38858745822836,,0,-24.070358768546704
+
+
+-->
+
+          </tr>
+        </table>
+        <br>
+        <br>
+
+<!--2012.0813 article.html-->
+	<div align="center">
+		<div class="article-koukai-Linkbotan">
+			<a href="#" onclick="_mailto();return false;">この物件についてメールで問い合わせをする</a>
+		</div>
+	</div>
+
+<!--2012.0813 article.html-->
+
+{% if data.auth %}
+<!--
+
+            <p class="class-title-chikusa">メモ欄</p>
+            <table width="80%" border="0" cellspacing="10" cellpadding="0">
+				<tr>
+				<td><textarea name="textareaName" rows="4" cols="64"></textarea></td>
+				<td align="right" valign="bottom"><input type="submit" name="submitButtonName" value="お気に入りに保存"></td>
+				</tr>
+            </table>
+            <br />
+            <p class="class-title-chikusa">リクエストの送信</p>
+            <table width="80%" border="0" cellspacing="10" cellpadding="0">
+			<tr>
+			<td><textarea name="textareaName" rows="4" cols="64"></textarea><br>
+			  <br>
+			  <b>リクエスト内容を選択下さい</b><br>
+			  <hr size="1">
+				  <table border="0" cellspacing="0" cellpadding="0">
+				    <tr>
+				      <td><input type="radio" name="radiogroup" value="radioValue"> 資料請求<br>
+				        <input type="radio" name="radiogroup" value="radioValue"> 相談<br>
+				        <input type="radio" name="radiogroup" value="radioValue"> ローンについて　　</td>
+				      <td><input type="radio" name="radiogroup" value="radioValue"> 問い合わせ　　<br>
+				        <input type="radio" name="radiogroup" value="radioValue"> 物件確認<br>
+				        <input type="radio" name="radiogroup" value="radioValue"> クレーム</td>
+				      <td><input type="radio" name="radiogroup" value="radioValue"> 見学希望<br>
+				        <input type="radio" name="radiogroup" value="radioValue"> 場所が知りたい　　<br>
+				        <br>
+				      </td>
+				      <td><input type="radio" name="radiogroup" value="radioValue"> 検討中<br>
+				        <input type="radio" name="radiogroup" value="radioValue"> 契約について<br>
+				        <br>
+				      </td>
+				    </tr>
+	 			 </table>
+				</td>
+				<td align="right" valign="bottom"><input type="submit" name="submitButtonName" value="リクエストを送信する"></td>
+				</tr>
+            </table>
+
+<!--2012.1201 login.html-->
+
+-->
+
+{% else %}
+
+<img src="https://www.chikusaku-mansion.com/form/img/t01.jpg" alt="お問い合わせ・会員登録はこちら" width="815" height="48" border="0"><br>
+<span class="class14b">以下のフォームにメールアドレスをご記入の上送信ボタンを押して下さい。後ほど本登録用のメールを送信致します</span><br>
+						<img src="https://www.chikusaku-mansion.com/article/cmn_img/t-merit.jpg" alt="" width="815" height="64" border="0"><br>
+						<br>
+
+<form action="https://s-style-hrd.appspot.com/regist" method="POST"  onSubmit="javascript:_gaq.push(['_linkByPost',this])">
+<table width="100%" border="0" cellspacing="1" cellpadding="8" bgcolor="#a8a29f">
+	<tr>
+	<td class="class14white" align="left" valign="top" bgcolor="#ff8311" >入力して送信ボタンを押して下さい</td>
+	</tr>
+	<tr>
+	<td style="font-size: 1em" align="left" valign="top" bgcolor="white">ご希望のユーザーID：　　<input type="text" id="new_login_id" name="new_login_id" value="" size="53"><br>
+	<span class="class10rightgray2">（記入例）　yamada001</span></td>
+	</tr>
+	<tr>
+	<td style="font-size: 1em" align="left" valign="top" bgcolor="white">ご希望のパスワード：　　<input type="password" name="new_login_pwd" id="new_login_pwd" size="53"><br>
+	<span class="class10rightgray2">（記入例）　pwd@11dd</span></td>
+	</tr>
+	<tr>
+	<td style="font-size: 1em" align="left" valign="top" bgcolor="white">連絡先メールアドレス　　<input type="text" name="new_user_email" id="new_user_email" size="53"><br>
+	<span class="class10rightgray2">（記入例）　mansion@chikusaku-mansion.com</span></td>
+	</tr>
+</table>
+<br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr><input type="hidden" id="corp_name" name="corp_name" value="s-style">
+	<input type="hidden" id="branch_name" name="branch_name" value="hon">
+	<input type="hidden" id="sitename" name="sitename" value="www.chikusaku-mansion.com">
+	<input type="hidden" id="togo" name="togo" value="https://s-style-hrd.appspot.com/show/s-style/hon/www.chikusaku-mansion.com/bkdata/article.html?media=web&id={{data.bkdata.bkID}}">
+	<input type="hidden" id="reqnum" name="reqnum" value="{{data.bkdata.bkID}}">
+	<input type="hidden" id="reqtext" name="reqtext" value="">
+	<td style="font-size: 1em" align="center"><input type="submit" id="new_regist" name="new_regist" value="この内容で送信する"></td>
+	</tr>
+</table>
+</form>
+{% endif %} 
+<br />
+<br />
+
+<img src="https://www.chikusaku-mansion.com/top_img/t-shitadori.jpg" alt="" width="815" height="50" border="0"><br>
+<span class="class14orange">お客様が安心してマンションの売却ができるようお手伝いするための弊社のサービスです。</span><br>
+<span class="class14red">【安心の下取保証・買取いたします】</span><br>
+良い物件が見つかったのに、自宅が売れなかったら……とご不安のある方に最適です。<br>
+現在のご自宅が、当社専任の仲介で一定期間内に売却できなかった場合、あらかじめ買取保証させて頂いた価額で買取らせていただきます。<br>
+お買換えの資金計画が確定しますので、気に入った、お住まいを見つけたときに、保証価格を基に自宅売却の前でも、ご購入の契約を締結でき、チャンスを逃すこともありません。しっかりサポートいたしますのでお任せください。<br>
+またお急ぎの方や特殊な物件は即日の買取もいたしております。<br>
+						<br>
+						<br><img src="https://www.chikusaku-mansion.com/cmn_img/kei-orange.jpg" alt="" width="815" height="4" border="0"><br>
+        <a onmouseover="document.images['b-baikyaku'].src='https://www.chikusaku-mansion.com/cmn_img/b-baikyaku02o.jpg'" onmouseout="document.images['b-baikyaku'].src='https://www.chikusaku-mansion.com/cmn_img/b-baikyaku02.jpg'" href="https://chikusaku-m.com/" target="_blank"><img src="https://www.chikusaku-mansion.com/cmn_img/b-baikyaku02.jpg" name="b-baikyaku" alt="" width="815" height="36" border="0" vspace="8"></a><br>
+						<br>
+	
+{% endblock content %}
+

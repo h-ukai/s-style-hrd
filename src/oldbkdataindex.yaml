@@ -1,0 +1,476 @@
+- kind: BKdata
+  properties:
+  - name: Branch_Key
+  - name: CorpOrg_key
+  - name: bkID
+  - name: media
+  - name: pos
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: bkknShbt
+  - name: bkknShmk
+  - name: dtsyuri
+  - name: kukkk
+  - name: nyrykkisyID
+  - name: kknnngp
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: bkknShbt
+  - name: bkknShmk
+  - name: dtsyuri
+  - name: nyrykkisyID
+  - name: hnknngp
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: bkknShbt
+  - name: bkknShmk
+  - name: dtsyuri
+  - name: nyrykkisyID
+  - name: kknnngp
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: bkknShbt
+  - name: bkknShmk
+  - name: dtsyuri
+  - name: nyrykkisyID
+  - name: ksnnngp
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: bkknShbt
+  - name: bkknShmk
+  - name: nyrykkisyID
+  - name: hnknngp
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: bkknShbt
+  - name: dtsyuri
+  - name: mtngflg
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: webknskflg
+  - name: idkd
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: bkknShbt
+  - name: dtsyuri
+  - name: nyrykkisyID
+  - name: hnknngp
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: bkknShbt
+  - name: dtsyuri
+  - name: nyrykkisyID
+  - name: kknnngp
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: bkknShbt
+  - name: dtsyuri
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: idkd
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: kukkk
+  - name: nyrykkisyID
+  - name: kknnngp
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: nyrykkisyID
+  - name: kknnngp
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: tdufknmi
+  - name: snyuMnskSyuBbnMnsk2
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: tdufknmi
+  - name: tcMnsk2
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: tdufknmi
+  - name: ttmnMnsk1
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: shzicmi1
+  - name: tdufknmi
+  - name: shzicmi2
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: shzicmi1
+  - name: todofukenmei
+  - name: shzicmi2
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: tdufknmi
+  - name: shzicmi1
+  - name: shzicmi2
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: shzicmi1
+  - name: tdufknmi
+  - name: shzicmi2
+
+- kind: BKdata
+  properties:
+  - name: bkID
+  - name: idkd
+
+- kind: BKdata
+  properties:
+  - name: bkknShbt
+  - name: bknbng
+  - name: dtsyuri
+  - name: hyBngu
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: shzicmi3
+  - name: duplicationcheck
+
+- kind: BKdata
+  properties:
+  - name: bkknShbt
+  - name: bknbng
+  - name: dtsyuri
+  - name: hyBngu
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: shziki
+  - name: duplicationcheck
+
+- kind: BKdata
+  properties:
+  - name: bkknShbt
+  - name: bknbng
+  - name: dtsyuri
+  - name: mdrHysu1
+  - name: mdrTyp1
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: shziki
+  - name: snyuMnskSyuBbnMnsk2
+  - name: duplicationcheck
+
+- kind: BKdata
+  properties:
+  - name: bkknShbt
+  - name: bknbng
+  - name: dtsyuri
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: tcMnsk2
+  - name: duplicationcheck
+
+- kind: BKdata
+  properties:
+  - name: bkknShbt
+  - name: mtngflg
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: webknskflg
+  - name: icons
+  - name: hykpint
+    direction: desc
+
+- kind: BKdata
+  properties:
+  - name: bkknShbt
+  - name: nyrykkisyID
+  - name: kknnngp
+
+- kind: BKdata
+  properties:
+  - name: bkknShmk
+  - name: nyrykkisyID
+  - name: kknnngp
+
+- kind: BKdata
+  properties:
+  - name: bknbng
+  - name: dtsyuri
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: duplicationcheck
+
+- kind: BKdata
+  properties:
+  - name: dataSource
+  - name: bkID
+
+- kind: BKdata
+  properties:
+  - name: dataSource
+  - name: ksnnngp
+
+- kind: BKdata
+  properties:
+  - name: dataSource
+  - name: turknngp
+
+- kind: BKdata
+  properties:
+  - name: dataSource
+  - name: turknngxxxp
+
+- kind: BKdata
+  properties:
+  - name: dtsyuri
+  - name: bkID
+
+- kind: BKdata
+  properties:
+  - name: dtsyuri
+  - name: hyBngu
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: duplicationcheck
+
+- kind: BKdata
+  properties:
+  - name: dtsyuri
+  - name: mdrHysu1
+  - name: mdrTyp1
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: shziki
+  - name: snyuMnskSyuBbnMnsk2
+  - name: duplicationcheck
+
+- kind: BKdata
+  properties:
+  - name: icons
+  - name: mtngflg
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: webknskflg
+  - name: hykpint
+
+- kind: BKdata
+  properties:
+  - name: idkd
+  - name: bkID
+
+- kind: BKdata
+  properties:
+  - name: mtngflg
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: webknskflg
+  - name: icons
+
+- kind: BKdata
+  properties:
+  - name: mtngflg
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: webknskflg
+  - name: icons
+  - name: hykpint
+
+- kind: BKdata
+  properties:
+  - name: mtngflg
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: webknskflg
+  - name: icons
+  - name: hykpint
+    direction: desc
+
+- kind: BKdata
+  properties:
+  - name: nyrykkisyID
+  - name: kknnngp
+
+- kind: BKdata
+  properties:
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: kknnngp
+
+- kind: BKdata
+  properties:
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: tdufknmi
+  - name: hnknngp
+
+- kind: BKdata
+  properties:
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: tdufknmi
+  - name: kknnngp
+
+- kind: BKdata
+  properties:
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: tdufknmi
+  - name: ksnnngp
+
+- kind: BKdata
+  properties:
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: shzicmi2
+  - name: tdufknmi
+  - name: turknngp
+
+- kind: BKdata
+  properties:
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: tdufknmi
+  - name: hnknngp
+
+- kind: BKdata
+  properties:
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: tdufknmi
+  - name: kknnngp
+
+- kind: BKdata
+  properties:
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: tdufknmi
+  - name: ksnnngp
+
+- kind: BKdata
+  properties:
+  - name: nyrykkisyID
+  - name: nyrykstnID
+  - name: shzicmi1
+  - name: tdufknmi
+  - name: turknngp
+
+- kind: BKdata
+  properties:
+  - name: shzicmi1
+  - name: todofukenmei
+  - name: shzicmi2
+
+- kind: BKdata
+  properties:
+  - name: sksijky
+  - name: kknnngp
+
+- kind: BKdata
+  properties:
+  - name: sksijky
+  - name: kknnngp
+    direction: desc
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: bkknShbt
+  - name: bkknShmk
+  - name: dtsyuri
+  - name: isidkd
+  - name: nyrykkisyID
+  - name: kknnngp
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: nyrykkisyID
+  - name: ksnnngp
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: isidkd
+  - name: nyrykkisyID
+  - name: kknnngp
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: nyrykkisyID
+  - name: ksnnngp
+
+- kind: BKdata
+  properties:
+  - name: bbchntikbn
+  - name: dtsyuri
+  - name: nyrykkisyID
+  - name: turknngp
+

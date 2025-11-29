@@ -1,0 +1,78 @@
+{% extends "applicationpagebase.html" %}
+
+{#
+Another login utility sample on Google App Engine
+
+Author    : OKAZAKI Hiroki (okaz@teshigoto.net, https://www.teshigoto.net/)
+Version   : $Id: resign.html,v 1.2 2009/02/04 06:28:05 okaz Exp $
+Copyright : Copyright (c) 2009 OKAZAKI Hiroki
+License   : Python
+#}
+
+
+{% block revision %}$Revision: 1.2 ${% endblock %}
+{% block date %}$Date: 2009/02/04 06:28:05 ${% endblock %}
+
+{% block title %}Another login utility sample on Google App Engine : Regist{% endblock %}
+
+{% block content %}
+{% if not completed_msg %}
+<p>
+{{ resign_step|escape }}
+</p>
+
+{% if error_msg %}
+<p class="error_msg">
+{{ error_msg|escape }}
+</p>
+{% endif %}
+
+<form name="myform"
+      action="/resign"
+      method="post">
+
+<p>
+{{ resign_login_id|escape }} : <input type="text"
+			      id="resign_login_id"
+			      name="resign_login_id"
+			      value="{{ resign_login_id_value|escape }}" />
+</p>
+
+<p>
+{{ resign_login_pwd|escape }} : <input type="password"
+			       id="resign_login_pwd"
+			       name="resign_login_pwd"
+			       value="" />
+</p>
+
+<!--
+<p>
+{{ resign_user_email|escape }} : <input type="text"
+			        id="resign_user_email"
+			        name="resign_user_email"
+			        value="{{ resign_user_email_value|escape }}" />
+</p>
+-->
+
+<p>
+<input type="submit"
+       id="resign"
+       name="resign"
+       value="{{ resign|escape }}" />
+</p>
+
+</form>
+
+{% else %}
+
+<p>
+{{ completed_msg|escape }}
+</p>
+
+{% endif %}
+
+<p>
+<a href="/">{{ return_top|escape }}</a>
+</p>
+
+{% endblock %}
