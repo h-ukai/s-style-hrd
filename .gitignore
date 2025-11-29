@@ -42,3 +42,7 @@ csvupload/*.csv
 # Uncommment if you don't want to track:
 # migration-logs/
 # *.md
+
+# App Engine config with secrets
+src/app.yaml
+migration-src/app.yaml
