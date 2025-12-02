@@ -2,11 +2,11 @@
 import os
 from google.cloud import ndb
 from flask import request, render_template_string
-from models.member import member
-from models.bksearchaddress import bksearchaddresslist
+from application.models.member import member
+from application.models.bksearchaddress import bksearchaddresslist
 
 import datetime
-import bksearchutl
+from application import bksearchutl
 
 def addresslist_route(**kwargs):
     """Flask route handler for address list management"""
@@ -99,7 +99,14 @@ def addresslist_route(**kwargs):
         "key": key,
         "now": now,
         "Message": Message,
-        "error_msg": ""
+        "error_msg": "",
+        "data": {
+            "tdufknmi": None,
+            "address1": {
+                "shzicmi1": None,
+                "shzicmi1id": None
+            }
+        }
     }
 
     path = os.path.dirname(__file__) + '/../templates/addresslist.html'

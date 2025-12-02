@@ -20,16 +20,16 @@ from email.header import decode_header
 from email.utils import parseaddr, getaddresses
 from flask import request, Response
 from google.cloud import ndb
-import config
+from application import config
 from application.email_decoder import email_decoder
 from application.messageManager import messageManager
 from application.models.member import member
 
 # IMAP server configuration (should be in Cloud Secret Manager)
-IMAP_SERVER = config.get('IMAP_SERVER', 'imap.example.com')
-IMAP_PORT = config.get('IMAP_PORT', 993)
-IMAP_USER = config.get('IMAP_USER', 'mailbox@example.com')
-IMAP_PASSWORD = config.get('IMAP_PASSWORD', '')
+IMAP_SERVER = getattr(config, 'IMAP_SERVER', 'imap.example.com')
+IMAP_PORT = getattr(config, 'IMAP_PORT', 993)
+IMAP_USER = getattr(config, 'IMAP_USER', 'mailbox@example.com')
+IMAP_PASSWORD = getattr(config, 'IMAP_PASSWORD', '')
 
 
 def mail_handler_route():

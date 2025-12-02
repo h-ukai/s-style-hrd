@@ -334,7 +334,7 @@ $(function(){
 <div class="space02">
 区分 
 <select name="status" id="status" size="1">
-<option value="顧客" {% if memdb.status == "顧客" %} selected{% endif %}{{memdb.status|default_if_none:" selected"}}>顧客</option>
+<option value="顧客" {% if memdb.status == "顧客" %} selected{% endif %}>顧客</option>
 <option value="業者" {% if memdb.status == "業者" %} selected{% endif %}>業者</option>
 <option value="建築業者" {% if memdb.status == "建築業者" %} selected{% endif %}>建築業者</option>
 <option value="紹介者" {% if memdb.status == "紹介者" %} selected{% endif %}>紹介者</option>
@@ -343,7 +343,7 @@ $(function(){
 <option value="その他" {% if memdb.status == "その他" %} selected{% endif %}>その他</option>
 </select> 
 　登録年月日:
-<input type="text" name="tourokunengappi" id="tourokunengappi" value="{{memdb.tourokunengappi|default_if_none:""|date:"Y/m/d H:i:s"}}" size="11" />
+<input type="text" name="tourokunengappi" id="tourokunengappi" value="{{memdb.tourokunengappi|default("")}}" size="11" />
 　担当 <select name="tanto" size="1">
 <option value="" ></option>
 {% for e in tanto %}
@@ -351,7 +351,7 @@ $(function(){
 {% endfor %}
 </select>
 <br>サイト名
-<input type="text" name="sitename" id="sitename" value="{{memdb.sitename|default_if_none:""}}">
+<input type="text" name="sitename" id="sitename" value="{{memdb.sitename|default("")}}">
 </div>
 
 <div class="space01">
@@ -364,7 +364,7 @@ checked {% endif %}/>
 借<input type="checkbox" name="kari" value="1" {% if memdb.kari %}
 checked {% endif %}/>
 　媒介種類 <select name="baikai" size="1">
-<option {{memdb.baikai|default_if_none:" selected"}} value=""></option>
+<option {{memdb.baikai|default(" selected")}} value=""></option>
 <option value="一般" {% if memdb.baikai == "一般" %} selected{% endif %}>
 一般
 </option>
@@ -414,78 +414,78 @@ checked {% endif %}/>
 </select>
 　成約年月日 
 <input type="text" name="seiyakunengappi" id="seiyakunengappi"
-value="{{memdb.seiyakunengappi|default_if_none:""|date:"Y/m/d H:i:s"}}" size="11" />
+value="{{memdb.seiyakunengappi|default("")}}" size="11" />
 　成約アンケート
 <INPUT value="1" type="checkbox" id="seiyakuankeito" name="seiyakuankeito" {% if memdb.seiyakuankeito %} checked {% endif %}>
 </div>
 
 <div class="space01">
 メンバーID <input type="text" name="memberID" id="memberID"
-value="{{memberID|default_if_none:""}}" size="11" />　　
+value="{{memberID|default("")}}" size="11" />　　
 メンバー名 
 <input type="text" name="name" id="name"
-value="{{memdb.name|default_if_none:""}}" size="11" />　　
+value="{{memdb.name|default("")}}" size="11" />　　
 読み仮名 
 <input type="text" name="yomi" id="yomi"
-value="{{memdb.yomi|default_if_none:""}}" size="11" />
+value="{{memdb.yomi|default("")}}" size="11" />
 </div>
 
 <div class="space02">
-年齢 <input type="text" name="age" id="age" value="{{memdb.age|floatformat|default_if_none:""}}" size="11" />
-　　勤続年数 <input type="text" name="kinzoku" id="kinzoku" value="{{memdb.kinzoku|floatformat|default_if_none:""}}" size="11" />
+年齢 <input type="text" name="age" id="age" value="{{memdb.age|default("")}}" size="11" />
+　　勤続年数 <input type="text" name="kinzoku" id="kinzoku" value="{{memdb.kinzoku|default("")}}" size="11" />
 </div>
 
 <div class="space01">
-入居大人 <input type="text" name="otona" id="otona" value="{{memdb.otona|floatformat|default_if_none:""}}" size="11" />
-　　入居子供 <input type="text" name="kodomo" id="kodomo" value="{{memdb.kodomo|floatformat|default_if_none:""}}" size="11" />
+入居大人 <input type="text" name="otona" id="otona" value="{{memdb.otona|default("")}}" size="11" />
+　　入居子供 <input type="text" name="kodomo" id="kodomo" value="{{memdb.kodomo|default("")}}" size="11" />
 </div>
 
 <div class="space02">
-郵便番号 <input type="text" name="zip" id="zip"value="{{memdb.zip|default_if_none:""}}" size="11" />
+郵便番号 <input type="text" name="zip" id="zip"value="{{memdb.zip|default("")}}" size="11" />
 </div>
 <div class="space02">
-住所　　 <input type="text" name="address" id="address" style="width: 400px;" value="{{memdb.address|default_if_none:""}}"/>
+住所　　 <input type="text" name="address" id="address" style="width: 400px;" value="{{memdb.address|default("")}}"/>
 </div>
 <div class="space01">
-所在地1 <input type="text" name="address1" id="address1" value="{{memdb.address1|default_if_none:""}}" style="width: 200px;" />
-　所在地2 <input type="text" name="address2" id="address2" value="{{memdb.address2|default_if_none:""}}" size="11" />
+所在地1 <input type="text" name="address1" id="address1" value="{{memdb.address1|default("")}}" style="width: 200px;" />
+　所在地2 <input type="text" name="address2" id="address2" value="{{memdb.address2|default("")}}" size="11" />
 </div>
 
 <div class="space01">
-電話番号 <input type="text" name="phone" id="phone" value="{{memdb.phone|default_if_none:""}}" size="11" />
-　　FAX番号 <input type="text" name="fax" id="fax" value="{{memdb.fax|default_if_none:""}}" size="11" />
-　　携帯番号 <input type="text" name="mobilephone" id="mobilephone" value="{{memdb.mobilephone|default_if_none:""}}" size="11" />
+電話番号 <input type="text" name="phone" id="phone" value="{{memdb.phone|default("")}}" size="11" />
+　　FAX番号 <input type="text" name="fax" id="fax" value="{{memdb.fax|default("")}}" size="11" />
+　　携帯番号 <input type="text" name="mobilephone" id="mobilephone" value="{{memdb.mobilephone|default("")}}" size="11" />
 </div>
 
 <div class="space02">
 勤め先
 </div>
 <div class="space02">
-社名 　　<input type="text" name="tutomesaki" id="tutomesaki" value="{{memdb.tutomesaki|default_if_none:""}}" size="35" />　　
+社名 　　<input type="text" name="tutomesaki" id="tutomesaki" value="{{memdb.tutomesaki|default("")}}" size="35" />　　
 </div>
 <div class="space02">
-読み仮名 <input type="text" name="CorpOrg_yomi" id="CorpOrg_yomi" value="{{memdb.CorpOrg_yomi|default_if_none:""}}" size="35" />　　
+読み仮名 <input type="text" name="CorpOrg_yomi" id="CorpOrg_yomi" value="{{memdb.CorpOrg_yomi|default("")}}" size="35" />　　
 </div>
 <div class="space02">
-役職　　 <input type="text" name="CorpOrg_yaku" id="CorpOrg_yaku" value="{{memdb.CorpOrg_yaku|default_if_none:""}}" size="20" />
+役職　　 <input type="text" name="CorpOrg_yaku" id="CorpOrg_yaku" value="{{memdb.CorpOrg_yaku|default("")}}" size="20" />
 </div>
 <div class="space02">
-郵便番号 <input type="text" name="CorpOrg_zip" id="CorpOrg_zip" value="{{memdb.CorpOrg_zip|default_if_none:""}}" size="11" />  
-所在地 <input type="text" name="CorpOrg_address" id="CorpOrg_address" value="{{memdb.CorpOrg_address|default_if_none:""}}" size="50" />
+郵便番号 <input type="text" name="CorpOrg_zip" id="CorpOrg_zip" value="{{memdb.CorpOrg_zip|default("")}}" size="11" />  
+所在地 <input type="text" name="CorpOrg_address" id="CorpOrg_address" value="{{memdb.CorpOrg_address|default("")}}" size="50" />
 </div>
 <div class="space02">
-所在地1 <input type="text" name="CorpOrg_address1" id="CorpOrg_address1" value="{{memdb.CorpOrg_address1|default_if_none:""}}" size="20" />
-　　所在地2 <input type="text" name="CorpOrg_address2" id="CorpOrg_address2" value="{{memdb.CorpOrg_address2|default_if_none:""}}" size="20" />
+所在地1 <input type="text" name="CorpOrg_address1" id="CorpOrg_address1" value="{{memdb.CorpOrg_address1|default("")}}" size="20" />
+　　所在地2 <input type="text" name="CorpOrg_address2" id="CorpOrg_address2" value="{{memdb.CorpOrg_address2|default("")}}" size="20" />
 </div>
 <div class="space01">
-電話番号 <input type="text" name="CorpOrg_phone" id="CorpOrg_phone" value="{{memdb.CorpOrg_phone|default_if_none:""}}" size="11" />  
-　　FAX番号 <input type="text" name="CorpOrg_fax" id="CorpOrg_fax" value="{{memdb.CorpOrg_fax|default_if_none:""}}" size="11" />
+電話番号 <input type="text" name="CorpOrg_phone" id="CorpOrg_phone" value="{{memdb.CorpOrg_phone|default("")}}" size="11" />  
+　　FAX番号 <input type="text" name="CorpOrg_fax" id="CorpOrg_fax" value="{{memdb.CorpOrg_fax|default("")}}" size="11" />
 </div>
 
 <div class="space02">
 送信方法 
 <select name="access" size="1">
-<option {{memdb.access|default_if_none:" selected"}} value=""></option>
+<option {{memdb.access|default(" selected")}} value=""></option>
 <option value="メール" {% if memdb.access == "メール" %} selected{% endif %}>
 メール
 </option>
@@ -503,28 +503,28 @@ FAX
 </option>
 </select>
 　　メール 
-<input type="text" name="mail" id="mail" value="{{memdb.mail|default_if_none:""}}" size="20" />
+<input type="text" name="mail" id="mail" value="{{memdb.mail|default("")}}" size="20" />
 </div>
 <div class="space01">
 ネットID 
-<input type="text" name="netID" id="netID" value="{{memdb.netID|default_if_none:""}}" size="11" />
+<input type="text" name="netID" id="netID" value="{{memdb.netID|default("")}}" size="11" />
 　　パスワード 
-<input type="text" name="netPass" id="netPass" value="{{memdb.netPass|default_if_none:""}}" size="11" />
+<input type="text" name="netPass" id="netPass" value="{{memdb.netPass|default("")}}" size="11" />
 </div>
 
 <div class="space02">
-自己資金 <input type="text" name="zikoshikin" id="zikoshikin" value="{{memdb.zikoshikin|floatformat|default_if_none:""}}" size="11" />
-　　返済予定額月々 <input type="text" name="heisaituki" id="heisaituki" value="{{memdb.heisaituki|floatformat|default_if_none:""}}" size="11" />
+自己資金 <input type="text" name="zikoshikin" id="zikoshikin" value="{{memdb.zikoshikin|default("")}}" size="11" />
+　　返済予定額月々 <input type="text" name="heisaituki" id="heisaituki" value="{{memdb.heisaituki|default("")}}" size="11" />
 </div>
 <div class="space01">
-返済予定額ボーナス <input type="text" name="heisaibonasu" id="heisaibonasu" value="{{memdb.heisaibonasu|floatformat|default_if_none:""}}" size="11" />
-　　購入時期 <input type="text" name="kounyuziki" id="kounyuziki" value="{{memdb.kounyuziki|default_if_none:""}}" size="11" />年
+返済予定額ボーナス <input type="text" name="heisaibonasu" id="heisaibonasu" value="{{memdb.heisaibonasu|default("")}}" size="11" />
+　　購入時期 <input type="text" name="kounyuziki" id="kounyuziki" value="{{memdb.kounyuziki|default("")}}" size="11" />年
 </div>
 
 <div class="space02">
 区分 
 <select name="rank" size="1">
-                      <option {{memdb.rank|default_if_none:" selected"}} value=""></option>
+                      <option {{memdb.rank|default(" selected")}} value=""></option>
                       <option value="A" {% if memdb.rank == "A" %} selected{% endif %}>
                       A
                       </option>
@@ -605,20 +605,20 @@ FAX
                       </option>
                     </select>
 　　サービス 
-<input type="text" name="service" id="service" size="28" title="{% if servicelist %}{{ servicelist|join:"," }}{% endif %}" value="{% if memdb.service %}{{ memdb.service|join:"," }}{% endif %}"/>
+<input type="text" name="service" id="service" size="28" title="{% if servicelist %}{{ servicelist|join(",") }}{% endif %}" value="{% if memdb.service %}{{ memdb.service|join(",") }}{% endif %}"/>
 </div>
 
 <div class="space01">
 MNo 
-<input type="text" name="mno" id="mno" value="{{memdb.mno|floatformat|default_if_none:""}}" size="11" />
+<input type="text" name="mno" id="mno" value="{{memdb.mno|default("")}}" size="11" />
 　　MR 
-<input type="text" name="mr" value="{{memdb.mr|floatformat|default_if_none:""}}"  size="11" />
+<input type="text" name="mr" value="{{memdb.mr|default("")}}"  size="11" />
 </div>
 
 <div class="space01">
 獲得媒体 
 <select name="baitai" size="1">
-<option {{memdb.baitai|default_if_none:" selected"}} value=""></option>
+<option {{memdb.baitai|default(" selected")}} value=""></option>
 <option value="★" {% if memdb.baitai == "★" %} selected{% endif %}>
 ★
 </option>
@@ -634,7 +634,7 @@ MNo
 </select>　　
 　　初回アクセス 
 <select name="syokai" size="1">
-<option {{memdb.syokai|default_if_none:" selected"}} value=""></option>
+<option {{memdb.syokai|default(" selected")}} value=""></option>
 <option value="★" {% if memdb.syokai == "★" %} selected{% endif %}>
 ★
 </option>
@@ -650,7 +650,7 @@ MNo
 </select>　　
 　　紹介業者 
 <select name="gyosya" size="1">
-<option {{memdb.gyosya|default_if_none:" selected"}} value=""></option>
+<option {{memdb.gyosya|default(" selected")}} value=""></option>
 <option value="★" {% if memdb.gyosya == "★" %} selected{% endif %}>
 ★
 </option>
@@ -669,7 +669,7 @@ MNo
 
 <ul>
 <li>備考</li>
-									<textarea name="bikou" rows="4" cols="79">{{memdb.bikou|default_if_none:""}}</textarea>
+									<textarea name="bikou" rows="4" cols="79">{{memdb.bikou|default("")}}</textarea>
 								</ul>
 
 </div><!--contents-input End-->

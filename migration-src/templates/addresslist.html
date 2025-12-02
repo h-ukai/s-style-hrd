@@ -354,15 +354,15 @@ function getUrlVars()
 <form action="/addresslist.html" method="post" name="addresslistfrm" id="addresslistfrm">
 <div class="addresslist01">
 <div class="left">
-<input type="hidden" name="memberID" value="{{memberID|default_if_none:""}}"/>
-<input type="hidden" name="modal" id = "modal" value="{{modal|default_if_none:""}}"/>
-<input type="hidden" name="listid" id="listid" value="{{key|default_if_none:""}}"/>
-区分：<input type="text" name="division" id="division" value="{{division|default_if_none:""}}" size="11" />
-地名一覧名：<input type="text" name="listname" id="listname" value="{{listname|default_if_none:""}}" size="11" />
+<input type="hidden" name="memberID" value="{{memberID|default("")}}"/>
+<input type="hidden" name="modal" id = "modal" value="{{modal|default("")}}"/>
+<input type="hidden" name="listid" id="listid" value="{{key|default("")}}"/>
+区分：<input type="text" name="division" id="division" value="{{division|default("")}}" size="11" />
+地名一覧名：<input type="text" name="listname" id="listname" value="{{listname|default("")}}" size="11" />
 </div>
 
 <div class="right">
-<span id = message>{{Message|default_if_none:""}}</span>
+<span id = message>{{Message|default("")}}</span>
 <input type="submit" name="submit" id="submit"  title="" value="保存する"/>
 <input type="submit" name="submit" id="delete"  title="" value="削除する"/>
 </div>
@@ -374,7 +374,7 @@ function getUrlVars()
 <div id="addresslist0" name="addresslist">
 <br/>
 都道府県<select name="tdufknmi" id ="tdufknmi" size="1">
-  <option {{data.tdufknmi|default_if_none:" selected"}} value=""></option>
+  <option {% if not data.tdufknmi %} selected{% endif %} value=""></option>
   <option value="北海道" {% if data.tdufknmi == "北海道" %} selected{% endif %}>北海道</option>
   <option value="青森県" {% if data.tdufknmi == "青森県" %} selected{% endif %}>青森県</option>
   <option value="岩手県" {% if data.tdufknmi == "岩手県" %} selected{% endif %}>岩手県</option>
@@ -423,8 +423,8 @@ function getUrlVars()
   <option value="鹿児島県" {% if data.tdufknmi == "鹿児島県" %} selected{% endif %}>鹿児島県</option>
   <option value="沖縄県" {% if data.tdufknmi == "沖縄県" %} selected{% endif %}>沖縄県</option>
 </select>
-所在地１<input type="text" name="address1" id="address1" value="{{data.address1.shzicmi1|default_if_none:""}}" size="11" />
-<input type="hidden" name="address1id" id="address1id" value="{{data.address1.shzicmi1id|default_if_none:""}}" size="11" />
+所在地１<input type="text" name="address1" id="address1" value="{{data.address1.shzicmi1|default("")}}" size="11" />
+<input type="hidden" name="address1id" id="address1id" value="{{data.address1.shzicmi1id|default("")}}" size="11" />
 所在地１を削除する場合は消して保存してください
 <div id=shzicmi2frm name=shzicmi2frm >
 <input type="button" value="所在地２を追加する"  ONCLICK="addad2($(this).parent().parent())" />

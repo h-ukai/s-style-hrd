@@ -1,0 +1,57 @@
+body,form,fieldset{margin: 0px;padding: 0px;}
+fieldset{border:none;}
+h1,h2,h3,h4,h5,h6,p,pre,blockquote,ul,ol,dl,dd{margin: 0px;padding: 0px;}
+blockquote,li,dt,dd{}
+li{list-style:none;}
+input,textarea{font-size: 1em;margin: 0px;padding: 0px;}
+body, td, font   { color: #3e3129; font-size: 13px; line-height: 1.5em }
+.class10 { font-size: 10px; line-height: 1.5em; }
+.class10white { color: white; font-size: 10px; line-height: 1.5em; }
+.class10aka { color: #bd001e; font-size: 10px; }
+.class10orange { color: #ff8311; font-size: 10px; line-height: 1.5em }
+.class10rightgray2 { color: #978d81; font-size: 12px; line-height: 1.5em; }
+.class-aka { color: #bd001e; font-weight: bold; }
+.class-ddepgreen { color: #008842; font-weight: bold; }
+.class-enji { color: #ff3c00; font-weight: bold;}
+.class-pink { color: #e95474; font-weight: bold; }
+.class-ligthblue { color: #428ae6; font-weight: bold; }
+.class-darkblue { color: #285ad7; font-weight: bold; }
+.class-white { color: white; }
+.class-green { color: #3dbd00; font-weight: bold; }
+.class-orange { color: #ff8311; font-weight: bold; }
+.class14b { font-size: 14px; font-weight: bold; }
+.class14white { color: #fff; font-size: 14px; font-weight: bold; }
+.class17light-gray { color: #a79b94; font-size: 17px; font-weight: bold; line-height: 1.5em; }
+.class14red { color: #bd001e; font-size: 14px; font-weight: bold; }
+.class-title01 { font-size: 15px; font-weight: bold; background-color: #fff; padding-top: 3px; padding-bottom: 3px; padding-left: 6px; border-color: #978d81 #978d81 #978d81 #ff8311; border-style: solid; border-width: 1px 1px 1px 5px; }
+.class-title-article { color: #ff8311; font-size: 14px; font-weight: bold; background-color: #fff; background-image: url(../article/cmn_img/t-back01.jpg); background-repeat: repeat-x; text-align: left; margin-bottom: 5px; padding-top: 3px; padding-bottom: 4px; padding-left: 6px; border-left: 5px solid #ff8311; outline: solid 1px #d1cec9; }
+.class-title-article2 { color: #fff; font-size: 12px; font-weight: bold; background-color: #ff8311; text-align: left; padding-top: 4px; padding-bottom: 3px; padding-left: 8px; }
+.class-title-article3 { color: #fff; font-size: 12px; font-weight: bold; background-color: #ccbd9f; text-align: left; padding-top: 4px; padding-bottom: 3px; padding-left: 8px; }
+.class-title-chikusa { color: #ff8311; font-size: 14px; font-weight: bold; background-color: #fff; background-image: url(../chikusa/cmn_img/t-back-chikusa.jpg); background-repeat: repeat-x; text-align: left; margin-bottom: 6px; padding-top: 3px; padding-bottom: 4px; padding-left: 6px; border-left: 5px solid #ff8311; outline: solid 1px #d1cec9; }
+.class-title-chikusa-goannai { color: #fff; font-size: 12px; font-weight: bold; background-color: #ccbd9f; text-align: left; width: 397px; padding-top: 4px; padding-bottom: 3px; padding-left: 8px; }
+h1 { color: #978d81; font-size: 10px; font-weight: normal; font-style: normal; line-height: 1.5em; margin: 0; }
+h2 { font-size: 16px; font-weight: bold; font-style: normal; line-height: 1.5em; margin: 0; }
+h3 { font-size: 14px; font-weight: normal; font-style: normal; line-height: 1.5em; margin: 0; }
+h4 { font-size: 14px; font-weight: normal; font-style: normal; line-height: 1.5em; margin: 0; }
+h5 { font-size: 14px; font-weight: normal; font-style: normal; line-height: 1.5em; margin: 0; }
+h6 { font-size: 14px; font-weight: normal; font-style: normal; line-height: 1.5em; margin: 0; }
+a:link,a:visited      { color: #6b5e56; text-decoration: none  }
+a:hover,a:active    { color: #978a82; text-decoration: underline; }
+#dd { margin: 0; padding: 0; }
+#dd li { margin: 0; padding: 0; list-style: none; float: left; font: bold 12px arial; }
+#dd li a.menu { display: block; background: #f1f0ef; padding: 0; margin: 0; color: #fff; width: 165px; text-decoration: none; }
+#dd li a.menu:hover {
+	background: #716a66;
+}
+.submenu { background: #f1f0ef; visibility: hidden; position: absolute; z-index: 3; }
+.submenu a { display: block; width: 165px; font: 12px arial; text-decoration: none; padding: 5px; color: #716a66; text-align: left; border-right: 1px solid #a8a29f; border-bottom: 1px solid #a8a29f; border-left: 1px solid #a8a29f; }
+.submenu a:hover {
+	background: #ff8311;
+	color: #fff;
+}
+body,form,fieldset{ color: #888377; margin: 0; padding: 0; }
+fieldset{border:none;}
+h1,h2,h3,h4,h5,h6,p,pre,blockquote,ul,ol,dl,dd{margin: 0px;padding: 0px;}
+blockquote,li,dt,dd{}
+li{ list-style:none; }
+input,textarea{font-size: 1em;margin: 0px;padding: 0px;}

@@ -1,0 +1,11 @@
+dispatch:
+  # /test で始まるすべてのリクエストを test-service にルーティング
+  # /test 単体（末尾スラッシュなし）
+  - url: "*/test"
+    service: test-service
+  # /test/ 以下のすべてのパス
+  - url: "*/test/*"
+    service: test-service
+
+  # デフォルト（既存のPython 2.7サービス）
+  # 明示的に指定しなくても default サービスがフォールバックとして動作します

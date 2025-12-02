@@ -91,7 +91,7 @@ def do_check(bkdata1):
             # 2年以内の物件に絞る
             cutoff_date = datetime.datetime.now() - datetime.timedelta(days=730)
             query = query.filter(bkdata.BKdata.kknnngp > cutoff_date)
-            query = query.order_by(bkdata.BKdata.kknnngp)
+            query = query.order(bkdata.BKdata.kknnngp)
 
             results = query.fetch()
             if results:
@@ -118,7 +118,7 @@ def do_check(bkdata1):
             # 2年以内の物件に絞る
             cutoff_date = datetime.datetime.now() - datetime.timedelta(days=730)
             query = query.filter(bkdata.BKdata.kknnngp > cutoff_date)
-            query = query.order_by(bkdata.BKdata.kknnngp)
+            query = query.order(bkdata.BKdata.kknnngp)
 
             results = query.fetch()
             if results:
@@ -138,7 +138,7 @@ def do_check(bkdata1):
             # 2年以内の物件に絞る
             cutoff_date = datetime.datetime.now() - datetime.timedelta(days=730)
             query = query.filter(bkdata.BKdata.kknnngp > cutoff_date)
-            query = query.order_by(bkdata.BKdata.kknnngp)
+            query = query.order(bkdata.BKdata.kknnngp)
 
             results = query.fetch()
             if results:

@@ -59,6 +59,9 @@ def getdatabyID(mesid):
             bklist = bkdb.fetch(50, 0)
             lst = []
             for bkl in bklist:
-                lst.append(bkl.refbk.makedata("web"))
+                # Cloud NDB: KeyProperty は Key オブジェクトを返すので .get() でエンティティを取得
+                bk_entity = bkl.refbk.get() if bkl.refbk else None
+                if bk_entity:
+                    lst.append(bk_entity.makedata("web"))
             return lst
     return []  # REVIEW-L1: Return empty list instead of None

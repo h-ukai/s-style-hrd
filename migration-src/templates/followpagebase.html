@@ -49,14 +49,14 @@ urlvar = getUrlVars();
 var d   = document;
 
 //var ajaxURL = "https://localhost:8080/jsonservice";
-var ajaxURL = "https://{{Domain|default_if_none:""}}/jsonservice";
+var ajaxURL = "https://{{Domain|default("")}}/jsonservice";
 //var ajaxareaURL = "https://localhost:8080/jsonservice";
-var ajaxareaURL = "https://{{Domain|default_if_none:""}}/jsonservice";
-var bkeditFile = "https://{{Domain|default_if_none:""}}/bkedit.html?bkID=";
+var ajaxareaURL = "https://{{Domain|default("")}}/jsonservice";
+var bkeditFile = "https://{{Domain|default("")}}/bkedit.html?bkID=";
 var followFile = "follow.html?memberID=";
 
-var set_memberID = "{{memberID|default_if_none:""}}";
-var set_tantoID = "{{userID|default_if_none:""}}";
+var set_memberID = "{{memberID|default("")}}";
+var set_tantoID = "{{userID|default("")}}";
 // var set_memberID = $("hidden#memberID").val();
 // var set_memberID = "test111";
 var set_action = urlvar['set_action'];
@@ -370,28 +370,28 @@ function selectgo(obj){
 <div class="wrapper">
 
 <!--header-->
-<div class="header">{% block titile2 %}{% endblock titile2 %} {{CorpOrg_key_name|default_if_none:""}} {{Branch_Key_name|default_if_none:""}} {{name|default_if_none:""}}
-<a href="../login.html?logoff=true&corp_name={{CorpOrg_key_name|default_if_none:""}}&branch_name={{Branch_Key_name|default_if_none:""}}&sitename={{sitename|default_if_none:""}}&togo={{pagepath|default_if_none:""}}">ログオフ</a>
+<div class="header">{% block titile2 %}{% endblock titile2 %} {{CorpOrg_key_name|default("")}} {{Branch_Key_name|default("")}} {{name|default("")}}
+<a href="../login.html?logoff=true&corp_name={{CorpOrg_key_name|default("")}}&branch_name={{Branch_Key_name|default("")}}&sitename={{sitename|default("")}}&togo={{pagepath|default("")}}">ログオフ</a>
 <select name="selectName" size="1" onchange="window.open($(this).val(),'_balank');$(this).val(0);">
 <option selected="selected" value=0 >メニュー</option>
 <option value="../bkedit.html">物件登録</option>
 <option value="../csvupload/bkdata.html">レインズアップロード</option>
-<option value="../matching/{{CorpOrg_key_name|default_if_none:""}}/{{Branch_Key_name|default_if_none:""}}/{{sitename|default_if_none:""}}/matching.html">マッチング</option>
+<option value="../matching/{{CorpOrg_key_name|default("")}}/{{Branch_Key_name|default("")}}/{{sitename|default("")}}/matching.html">マッチング</option>
 <option value="../bkjoukyoulist.html">資料作成状況</option>
 <option value="../bkdchk.html">重複チェック</option>
-<option value="../memberSearchandMail/{{CorpOrg_key_name|default_if_none:""}}/{{Branch_Key_name|default_if_none:""}}/{{sitename|default_if_none:""}}/backoffice/memberSearchandMail.html">顧客検索・顧客グループ・メール一斉送信</option>
+<option value="../memberSearchandMail/{{CorpOrg_key_name|default("")}}/{{Branch_Key_name|default("")}}/{{sitename|default("")}}/backoffice/memberSearchandMail.html">顧客検索・顧客グループ・メール一斉送信</option>
 <option value="../addresslist.html">アドレスリスト（小学校区）作成・編集</option>
 <option value="../csvupload/addressset.html">アドレスリスト（小学校区）アップロード</option>
-<option value="../tantochange/{{CorpOrg_key_name|default_if_none:""}}/{{Branch_Key_name|default_if_none:""}}/{{sitename|default_if_none:""}}/backoffice/tantochange.html">担当変更</option>
+<option value="../tantochange/{{CorpOrg_key_name|default("")}}/{{Branch_Key_name|default("")}}/{{sitename|default("")}}/backoffice/tantochange.html">担当変更</option>
 </select>
 </div>
 <!--header End-->
 
 <form action="" method="post" name="frmbksearch" id="frmbksearch">
-<input type="hidden" name="usurID" id = "userID" value="{{userID|default_if_none:""}}"/>
-<input type="hidden" name="usurkey" id ="usurkey" value="{{userkey|default_if_none:""}}"/>
-<input type="hidden" name="key" id = "key" value="{{key|default_if_none:""}}"/>
-<input type="hidden" name="page" id= "page" value="{{page|default_if_none:""}}"/>
+<input type="hidden" name="usurID" id = "userID" value="{{userID|default("")}}"/>
+<input type="hidden" name="usurkey" id ="usurkey" value="{{userkey|default("")}}"/>
+<input type="hidden" name="key" id = "key" value="{{key|default("")}}"/>
+<input type="hidden" name="page" id= "page" value="{{page|default("")}}"/>
 
 <div class="container">
   <div class="contents">
@@ -401,7 +401,7 @@ function selectgo(obj){
   <!-- ここから本文記入 -->
   <ul>
   <!--contents-head01-->
-  <li class="contents-head01"><span id="site">{{sitename|default_if_none:""}}</span> <span id="trader_fullname">{{membername|default_if_none:""}}</span><br /> ID:<input type="text" name="trader_id" id="trader_id" size="5" value="{{memberID|default_if_none:""}}"/> yomi:<input type="text" name="trader_name" id="trader_name" size="16" value="{{memberyomi|default_if_none:""}}"/> tel:<input type="text" name="trader_tel" id="trader_tel" size="13" value="{{membertel|default_if_none:""}}"/> mail:<input type="text" name="trader_mail" id="trader_mail" size="20" value="{{membermail|default_if_none:""}}"/></li>
+  <li class="contents-head01"><span id="site">{{sitename|default("")}}</span> <span id="trader_fullname">{{membername|default("")}}</span><br /> ID:<input type="text" name="trader_id" id="trader_id" size="5" value="{{memberID|default("")}}"/> yomi:<input type="text" name="trader_name" id="trader_name" size="16" value="{{memberyomi|default("")}}"/> tel:<input type="text" name="trader_tel" id="trader_tel" size="13" value="{{membertel|default("")}}"/> mail:<input type="text" name="trader_mail" id="trader_mail" size="20" value="{{membermail|default("")}}"/></li>
   <!--contents-head01 END-->
   <!--contents-head02-->
   <li class="contents-head02"><button name="buttonName" type="button" onclick="goloc('../follow/{{CorpOrg_key_name}}/{{Branch_Key_name}}/{{sitename}}/follow.html','')">フォロー状況</button><button name="buttonName" type="button" onclick="goloc('../memberedit/{{CorpOrg_key_name}}/{{Branch_Key_name}}/{{sitename}}/memberedit.html','')">顧客台帳</button><button name="buttonName" type="button" onclick="goloc('../bksearch/{{CorpOrg_key_name}}/{{Branch_Key_name}}/{{sitename}}/bksearch.html','')">検索条件</button><button name="buttonName" type="button" onclick="document.location='../memberedit/{{CorpOrg_key_name}}/{{Branch_Key_name}}/{{sitename}}/memberedit.html'" >新規登録</button><button type="button" onclick="ModalFollowInput(set_key);">新規フォロー</button></li>

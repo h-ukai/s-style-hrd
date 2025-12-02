@@ -5,12 +5,12 @@ from flask import request, render_template_string
 from google.cloud import ndb
 import smtplib
 from email.message import EmailMessage
-import session
+from application import session
 import os
-import config
-import messageManager
-from models.member import member
-from wordstocker import wordstocker
+from application import config
+from application import messageManager
+from application.models.member import member
+from application.wordstocker import wordstocker
 import datetime
 
 ADMIN_EMAIL = config.ADMIN_EMAIL
@@ -25,7 +25,7 @@ def mailinglist_route(**kwargs):
 def do_post(**kwargs):
     """POST handler for mailing list"""
     tmpl_val = {}
-    ssn = session.Session(request, None, "s-style")
+    ssn = session.Session(request, sid_name="s-style")
     tmpl_val['error_msg'] = ''
 
     if not ssn.chk_ssn():
@@ -34,7 +34,7 @@ def do_post(**kwargs):
         users = query.fetch(1)
         if users:
             user = users[0]
-            ssn = session.Session(request, None, "s-style")
+            ssn = session.Session(request, sid_name="s-style")
             sid = ssn.new_ssn()
 
             ssn.set_ssn_data('CorpOrg_key_name', user.CorpOrg_key_name)
@@ -147,12 +147,16 @@ def do_post(**kwargs):
                         except Exception as e:
                             print(f"Error sending email: {e}")
 
-    msglist = messageManager.messageManager.getmeslist(
-        corp=CorpOrg_key_name,
-        member=member.get_by_id(userkey),
-        kindname=u"メーリングリスト",
-        order='-reservation'
-    )
+    member_obj = ndb.Key(urlsafe=userkey).get() if userkey else None
+    if member_obj:
+        msglist = messageManager.messageManager.getmeslist(
+            CorpOrg_key_name,
+            member_obj,
+            kindname=u"メーリングリスト",
+            order='-reservation'
+        )
+    else:
+        msglist = []
     tmpl_val['msglist'] = msglist
 
     path = os.path.dirname(__file__) + '/../templates/mailinglist.html'

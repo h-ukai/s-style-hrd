@@ -1,24 +1,24 @@
 # -*- coding: utf-8 -*-
 
-from models.member import member
-from models.bksearchdata import bksearchdata
-from models.bkdata import BKdata
-from models.CorpOrg import CorpOrg
-from models.Branch import Branch
-from models.bksearchaddress import *
-from models.blob import blob
+from application.models.member import member
+from application.models.bksearchdata import bksearchdata
+from application.models.bkdata import BKdata
+from application.models.CorpOrg import CorpOrg
+from application.models.Branch import Branch
+from application.models.bksearchaddress import *
+from application.models.blob import Blob
 import logging
 import math
-from models.message import Message
+from application.models.message import Message
 import datetime
 
 from google.cloud import ndb
 from google.cloud import tasks_v2
-import messageManager
-from bklistutl import bklistutl
+from application import messageManager
+from application.bklistutl import bklistutl
 import redis  # Redis for Memorystore replacement
 import time
-import timemanager
+from application import timemanager
 from application import CriticalSection
 
 # REVIEW-L1: os がインポートされていません
@@ -103,7 +103,11 @@ class filterWorker:
         return self.post()
 
     def post(self):
+        from flask import request
         sddbkey = request.values.get('sddbkey')
+        if not sddbkey:
+            logging.warning('filterWorker: missing sddbkey parameter')
+            return 'OK', 200
         sddb = bksearchdata.get_by_id(sddbkey)
         msgkey = request.values.get('msgkey', None)
         hnknngpL = request.values.get('hnknngpL', None)
@@ -157,7 +161,11 @@ class filterWorker:
 class filterWorker2:
     """Flask route handler for secondary filter worker"""
     def post(self):
+        from flask import request
         sddbkey = request.values.get('sddbkey')
+        if not sddbkey:
+            logging.warning('filterWorker2: missing sddbkey parameter')
+            return 'OK', 200
         sddb = bksearchdata.get_by_id(sddbkey)
         msgkey = request.values.get('msgkey', None)
         hnknngpL = request.values.get('hnknngpL', None)

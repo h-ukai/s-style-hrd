@@ -113,7 +113,7 @@ def login_route():
             corp = ndb.Key(CorpOrg, user.CorpOrg_key_name).get()
             if corp and corp.active:
                 ssn_key = f"{tmpl_val['corp_name']}_{tmpl_val['branch_name']}_{tmpl_val['sitename']}"
-                ssn = dbsession(request, None, ssn_key, user.sid)
+                ssn = dbsession(request, ssn_key, user.sid)
                 ssn.new_ssn()
                 user.sid = ssn.getsid()
                 user.put()
@@ -149,8 +149,22 @@ def login_route():
     # template.render() → render_template()
     if get_login_style:
         # Python 3: os.getcwd() → 'templates' ディレクトリパス
-        return render_template(f'{get_login_style}.html', **tmpl_val)
+        template_path = f'{get_login_style}.html'
     else:
+        # Dynamic template path based on corp/branch/site
+        # Check if custom login template exists, otherwise use default
+        if tmpl_val['corp_name'] and tmpl_val['branch_name'] and tmpl_val['sitename']:
+            template_path = f"{tmpl_val['corp_name']}/{tmpl_val['branch_name']}/{tmpl_val['sitename']}/login.html"
+            # Fall back to generic login.html if custom doesn't exist
+            # Flask will raise TemplateNotFound, so we use the generic one
+        else:
+            template_path = 'login.html'
+
+    # Try to render custom template, fall back to generic
+    try:
+        return render_template(template_path, **tmpl_val)
+    except:
+        # Fall back to generic login template
         return render_template('login.html', **tmpl_val)
 
 

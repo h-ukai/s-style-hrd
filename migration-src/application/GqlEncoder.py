@@ -7,7 +7,7 @@ import datetime
 import time
 from decimal import Decimal
 import locale
-import timemanager
+from application import timemanager
 
 class GqlJsonEncoder(json.JSONEncoder):
     """Extends JSONEncoder to add support for NDB results and properties."""

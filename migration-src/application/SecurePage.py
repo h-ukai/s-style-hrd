@@ -18,7 +18,7 @@ class SecurePage(SecurePageBase):
             urlstr = urlstr + "&togo=" + request.path
             urlstr = urlstr + "&userpagebase=" + self.tmpl_val['userpagebase']
             # ssn.set_ssn_data("togo", urllib.parse.quote_plus(request.path))
-            return redirect('/login?' + urlstr)
+            return redirect('/test/login?' + urlstr)
         if not self.tmpl_val["status"] in status:
             self.tmpl_val['error_msg'] = '必要なステータスがありません'
             templ = self.corp_name + "/" + self.branch_name + "/" + self.Sitename + "/" + "sorry.html"

@@ -8,8 +8,8 @@ import csv
 import sys
 import datetime
 from io import StringIO
-from models.bksearchaddress import bksearchaddresslist
-from models.bksearchaddress import *
+from application.models.bksearchaddress import bksearchaddresslist
+from application.models.bksearchaddress import *
 
 def addresssetupload_route(**kwargs):
     """Flask route handler for address set upload"""
@@ -36,10 +36,10 @@ class addresssetupload:
 
     def get(self, **kwargs):
         self.source = request.args.get("source", "")
-        self.tmpl_val['source'] = self.source
+        self.tmpl_val['data_source'] = self.source
         self.tmpl_val['result'] = self.message
 
-        path = os.path.dirname(__file__) + '/../templates/uploadadresslist.html'
+        path = os.path.dirname(__file__) + '/../templates/uploadaddresslist.html'
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 template_content = f.read()

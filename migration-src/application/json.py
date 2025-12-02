@@ -28,7 +28,7 @@ provided to further simplify usage.
 """
 
 from flask import render_template, request, Response
-import timemanager
+from application import timemanager
 import re
 from google.cloud import ndb
 import datetime
@@ -63,7 +63,7 @@ import calendar
 from calendar import monthrange
 from application.qreki import Kyureki
 import application.config as config
-from application.dataProvider.bkdataSearchProvider import bkdataSearchProbider
+from dataProvider.bkdataSearchProvider import bkdataSearchProbider
 
 
 class JsonServiceHandler:

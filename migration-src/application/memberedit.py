@@ -5,7 +5,7 @@ from flask import render_template, request, redirect
 from google.cloud import ndb
 import datetime
 import re
-import timemanager
+from application import timemanager
 from application.SecurePage import SecurePage
 from application.wordstocker import wordstocker
 from application.models.member import member
@@ -19,7 +19,10 @@ class MemberEditHandler(SecurePage):
 
     def get(self, **kwargs):
         # REVIEW-L3: u"プレフィックス"を削除（Python 3互換性）
-        if self.Secure_init(*["管理者", "担当"], **kwargs):
+        result = self.Secure_init(*["管理者", "担当"], **kwargs)
+        if result is not True:
+            return result  # Return redirect or error template
+        if True:
             if kwargs.get("sitename", None) is None:
                 sitename = request.args.get("sitename")
             else:
@@ -57,211 +60,213 @@ class MemberEditHandler(SecurePage):
         # REVIEW-L1: ndb.Model.get_or_insertはクラスメソッド（静的メソッド）として使用
         # 修正前: memdb = member.get_or_insert(key_name)
         # 修正後: key = ndb.Key(member, key_name); memdb = key.get() or member(id=key_name)
-        if self.Secure_init(*["管理者", "担当"]):
-            if not self.memberID:
-                co = CorpOrg.get_by_id(self.corp_name)
-                self.memberID = str(co.getNextIDNum())
+        result = self.Secure_init(*["管理者", "担当"])
+        if result is not True:
+            return result  # Return redirect or error template
+        if not self.memberID:
+            co = CorpOrg.get_by_id(self.corp_name)
+            self.memberID = str(co.getNextIDNum())
 
-            key_name = self.corp_name + "/" + self.memberID
-            key = ndb.Key(member, key_name)
-            memdb = key.get()
-            if not memdb:
-                memdb = member(id=key_name)
+        key_name = self.corp_name + "/" + self.memberID
+        key = ndb.Key(member, key_name)
+        memdb = key.get()
+        if not memdb:
+            memdb = member(id=key_name)
 
-            # Set member properties
-            memdb.memberID = self.memberID
-            status = request.form.get("status")
-            memdb.status = status if status else None
+        # Set member properties
+        memdb.memberID = self.memberID
+        status = request.form.get("status")
+        memdb.status = status if status else None
 
-            memdb.CorpOrg_key_name = self.corp_name if self.corp_name else None
-            memdb.Branch_Key_name = self.branch_name if self.branch_name else None
+        memdb.CorpOrg_key_name = self.corp_name if self.corp_name else None
+        memdb.Branch_Key_name = self.branch_name if self.branch_name else None
 
-            sitename = request.form.get("sitename")
-            memdb.sitename = sitename if sitename else None
+        sitename = request.form.get("sitename")
+        memdb.sitename = sitename if sitename else None
 
-            name = request.form.get("name")
-            memdb.name = name if name else None
+        name = request.form.get("name")
+        memdb.name = name if name else None
 
-            yomi = request.form.get("yomi")
-            memdb.yomi = yomi if yomi else None
+        yomi = request.form.get("yomi")
+        memdb.yomi = yomi if yomi else None
 
-            zip_code = request.form.get("zip")
-            memdb.zip = zip_code if zip_code else None
+        zip_code = request.form.get("zip")
+        memdb.zip = zip_code if zip_code else None
 
-            address = request.form.get("address")
-            memdb.address = address if address else None
+        address = request.form.get("address")
+        memdb.address = address if address else None
 
-            address1 = request.form.get("address1")
-            memdb.address1 = address1 if address1 else None
+        address1 = request.form.get("address1")
+        memdb.address1 = address1 if address1 else None
 
-            address2 = request.form.get("address2")
-            memdb.address2 = address2 if address2 else None
+        address2 = request.form.get("address2")
+        memdb.address2 = address2 if address2 else None
 
-            phone = request.form.get("phone")
-            memdb.phone = phone if phone else None
+        phone = request.form.get("phone")
+        memdb.phone = phone if phone else None
 
-            fax = request.form.get("fax")
-            memdb.fax = fax if fax else None
+        fax = request.form.get("fax")
+        memdb.fax = fax if fax else None
 
-            mobilephone = request.form.get("mobilephone")
-            memdb.mobilephone = mobilephone if mobilephone else None
+        mobilephone = request.form.get("mobilephone")
+        memdb.mobilephone = mobilephone if mobilephone else None
 
-            mail = request.form.get("mail")
-            memdb.mail = mail if mail else None
+        mail = request.form.get("mail")
+        memdb.mail = mail if mail else None
 
-            netID = request.form.get("netID")
-            memdb.netID = netID if netID else None
+        netID = request.form.get("netID")
+        memdb.netID = netID if netID else None
 
-            netPass = request.form.get("netPass")
-            memdb.netPass = netPass if netPass else None
+        netPass = request.form.get("netPass")
+        memdb.netPass = netPass if netPass else None
 
-            # REVIEW-L1: re.compile().match()の第2引数削除（Python 3では不要）
-            # 修正前: r = re.compile(".*:.*:.*").match(tourokunengappi, 1)
-            # 修正後: r = re.compile(".*:.*:.*").match(tourokunengappi)
-            tourokunengappi = request.form.get("tourokunengappi")
-            if tourokunengappi and tourokunengappi != "":
-                r = re.compile(".*:.*:.*").match(tourokunengappi)
-                if r is None:
-                    memdb.tourokunengappi = timemanager.jst2utc_date(
-                        datetime.datetime.strptime(tourokunengappi, "%Y/%m/%d"))
-                else:
-                    memdb.tourokunengappi = timemanager.jst2utc_date(
-                        datetime.datetime.strptime(tourokunengappi, "%Y/%m/%d %H:%M:%S"))
+        # REVIEW-L1: re.compile().match()の第2引数削除（Python 3では不要）
+        # 修正前: r = re.compile(".*:.*:.*").match(tourokunengappi, 1)
+        # 修正後: r = re.compile(".*:.*:.*").match(tourokunengappi)
+        tourokunengappi = request.form.get("tourokunengappi")
+        if tourokunengappi and tourokunengappi != "":
+            r = re.compile(".*:.*:.*").match(tourokunengappi)
+            if r is None:
+                memdb.tourokunengappi = timemanager.jst2utc_date(
+                    datetime.datetime.strptime(tourokunengappi, "%Y/%m/%d"))
             else:
-                memdb.hnknngp = self.now
+                memdb.tourokunengappi = timemanager.jst2utc_date(
+                    datetime.datetime.strptime(tourokunengappi, "%Y/%m/%d %H:%M:%S"))
+        else:
+            memdb.hnknngp = self.now
 
-            tanto = request.form.get("tanto")
-            if tanto and str(memdb.key) != tanto:
-                memdb.tanto = ndb.Key(urlsafe=tanto.encode())
+        tanto = request.form.get("tanto")
+        if tanto and str(memdb.key) != tanto:
+            memdb.tanto = ndb.Key(urlsafe=tanto.encode())
+        else:
+            memdb.tanto = None
+
+        mno = request.form.get("mno")
+        memdb.mno = float(mno) if mno else None
+
+        mr = request.form.get("mr")
+        memdb.mr = float(mr) if mr else None
+
+        uri = request.form.get("uri")
+        memdb.uri = bool(uri) if uri == "1" else None
+
+        kai = request.form.get("kai")
+        memdb.kai = bool(kai) if kai == "1" else None
+
+        kashi = request.form.get("kashi")
+        memdb.kashi = bool(kashi) if kashi == "1" else None
+
+        kari = request.form.get("kari")
+        memdb.kari = bool(kari) if kari == "1" else None
+
+        baikai = request.form.get("baikai")
+        memdb.baikai = baikai if baikai else None
+
+        seiyaku = request.form.get("seiyaku")
+        memdb.seiyaku = seiyaku if seiyaku else None
+
+        # REVIEW-L1: re.compile().match()の第2引数削除（Python 3では不要）
+        seiyakunengappi = request.form.get("seiyakunengappi")
+        if seiyakunengappi and seiyakunengappi != "":
+            r = re.compile(".*:.*:.*").match(seiyakunengappi)
+            if r is None:
+                memdb.seiyakunengappi = timemanager.jst2utc_date(
+                    datetime.datetime.strptime(seiyakunengappi, "%Y/%m/%d"))
             else:
-                memdb.tanto = None
+                memdb.seiyakunengappi = timemanager.jst2utc_date(
+                    datetime.datetime.strptime(seiyakunengappi, "%Y/%m/%d %H:%M:%S"))
+        else:
+            memdb.hnknngp = None
 
-            mno = request.form.get("mno")
-            memdb.mno = float(mno) if mno else None
+        seiyakuankeito = request.form.get("seiyakuankeito")
+        memdb.seiyakuankeito = bool(seiyakuankeito) if seiyakuankeito == "1" else None
 
-            mr = request.form.get("mr")
-            memdb.mr = float(mr) if mr else None
+        age = request.form.get("age")
+        memdb.age = float(age) if age else None
 
-            uri = request.form.get("uri")
-            memdb.uri = bool(uri) if uri == "1" else None
+        kinzoku = request.form.get("kinzoku")
+        memdb.kinzoku = float(kinzoku) if kinzoku else None
 
-            kai = request.form.get("kai")
-            memdb.kai = bool(kai) if kai == "1" else None
+        otona = request.form.get("otona")
+        memdb.otona = float(otona) if otona else None
 
-            kashi = request.form.get("kashi")
-            memdb.kashi = bool(kashi) if kashi == "1" else None
+        kodomo = request.form.get("kodomo")
+        memdb.kodomo = float(kodomo) if kodomo else None
 
-            kari = request.form.get("kari")
-            memdb.kari = bool(kari) if kari == "1" else None
+        tutomesaki = request.form.get("tutomesaki")
+        memdb.tutomesaki = tutomesaki if tutomesaki else None
 
-            baikai = request.form.get("baikai")
-            memdb.baikai = baikai if baikai else None
+        CorpOrg_yomi = request.form.get("CorpOrg_yomi")
+        memdb.CorpOrg_yomi = CorpOrg_yomi if CorpOrg_yomi else None
 
-            seiyaku = request.form.get("seiyaku")
-            memdb.seiyaku = seiyaku if seiyaku else None
+        CorpOrg_yaku = request.form.get("CorpOrg_yaku")
+        memdb.CorpOrg_yaku = CorpOrg_yaku if CorpOrg_yaku else None
 
-            # REVIEW-L1: re.compile().match()の第2引数削除（Python 3では不要）
-            seiyakunengappi = request.form.get("seiyakunengappi")
-            if seiyakunengappi and seiyakunengappi != "":
-                r = re.compile(".*:.*:.*").match(seiyakunengappi)
-                if r is None:
-                    memdb.seiyakunengappi = timemanager.jst2utc_date(
-                        datetime.datetime.strptime(seiyakunengappi, "%Y/%m/%d"))
-                else:
-                    memdb.seiyakunengappi = timemanager.jst2utc_date(
-                        datetime.datetime.strptime(seiyakunengappi, "%Y/%m/%d %H:%M:%S"))
-            else:
-                memdb.hnknngp = None
+        CorpOrg_zip = request.form.get("CorpOrg_zip")
+        memdb.CorpOrg_zip = CorpOrg_zip if CorpOrg_zip else None
 
-            seiyakuankeito = request.form.get("seiyakuankeito")
-            memdb.seiyakuankeito = bool(seiyakuankeito) if seiyakuankeito == "1" else None
+        CorpOrg_address = request.form.get("CorpOrg_address")
+        memdb.CorpOrg_address = CorpOrg_address if CorpOrg_address else None
 
-            age = request.form.get("age")
-            memdb.age = float(age) if age else None
+        CorpOrg_address1 = request.form.get("CorpOrg_address1")
+        memdb.CorpOrg_address1 = CorpOrg_address1 if CorpOrg_address1 else None
 
-            kinzoku = request.form.get("kinzoku")
-            memdb.kinzoku = float(kinzoku) if kinzoku else None
+        CorpOrg_address2 = request.form.get("CorpOrg_address2")
+        memdb.CorpOrg_address2 = CorpOrg_address2 if CorpOrg_address2 else None
 
-            otona = request.form.get("otona")
-            memdb.otona = float(otona) if otona else None
+        CorpOrg_phone = request.form.get("CorpOrg_phone")
+        memdb.CorpOrg_phone = CorpOrg_phone if CorpOrg_phone else None
 
-            kodomo = request.form.get("kodomo")
-            memdb.kodomo = float(kodomo) if kodomo else None
+        CorpOrg_fax = request.form.get("CorpOrg_fax")
+        memdb.CorpOrg_fax = CorpOrg_fax if CorpOrg_fax else None
 
-            tutomesaki = request.form.get("tutomesaki")
-            memdb.tutomesaki = tutomesaki if tutomesaki else None
+        access = request.form.get("access")
+        memdb.access = access if access else None
 
-            CorpOrg_yomi = request.form.get("CorpOrg_yomi")
-            memdb.CorpOrg_yomi = CorpOrg_yomi if CorpOrg_yomi else None
+        zikoshikin = request.form.get("zikoshikin")
+        memdb.zikoshikin = float(zikoshikin) if zikoshikin else None
 
-            CorpOrg_yaku = request.form.get("CorpOrg_yaku")
-            memdb.CorpOrg_yaku = CorpOrg_yaku if CorpOrg_yaku else None
+        heisaituki = request.form.get("heisaituki")
+        memdb.heisaituki = float(heisaituki) if heisaituki else None
 
-            CorpOrg_zip = request.form.get("CorpOrg_zip")
-            memdb.CorpOrg_zip = CorpOrg_zip if CorpOrg_zip else None
+        heisaibonasu = request.form.get("heisaibonasu")
+        memdb.heisaibonasu = float(heisaibonasu) if heisaibonasu else None
 
-            CorpOrg_address = request.form.get("CorpOrg_address")
-            memdb.CorpOrg_address = CorpOrg_address if CorpOrg_address else None
+        kounyuziki = request.form.get("kounyuziki")
+        memdb.kounyuziki = kounyuziki if kounyuziki else None
 
-            CorpOrg_address1 = request.form.get("CorpOrg_address1")
-            memdb.CorpOrg_address1 = CorpOrg_address1 if CorpOrg_address1 else None
+        kounyunen = request.form.get("kounyunen")
+        memdb.kounyunen = float(kounyunen) if kounyunen else None
 
-            CorpOrg_address2 = request.form.get("CorpOrg_address2")
-            memdb.CorpOrg_address2 = CorpOrg_address2 if CorpOrg_address2 else None
+        rank = request.form.get("rank")
+        memdb.rank = rank if rank else None
 
-            CorpOrg_phone = request.form.get("CorpOrg_phone")
-            memdb.CorpOrg_phone = CorpOrg_phone if CorpOrg_phone else None
+        service = request.form.get("service")
+        if service:
+            memdb.service = []
+            for s in service.split(","):
+                if s != "":
+                    memdb.service.append(s)
+        else:
+            memdb.service = []
 
-            CorpOrg_fax = request.form.get("CorpOrg_fax")
-            memdb.CorpOrg_fax = CorpOrg_fax if CorpOrg_fax else None
+        baitai = request.form.get("baitai")
+        memdb.baitai = baitai if baitai else None
 
-            access = request.form.get("access")
-            memdb.access = access if access else None
+        syokai = request.form.get("syokai")
+        memdb.syokai = syokai if syokai else None
 
-            zikoshikin = request.form.get("zikoshikin")
-            memdb.zikoshikin = float(zikoshikin) if zikoshikin else None
+        gyosya = request.form.get("gyosya")
+        memdb.gyosya = gyosya if gyosya else None
 
-            heisaituki = request.form.get("heisaituki")
-            memdb.heisaituki = float(heisaituki) if heisaituki else None
+        bikou = request.form.get("bikou")
+        memdb.bikou = bikou
 
-            heisaibonasu = request.form.get("heisaibonasu")
-            memdb.heisaibonasu = float(heisaibonasu) if heisaibonasu else None
+        memdb.put()
+        memdb.wordstock()
 
-            kounyuziki = request.form.get("kounyuziki")
-            memdb.kounyuziki = kounyuziki if kounyuziki else None
-
-            kounyunen = request.form.get("kounyunen")
-            memdb.kounyunen = float(kounyunen) if kounyunen else None
-
-            rank = request.form.get("rank")
-            memdb.rank = rank if rank else None
-
-            service = request.form.get("service")
-            if service:
-                memdb.service = []
-                for s in service.split(","):
-                    if s != "":
-                        memdb.service.append(s)
-            else:
-                memdb.service = []
-
-            baitai = request.form.get("baitai")
-            memdb.baitai = baitai if baitai else None
-
-            syokai = request.form.get("syokai")
-            memdb.syokai = syokai if syokai else None
-
-            gyosya = request.form.get("gyosya")
-            memdb.gyosya = gyosya if gyosya else None
-
-            bikou = request.form.get("bikou")
-            memdb.bikou = bikou
-
-            memdb.put()
-            memdb.wordstock()
-
-            kwargs = {"memberID": memdb.memberID}
-            return self.get(**kwargs)
+        kwargs = {"memberID": memdb.memberID}
+        return self.get(**kwargs)
 
 
 def member_edit_route():

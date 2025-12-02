@@ -46,50 +46,50 @@
     <td width="11" background="../img/top-img/08.jpg"></td>
     <td><table width="100%" border="0" cellspacing="5" cellpadding="0">
         <tr>
-          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default:""}}</a></p>
+          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default("")}}</a></p>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td align="left">
 
 {% if bkdata.bkdata.kkkybku %}
-<span class="class14red">{{bkdata.bkdata.kkkybku|join:" "}} </span>
+<span class="class14red">{{bkdata.bkdata.kkkybku|join(" ")}} </span>
 <br />
 {% endif %}
 <span class="class-orange">●</span>価　格
-{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default:""}}万円（税込）{% endif %}
+{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default("")}}万円（税込）{% endif %}
 <br />
 <span class="class-orange">●</span>交　通
-{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default:""}}分　{% endif %}
-{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default:""}}分　{% endif %}
-{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default("")}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default("")}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default("")}}分　{% endif %}
 <br />
 
 <span class="class-orange">●</span>面　積
 
 {% if bkdata.bkdata.snyuMnskSyuBbnMnsk2 %}
-専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|floatformat:"-2"}}
+専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 {% if bkdata.bkdata.blcnyTrsMnsk %}
- 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|floatformat:"-2"}}
+ 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 {% if bkdata.bkdata.tcMcbnSumnsk %}
- 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|floatformat:"-2"}}
+ 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 <br />
 <span class="class-orange">●</span>間　取
-{{bkdata.bkdata.mdrHysu1|floatformat|default:""}}{{bkdata.bkdata.mdrTyp1|default:""}}
+{{bkdata.bkdata.mdrHysu1|default("")}}{{bkdata.bkdata.mdrTyp1|default("")}}
 <br />
                   </td>
                 <td align="right" valign="bottom"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" ><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="詳しくはこちら" width="107" height="19" border="0" vspace="3" /></a></td>
@@ -130,50 +130,50 @@ m<sup>2</sup>
     <td width="11" background="../img/top-img/08.jpg"></td>
     <td><table width="100%" border="0" cellspacing="5" cellpadding="0">
         <tr>
-          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default:""}}</a></p>
+          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default("")}}</a></p>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td align="left">
 
 {% if bkdata.bkdata.kkkybku %}
-<span class="class14red">{{bkdata.bkdata.kkkybku|join:" "}} </span>
+<span class="class14red">{{bkdata.bkdata.kkkybku|join(" ")}} </span>
 <br />
 {% endif %}
 <span class="class-orange">●</span>価　格
-{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default:""}}万円（税込）{% endif %}
+{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default("")}}万円（税込）{% endif %}
 <br />
 <span class="class-orange">●</span>交　通
-{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default:""}}分　{% endif %}
-{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default:""}}分　{% endif %}
-{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default("")}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default("")}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default("")}}分　{% endif %}
 <br />
 
 <span class="class-orange">●</span>面　積
 
 {% if bkdata.bkdata.snyuMnskSyuBbnMnsk2 %}
-専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|floatformat:"-2"}}
+専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 {% if bkdata.bkdata.blcnyTrsMnsk %}
- 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|floatformat:"-2"}}
+ 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 {% if bkdata.bkdata.tcMcbnSumnsk %}
- 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|floatformat:"-2"}}
+ 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 <br />
 <span class="class-orange">●</span>間　取
-{{bkdata.bkdata.mdrHysu1|floatformat|default:""}}{{bkdata.bkdata.mdrTyp1|default:""}}
+{{bkdata.bkdata.mdrHysu1|default("")}}{{bkdata.bkdata.mdrTyp1|default("")}}
 <br />
                   </td>
                 <td align="right" valign="bottom"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" ><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="詳しくはこちら" width="107" height="19" border="0" vspace="3" /></a></td>
@@ -212,50 +212,50 @@ m<sup>2</sup>
     <td width="11" background="../img/top-img/08.jpg"></td>
     <td><table width="100%" border="0" cellspacing="5" cellpadding="0">
         <tr>
-          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default:""}}</a></p>
+          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default("")}}</a></p>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td align="left">
 
 {% if bkdata.bkdata.kkkybku %}
-<span class="class14red">{{bkdata.bkdata.kkkybku|join:" "}} </span>
+<span class="class14red">{{bkdata.bkdata.kkkybku|join(" ")}} </span>
 <br />
 {% endif %}
 <span class="class-orange">●</span>価　格
-{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default:""}}万円（税込）{% endif %}
+{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default("")}}万円（税込）{% endif %}
 <br />
 <span class="class-orange">●</span>交　通
-{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default:""}}分　{% endif %}
-{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default:""}}分　{% endif %}
-{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default("")}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default("")}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default("")}}分　{% endif %}
 <br />
 
 <span class="class-orange">●</span>面　積
 
 {% if bkdata.bkdata.snyuMnskSyuBbnMnsk2 %}
-専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|floatformat:"-2"}}
+専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 {% if bkdata.bkdata.blcnyTrsMnsk %}
- 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|floatformat:"-2"}}
+ 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 {% if bkdata.bkdata.tcMcbnSumnsk %}
- 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|floatformat:"-2"}}
+ 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 <br />
 <span class="class-orange">●</span>間　取
-{{bkdata.bkdata.mdrHysu1|floatformat|default:""}}{{bkdata.bkdata.mdrTyp1|default:""}}
+{{bkdata.bkdata.mdrHysu1|default("")}}{{bkdata.bkdata.mdrTyp1|default("")}}
 <br />
                   </td>
                 <td align="right" valign="bottom"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" ><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="詳しくはこちら" width="107" height="19" border="0" vspace="3" /></a></td>
@@ -295,50 +295,50 @@ m<sup>2</sup>
     <td width="11" background="../img/top-img/08.jpg"></td>
     <td><table width="100%" border="0" cellspacing="5" cellpadding="0">
         <tr>
-          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default:""}}</a></p>
+          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default("")}}</a></p>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td align="left">
 
 {% if bkdata.bkdata.kkkybku %}
-<span class="class14red">{{bkdata.bkdata.kkkybku|join:" "}} </span>
+<span class="class14red">{{bkdata.bkdata.kkkybku|join(" ")}} </span>
 <br />
 {% endif %}
 <span class="class-orange">●</span>価　格
-{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default:""}}万円（税込）{% endif %}
+{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default("")}}万円（税込）{% endif %}
 <br />
 <span class="class-orange">●</span>交　通
-{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default:""}}分　{% endif %}
-{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default:""}}分　{% endif %}
-{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default("")}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default("")}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default("")}}分　{% endif %}
 <br />
 
 <span class="class-orange">●</span>面　積
 
 {% if bkdata.bkdata.snyuMnskSyuBbnMnsk2 %}
-専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|floatformat:"-2"}}
+専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 {% if bkdata.bkdata.blcnyTrsMnsk %}
- 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|floatformat:"-2"}}
+ 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 {% if bkdata.bkdata.tcMcbnSumnsk %}
- 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|floatformat:"-2"}}
+ 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 <br />
 <span class="class-orange">●</span>間　取
-{{bkdata.bkdata.mdrHysu1|floatformat|default:""}}{{bkdata.bkdata.mdrTyp1|default:""}}
+{{bkdata.bkdata.mdrHysu1|default("")}}{{bkdata.bkdata.mdrTyp1|default("")}}
 <br />
                   </td>
                 <td align="right" valign="bottom"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" ><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="詳しくはこちら" width="107" height="19" border="0" vspace="3" /></a></td>
@@ -380,50 +380,50 @@ m<sup>2</sup>
     <td width="11" background="../img/top-img/08.jpg"></td>
     <td><table width="100%" border="0" cellspacing="5" cellpadding="0">
         <tr>
-          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default:""}}</a></p>
+          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default("")}}</a></p>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td align="left">
 
 {% if bkdata.bkdata.kkkybku %}
-<span class="class14red">{{bkdata.bkdata.kkkybku|join:" "}} </span>
+<span class="class14red">{{bkdata.bkdata.kkkybku|join(" ")}} </span>
 <br />
 {% endif %}
 <span class="class-orange">●</span>価　格
-{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default:""}}万円(税込){% endif %}
+{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default("")}}万円(税込){% endif %}
 <br />
 <span class="class-orange">●</span>交　通
-{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default:""}}分　{% endif %}
-{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default:""}}分　{% endif %}
-{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default("")}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default("")}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default("")}}分　{% endif %}
 <br />
 
 <span class="class-orange">●</span>面　積
 
 {% if bkdata.bkdata.snyuMnskSyuBbnMnsk2 %}
-専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|floatformat:"-2"}}
+専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 {% if bkdata.bkdata.blcnyTrsMnsk %}
- 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|floatformat:"-2"}}
+ 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 {% if bkdata.bkdata.tcMcbnSumnsk %}
- 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|floatformat:"-2"}}
+ 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 <br />
 <span class="class-orange">●</span>間　取
-{{bkdata.bkdata.mdrHysu1|floatformat|default:""}}{{bkdata.bkdata.mdrTyp1|default:""}}
+{{bkdata.bkdata.mdrHysu1|default("")}}{{bkdata.bkdata.mdrTyp1|default("")}}
 <br />
                   </td>
                 <td align="right" valign="bottom"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" ><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="詳しくはこちら" width="107" height="19" border="0" vspace="3" /></a></td>
@@ -466,50 +466,50 @@ m<sup>2</sup>
     <td width="11" background="../img/top-img/08.jpg"></td>
     <td><table width="100%" border="0" cellspacing="5" cellpadding="0">
         <tr>
-          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri2}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default:""}}</a></p>
+          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri2}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default("")}}</a></p>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td align="left">
 
 {% if bkdata.bkdata.kkkybku %}
-<span class="class14red">{{bkdata.bkdata.kkkybku|join:" "}} </span>
+<span class="class14red">{{bkdata.bkdata.kkkybku|join(" ")}} </span>
 <br />
 {% endif %}
 <span class="class-orange">●</span>価　格
-{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default:""}}万円（税込）{% endif %}
+{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default("")}}万円（税込）{% endif %}
 <br />
 <span class="class-orange">●</span>交　通
-{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default:""}}分　{% endif %}
-{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default:""}}分　{% endif %}
-{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default("")}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default("")}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default("")}}分　{% endif %}
 <br />
 
 <span class="class-orange">●</span>面　積
 
 {% if bkdata.bkdata.snyuMnskSyuBbnMnsk2 %}
-専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|floatformat:"-2"}}
+専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 {% if bkdata.bkdata.blcnyTrsMnsk %}
- 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|floatformat:"-2"}}
+ 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 {% if bkdata.bkdata.tcMcbnSumnsk %}
- 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|floatformat:"-2"}}
+ 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 <br />
 <span class="class-orange">●</span>間　取
-{{bkdata.bkdata.mdrHysu1|floatformat|default:""}}{{bkdata.bkdata.mdrTyp1|default:""}}
+{{bkdata.bkdata.mdrHysu1|default("")}}{{bkdata.bkdata.mdrTyp1|default("")}}
 <br />
                   </td>
                 <td align="right" valign="bottom"><a href="{{data.bkdatauri}}{{bkdata.bkdata.bkID}}" ><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="詳しくはこちら" width="107" height="19" border="0" vspace="3" /></a></td>
@@ -555,7 +555,7 @@ m<sup>2</sup>
     <td width="11" background="../img/top-img/08.jpg"></td>
     <td><table width="100%" border="0" cellspacing="5" cellpadding="0">
         <tr>
-          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri2}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default:""}}</a></p>
+          <td align="left" valign="top"><p class="class-title-article-top"><a href="{{data.bkdatauri2}}{{bkdata.bkdata.bkID}}" >【{{bkdata.bkdata.bkID}}】{{bkdata.bkdata.ttmnmi|default("")}}</a></p>
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td align="left">
@@ -563,46 +563,46 @@ m<sup>2</sup>
 {% if bkdata.bkdata.kukkTnsiKbn == "広告可" %}
 
 {% if bkdata.bkdata.kkkybku %}
-<span class="class14red">{{bkdata.bkdata.kkkybku|join:" "}} </span>
+<span class="class14red">{{bkdata.bkdata.kkkybku|join(" ")}} </span>
 <br />
 {% endif %}
 
 
 <span class="class-orange">●</span>価　格
-{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default:""}}万円（税込）{% endif %}
+{% if bkdata.bkdata.kkkksyk %}価格応談{% else %}{{bkdata.kakakuM|default("")}}万円（税込）{% endif %}
 <br />
 <span class="class-orange">●</span>交　通
-{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default:""}}分　{% endif %}
-{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default:""}}分　{% endif %}
-{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default:""}}　{% endif %}
-{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default:""}}駅　{% endif %}
-{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default:""}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi1 %}{{bkdata.bkdata.ensnmi1|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi1 %}{{bkdata.bkdata.ekmi1|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn11 %}{{bkdata.bkdata.thHn11|default("")}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi2 %}　{{bkdata.bkdata.ensnmi2|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi2 %}{{bkdata.bkdata.ekmi2|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn12 %}{{bkdata.bkdata.thHn12|default("")}}分　{% endif %}
+{% if bkdata.bkdata.ensnmi3 %}　{{bkdata.bkdata.ensnmi3|default("")}}　{% endif %}
+{% if bkdata.bkdata.ekmi3 %}{{bkdata.bkdata.ekmi3|default("")}}駅　{% endif %}
+{% if bkdata.bkdata.thHn13 %}{{bkdata.bkdata.thHn13|default("")}}分　{% endif %}
 <br />
 
 <span class="class-orange">●</span>面　積
 
 {% if bkdata.bkdata.snyuMnskSyuBbnMnsk2 %}
-専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|floatformat:"-2"}}
+専有面積/{{bkdata.bkdata.snyuMnskSyuBbnMnsk2|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 {% if bkdata.bkdata.blcnyTrsMnsk %}
- 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|floatformat:"-2"}}
+ 　バルコニー（テラス）/{{bkdata.bkdata.blcnyTrsMnsk|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 {% if bkdata.bkdata.tcMcbnSumnsk %}
- 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|floatformat:"-2"}}
+ 　土地共有面積/{{bkdata.bkdata.tcMcbnSumnsk|float|round(2)}}
 m<sup>2</sup>
 {% endif %}
 
 <br />
 <span class="class-orange">●</span>間　取
-{{bkdata.bkdata.mdrHysu1|floatformat|default:""}}{{bkdata.bkdata.mdrTyp1|default:""}}
+{{bkdata.bkdata.mdrHysu1|default("")}}{{bkdata.bkdata.mdrTyp1|default("")}}
 <br />
                   </td>
                 <td align="right" valign="bottom"><a href="{{data.bkdatauri2}}{{bkdata.bkdata.bkID}}" ><img src="https://www.chikusaku-mansion.com/article/cmn_img/b-kuwashiku.jpg" alt="詳しくはこちら" width="107" height="19" border="0" vspace="3" /></a></td>

@@ -14,17 +14,17 @@ from application.models.member import member
 from datetime import datetime
 import re
 from application import timemanager
-import config
+from application import config
 import logging
 import smtplib
 from email.message import EmailMessage
 from email.utils import formataddr
 
 # SMTP Configuration (should be in Cloud Secret Manager)
-SMTP_SERVER = config.get('SMTP_SERVER', 'smtp.example.com')
-SMTP_PORT = config.get('SMTP_PORT', 587)
-SMTP_USER = config.get('SMTP_USER', '')
-SMTP_PASSWORD = config.get('SMTP_PASSWORD', '')
+SMTP_SERVER = getattr(config, 'SMTP_SERVER', 'smtp.example.com')
+SMTP_PORT = getattr(config, 'SMTP_PORT', 587)
+SMTP_USER = getattr(config, 'SMTP_USER', '')
+SMTP_PASSWORD = getattr(config, 'SMTP_PASSWORD', '')
 
 
 class messageManager:
@@ -261,38 +261,48 @@ class messageManager:
         if member_obj.CorpOrg_key_name != corp:
             raise messageManagerError("BadIDError: Invalid ID")
 
-        comblist = member_obj.refmeslist
+        # REVIEW-L2-FIXED: ndb migration - replace db backreference with explicit query
+        # Old db code: comblist = member_obj.refmeslist (automatic backreference)
+        # New ndb code: query msgcombinator where refmem == member_obj.key
+        comblist = msgcombinator.query(msgcombinator.refmem == member_obj.key)
         if combkind:
             comblist = comblist.filter(msgcombinator.combkind == combkind)
 
         res = []
         for comb in comblist:
+            # REVIEW-L2-FIXED: ndb Key needs .get() to access properties
+            # Old db: comb.refmes.subject (automatic dereferencing)
+            # New ndb: comb.refmes.get().subject (explicit dereferencing)
             try:
-                sub = comb.refmes.subject
+                msg = comb.refmes.get() if comb.refmes else None
+                if not msg:
+                    comb.key.delete()
+                    continue
+                sub = msg.subject
             except Exception as e:
                 logging.error("comb.refmes.subject ERROR: %s", str(e))
-                comb.delete()
+                comb.key.delete()
                 continue
 
-            if subject and comb.refmes.subject != subject:
+            if subject and msg.subject != subject:
                 continue
-            if kindname and comb.refmes.kindname != kindname:
+            if kindname and msg.kindname != kindname:
                 continue
-            if done is not None and comb.refmes.done != done:
+            if done is not None and msg.done != done:
                 continue
             if kill == False:
-                if comb.refmes and kill != comb.refmes.kill:
+                if msg and kill != msg.kill:
                     continue
             if reservationLower:
                 rt = timemanager.jst2utc_date(reservationLower).replace(tzinfo=None)
-                if comb.refmes.reservation < rt:
+                if msg.reservation < rt:
                     continue
             if reservationUpper:
                 rt = timemanager.jst2utc_date(reservationUpper).replace(tzinfo=None)
-                if comb.refmes.reservation >= rt:
+                if msg.reservation >= rt:
                     continue
 
-            res.append(comb.refmes)
+            res.append(msg)
 
         # REVIEW-L3: ソート処理が既に reverse=True を使用しており最適化済み
         # 効果: 旧コード(sort + reverse)より効率的
@@ -307,10 +317,12 @@ class messageManager:
     @classmethod
     def getmemlist(cls, message, combkind=None):
         """Get member list for a message"""
-        comblist = message.refmemlist
+        # Cloud NDB: ReferenceProperty の collection_name (refmemlist) は自動生成されないため
+        # 明示的なクエリで msgcombinator を取得する
+        query = msgcombinator.query(msgcombinator.refmes == message.key)
         if combkind:
-            comblist = comblist.filter(msgcombinator.combkind == combkind)
-        return comblist
+            query = query.filter(msgcombinator.combkind == combkind)
+        return query
 
     @classmethod
     def getmesbyID(cls, corp, id):
@@ -341,9 +353,12 @@ class messageManager:
     @classmethod
     def chkmes(cls, corp, id, message):
         """Check if message belongs to corporation"""
-        comblist = message.refmemlist
+        # Cloud NDB: ReferenceProperty の collection_name (refmemlist) は自動生成されないため
+        # 明示的なクエリで msgcombinator を取得する
+        comblist = msgcombinator.query(msgcombinator.refmes == message.key).fetch()
         for comb in comblist:
-            if comb.refmem.CorpOrg_key_name != corp:
+            mem = comb.refmem.get() if comb.refmem else None
+            if mem and mem.CorpOrg_key_name != corp:
                 raise messageManagerError("BadIDError: Invalid ID")
 
 

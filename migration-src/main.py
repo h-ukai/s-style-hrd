@@ -1,12 +1,36 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import Flask
+from flask import Flask, g, Blueprint
 import os
+from google.cloud import ndb
+
+# NDB クライアント初期化
+ndb_client = ndb.Client()
 
 # Flask アプリケーション初期化
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-please-change-in-production')
+
+# Blueprint for /test prefix (dispatch.yaml routes /test/* to this service)
+# すべてのルートは /test プレフィックス付きでアクセスされる
+test_bp = Blueprint('test', __name__, url_prefix='/test')
+
+# NDB コンテキストミドルウェア
+@app.before_request
+def before_request():
+    """リクエスト前に NDB コンテキストを開始"""
+    g.ndb_context = ndb_client.context()
+    g.ndb_context.__enter__()
+
+@app.teardown_request
+def teardown_request(exception=None):
+    """リクエスト後に NDB コンテキストをクリーンアップ"""
+    if hasattr(g, 'ndb_context'):
+        try:
+            g.ndb_context.__exit__(None, None, None)
+        except:
+            pass
 
 # 参照元: app.yaml から参照されています
 
@@ -27,7 +51,7 @@ from application.login import login_route, logout_route
 from application.duplicationcheck import duplication_check_route
 from application.json import json_service_route
 from application.memberedit import member_edit_route
-from application.test import test_route
+# from application.test import test_route  # /test now uses index_route
 from application.bksearch import bksearch_route
 from application.follow import follow_route
 from application.mypage import mypage_route
@@ -37,7 +61,7 @@ from application.addresslist import addresslist_route
 from application.show import show_route
 from application.mailinglist import mailinglist_route
 from application.uploadaddressset import addresssetupload_route
-from application.memberSearchandMail import memberSearchandMail, memberSearchandMailback, mailsendback
+# from application.memberSearchandMail import memberSearchandMail, memberSearchandMailback, mailsendback  # TODO: Flask migration incomplete
 from application.bksearchutl import filterWorker, filterWorker2
 # from application.cron import cron_jobs_route
 # from application.sendmsg import sendmsg_route
@@ -64,117 +88,120 @@ from application.index import index_route
 # webapp2.WSGIApplication のルーティングを Flask の @app.route に置き換える必要があります
 
 # Login/Logout ルート（移行済み）
-@app.route('/login', methods=['GET', 'POST'])
-@app.route('/login.html', methods=['GET', 'POST'])
+@test_bp.route('/login', methods=['GET', 'POST'])
+@test_bp.route('/login.html', methods=['GET', 'POST'])
 def login():
     """Login handler"""
     return login_route()
 
-@app.route('/logout', methods=['GET', 'POST'])
+@test_bp.route('/logout', methods=['GET', 'POST'])
 def logout():
     """Logout handler"""
     return logout_route()
 
 # 以下のルートは各モジュールのマイグレーション後に実装
-@app.route('/addresslist', methods=['GET', 'POST'])
+@test_bp.route('/addresslist', methods=['GET', 'POST'])
 def addresslist():
     """Address list handler"""
     return addresslist_route()
 
-@app.route('/show/<path:path>', methods=['GET', 'POST'])
+@test_bp.route('/show/<path:path>', methods=['GET', 'POST'])
 def show(path):
     """Property display handler"""
     return show_route()
 
-@app.route('/mailinglist', methods=['GET', 'POST'])
+@test_bp.route('/mailinglist', methods=['GET', 'POST'])
 def mailinglist():
     """Mailing list handler"""
     return mailinglist_route()
 
-@app.route('/csvupload/addressset.html', methods=['GET', 'POST'])
+@test_bp.route('/csvupload/addressset.html', methods=['GET', 'POST'])
 def uploadaddressset():
     """Address set upload handler"""
     return addresssetupload_route()
 
-@app.route('/membersearch', methods=['GET', 'POST'])
-def member_search():
-    """Member search and mail handler"""
-    handler = memberSearchandMail()
-    return handler.post()
+# TODO: memberSearchandMail Flask migration incomplete
+# @app.route('/membersearch', methods=['GET', 'POST'])
+# def member_search():
+#     """Member search and mail handler"""
+#     handler = memberSearchandMail()
+#     return handler.post()
+#
+# @app.route('/membersearchback', methods=['GET', 'POST'])
+# def member_search_back():
+#     """Member search back handler"""
+#     handler = memberSearchandMailback()
+#     return handler.post()
+#
+# @app.route('/mailsendback', methods=['GET', 'POST'])
+# def mail_send_back():
+#     """Mail send back handler"""
+#     handler = mailsendback()
+#     return handler.post()
 
-@app.route('/membersearchback', methods=['GET', 'POST'])
-def member_search_back():
-    """Member search back handler"""
-    handler = memberSearchandMailback()
-    return handler.post()
-
-@app.route('/mailsendback', methods=['GET', 'POST'])
-def mail_send_back():
-    """Mail send back handler"""
-    handler = mailsendback()
-    return handler.post()
-
-@app.route('/tasks/filterWorker', methods=['POST'])
+@test_bp.route('/tasks/filterWorker', methods=['POST'])
 def filter_worker():
     """Filter worker task handler"""
     handler = filterWorker()
     return handler.post()
 
-@app.route('/tasks/filterWorker2', methods=['POST'])
+@test_bp.route('/tasks/filterWorker2', methods=['POST'])
 def filter_worker2():
     """Filter worker2 task handler"""
     handler = filterWorker2()
     return handler.post()
 
-@app.route('/duplicationcheck', methods=['GET', 'POST'])
+@test_bp.route('/duplicationcheck', methods=['GET', 'POST'])
 def duplicationcheck():
     """Duplication check handler"""
     return duplication_check_route()
 
 # Group 2 routes (json, memberedit, test, bksearch, follow, mypage, bkjoukyoulist, bkdchk)
-@app.route('/jsonservice', methods=['GET', 'POST'])
+@test_bp.route('/jsonservice', methods=['GET', 'POST'])
 def jsonservice():
     """JSON service handler"""
     return json_service_route()
 
-@app.route('/memberedit', methods=['GET', 'POST'])
+@test_bp.route('/memberedit', methods=['GET', 'POST'])
 def memberedit():
     """Member edit handler"""
     return member_edit_route()
 
-@app.route('/test', methods=['GET', 'POST'])
+# /test と /test/ は Blueprint の url_prefix で自動的に /test になる
+@test_bp.route('/', methods=['GET', 'POST'])
+@test_bp.route('', methods=['GET', 'POST'])
 def test():
-    """Test handler"""
-    return test_route()
+    """Test handler - shows index page (same as /)"""
+    return index_route()
 
-@app.route('/bksearch', methods=['GET', 'POST'])
+@test_bp.route('/bksearch', methods=['GET', 'POST'])
 def bksearch():
     """Book search handler"""
     return bksearch_route()
 
-@app.route('/follow', methods=['GET', 'POST'])
-def follow():
+@test_bp.route('/follow/<path:path>', methods=['GET', 'POST'])
+@test_bp.route('/follow', methods=['GET', 'POST'])
+def follow(path=None):
     """Follow handler"""
     return follow_route()
 
-@app.route('/mypage', methods=['GET', 'POST'])
+@test_bp.route('/mypage', methods=['GET', 'POST'])
 def mypage():
     """My page handler"""
     return mypage_route()
 
-@app.route('/bkjoukyoulist', methods=['GET', 'POST'])
+@test_bp.route('/bkjoukyoulist', methods=['GET', 'POST'])
 def bkjoukyoulist():
     """Book situation list handler"""
     return bkjoukyoulist_route()
 
-@app.route('/bkdchk', methods=['GET', 'POST'])
+@test_bp.route('/bkdchk', methods=['GET', 'POST'])
 def bkdchk():
     """Book data check handler"""
     return bkdchk_route()
 
-# Index route (moved to Group 5)
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/index.html', methods=['GET', 'POST'])
+# Index route
+@test_bp.route('/index.html', methods=['GET', 'POST'])
 def index():
     """Index page handler"""
     return index_route()
@@ -239,6 +266,9 @@ def index():
 # - self.redirect() → return redirect()
 # - /_ah/mail/* ルートは廃止されました（IMAP ポーリング方式に移行）
 # - 各モジュールのマイグレーション完了後、ここにルート登録を追加してください
+
+# Blueprint を登録（dispatch.yaml が /test/* を test-service にルーティングするため）
+app.register_blueprint(test_bp)
 
 if __name__ == '__main__':
     # 開発サーバー起動（本番環境では gunicorn が使用されます）

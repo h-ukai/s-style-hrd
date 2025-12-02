@@ -7,15 +7,15 @@ import smtplib
 from email.message import EmailMessage
 import os
 import sys
-import config
-import messageManager
-from models.message import Message
-from models.member import member
+from application import config
+from application import messageManager
+from application.models.message import Message
+from application.models.member import member
 from application.SecurePage import SecurePage
-from wordstocker import wordstocker
-from bklistutl import bklistutl
-from GqlEncoder import GqlJsonEncoder
-import timemanager
+from application.wordstocker import wordstocker
+from application.bklistutl import bklistutl
+from application.GqlEncoder import GqlJsonEncoder
+from application import timemanager
 import datetime
 import re
 from application.mailvalidation import mailvalidation

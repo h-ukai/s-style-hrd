@@ -93,9 +93,10 @@ class bkdataSearchProbider(object):
                 self.tmpl_val["membername"] = self.memdb.name
                 self.tmpl_val["memberID"] = self.memberID
 
-        if self.memberID:
+        pages = []  # Initialize pages to empty list
+        if self.memberID and self.memdb:
             # ndb では Query オブジェクトから count() で件数取得
-            query = bksearchdata.query(bksearchdata.member == self.memdb.key)
+            query = bksearchdata.query(bksearchdata.member_key == self.memdb.key)
             allpage = query.count()
             pages = []
             for i in range(allpage):
@@ -183,7 +184,7 @@ class bkdataSearchProbider(object):
         mmdb = ndb.Key(member, key_name).get()
 
         # ndb では Query オブジェクトから count() で件数取得
-        query = bksearchdata.query(bksearchdata.member == mmdb.key)
+        query = bksearchdata.query(bksearchdata.member_key == mmdb.key)
 
         if not key or submit == "新規ページへ保存" or submit == "新規ページへ保存して検索" or submit == "search" or submit == "新規ページへ保存2" or submit == "新規ページへ保存して検索2" or submit == "search2":
             # REVIEW-L1: Flask request.values.get() に修正

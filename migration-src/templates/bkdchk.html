@@ -7,7 +7,7 @@
 <title>重複チェック</title>
 <link href="../css/styles.css" type="text/css" rel="stylesheet" media="all" />
 <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/blitzer/jquery-ui.css" rel="stylesheet" type="text/css"/><!-- jquery UI のcss-->
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js"></script><!-- jquery　本体-->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script><!-- jquery　本体-->
 <script type="text/javascript"  src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js"></script><!-- jquery-UI　本体-->
 <style>
 .ui-autocomplete-loading {
@@ -285,7 +285,7 @@ function showtbl(){
 		                            <option value="サンプル" >サンプル</option>
 									</select>
 									<select name="tdufknmi" id="tdufknmi" size="1">
-									   <option {{def.tdufknmi|default_if_none:" selected"}} value=""></option>
+									   <option {% if def.tdufknmi is none %} selected{% endif %} value=""></option>
 									   <option value="北海道" {% if def.tdufknmi == "北海道" %} selected{% endif %}>北海道</option>
 									   <option value="青森県" {% if def.tdufknmi == "青森県" %} selected{% endif %}>青森県</option>
 									   <option value="岩手県" {% if def.tdufknmi == "岩手県" %} selected{% endif %}>岩手県</option>
@@ -337,11 +337,11 @@ function showtbl(){
 								</td>
 								<td>
 									所在地1<input type="text" name="address1" id="address1"
-									value="{{shzicmi1|default_if_none:""}}{{current.shzicmi1|default_if_none:""}}" style="width: 100px;" />
+									value="{{shzicmi1|default("")}}{{current.shzicmi1|default("")}}" style="width: 100px;" />
 								</td>
 								<td>
 									所在地2<input type="text" name="address2" id="address2"
-									value="{{shzicmi2|default_if_none:""}}{{current.shzicmi2|default_if_none:""}}" style="width: 100px;" />
+									value="{{shzicmi2|default("")}}{{current.shzicmi2|default("")}}" style="width: 100px;" />
 								</td>
 								<td>
 								</td>
@@ -349,15 +349,15 @@ function showtbl(){
 							<tr>
 								<td>
 									土地面積<input type="text" name="tcMnsk2" id="tcMnsk2"
-									value="{{tcMnsk2|floatformat:"-2"|default_if_none:""}}" style="width: 100px;" />㎡
+									value="{% if tcMnsk2 %}{{tcMnsk2|float|round(2)}}{% endif %}" style="width: 100px;" />㎡
 								</td>
 								<td>
 									建物面積<input type="text" name="ttmnMnsk1" id="ttmnMnsk1"
-									value="{{ttmnMnsk1|floatformat:"-2"|default_if_none:""}}" style="width: 100px;" />㎡
+									value="{% if ttmnMnsk1 %}{{ttmnMnsk1|float|round(2)}}{% endif %}" style="width: 100px;" />㎡
 								</td>
 								<td>
 									建物専有面積<input type="text" name="snyuMnskSyuBbnMnsk2" id="snyuMnskSyuBbnMnsk2"
-									value="{{snyuMnskSyuBbnMnsk2|floatformat:"-2"|default_if_none:""}}" style="width: 100px;" />㎡
+									value="{% if snyuMnskSyuBbnMnsk2 %}{{snyuMnskSyuBbnMnsk2|float|round(2)}}{% endif %}" style="width: 100px;" />㎡
 								</td>
 							<!--
 							<tr>
@@ -385,42 +385,44 @@ function showtbl(){
 			<div style="width:900px; overflow-x:scroll;">
 			<table name="tbl" id ="tbl" style="border: 1px solid #ccc;" cellspacing="0" >
 				<thead id="tblthead">
+					{% if current %}
 					<tr>
-					<td sort=物件番号><a href="../bkedit.html?bkID={{current.bkID|default_if_none:""}}" target="_blank">{{current.bkID|default_if_none:""}}</a></td>
-					<td sort=作成状況>{{current.sksijky|default_if_none:""}}</td>
-					<td sort=自社管理欄>{{bkdb.jshKnrrn|default_if_none:""}}</td>
-					<td sort=業者名>{{current.kiinni|default_if_none:""}}</td>
-					<td sort=代表電話番号>{{current.dihyodnwbngu|default_if_none:""}}</td>
-					<td sort=データ元>{{current.dataSource|default_if_none:""}}</td>
-					<td sort=広告転載区分>{{current.kukkTnsiKbn|default_if_none:""}}</td>
-					<td sort=売買賃貸区分>{{current.bbchntikbn|default_if_none:""}}</td>
-					<td sort=データ種類>{{current.dtsyuri|default_if_none:""}}</td>
-					<td sort=物件種目>{{current.bkknShmk|default_if_none:""}}</td>
-					<td sort=価格>{{current.kkkuCnryu|floatformat|default_if_none:""}}</td>
-					<td sort=所在地名1>{{current.shzicmi1|default_if_none:""}}</td>
-					<td sort=所在地名2>{{current.shzicmi2|default_if_none:""}}</td>
-					<td sort=所在地名3>{{current.shzicmi3|default_if_none:""}}</td>
-					<td sort=建物名>{{current.ttmnmi|default_if_none:""}}</td>
-					<td sort=部屋番号>{{current.hyBngu|default_if_none:""}}</td>
-					<td sort=建物面積1>{{current.ttmnMnsk1|default_if_none:""}}</td>
-					<td sort=専有面積>{{current.snyuMnskSyuBbnMnsk2|floatformat|default_if_none:""}}</td>
-					<td sort=建物構造>{{current.ttmnKuzu|default_if_none:""}}</td>
-					<td sort=築年月(西暦)>{{current.cknngtSirk|date:"Y/m/d H:i:s"}}</td>
-					<td sort=坪単価>{{current.tbTnk|floatformat|default_if_none:""}}</td>
-					<td sort=登記簿地目>{{current.tukbCmk|default_if_none:""}}</td>
-					<td sort=土地面積>{{current.tcMnsk2|floatformat|default_if_none:""}}</td>
-					<td sort=現況有姿分譲地>{{current.bnjyuTkcGnkyuYusBnjyuc|default_if_none:""}}</td>
-					<td sort=接道方向1>{{current.stduHuku1|default_if_none:""}}</td>
-					<td sort=接道方向2>{{current.stduHuku2|default_if_none:""}}</td>
-					<td sort=接道状況>{{current.stduJyukyu|default_if_none:""}}</td>
-					<td sort=用途地域(1)>{{current.yutCik1|default_if_none:""}}</td>
-					<td sort=備考1>{{current.bku1|default_if_none:""}}</td>
-					<td sort=備考2>{{current.bku2|default_if_none:""}}</td>
-					<td sort=確認年月日>{{current.kknnngp|date:"Y/m/d H:i:s"}}</td>
-					<td sort=変更年月日>{{current.hnknngp|date:"Y/m/d H:i:s"}}</td>
-					<td sort=更新年月日>{{current.ksnnngp|date:"Y/m/d H:i:s"}}</td>
-					<td sort=登録年月日>{{current.turknngp|date:"Y/m/d H:i:s"}}</td>
+					<td sort=物件番号><a href="../bkedit.html?bkID={{current.bkID|default("")}}" target="_blank">{{current.bkID|default("")}}</a></td>
+					<td sort=作成状況>{{current.sksijky|default("")}}</td>
+					<td sort=自社管理欄>{{current.jshKnrrn|default("")}}</td>
+					<td sort=業者名>{{current.kiinni|default("")}}</td>
+					<td sort=代表電話番号>{{current.dihyodnwbngu|default("")}}</td>
+					<td sort=データ元>{{current.dataSource|default("")}}</td>
+					<td sort=広告転載区分>{{current.kukkTnsiKbn|default("")}}</td>
+					<td sort=売買賃貸区分>{{current.bbchntikbn|default("")}}</td>
+					<td sort=データ種類>{{current.dtsyuri|default("")}}</td>
+					<td sort=物件種目>{{current.bkknShmk|default("")}}</td>
+					<td sort=価格>{% if current and current.kkkuCnryu %}{{current.kkkuCnryu|float}}{% endif %}</td>
+					<td sort=所在地名1>{{current.shzicmi1|default("")}}</td>
+					<td sort=所在地名2>{{current.shzicmi2|default("")}}</td>
+					<td sort=所在地名3>{{current.shzicmi3|default("")}}</td>
+					<td sort=建物名>{{current.ttmnmi|default("")}}</td>
+					<td sort=部屋番号>{{current.hyBngu|default("")}}</td>
+					<td sort=建物面積1>{{current.ttmnMnsk1|default("")}}</td>
+					<td sort=専有面積>{% if current and current.snyuMnskSyuBbnMnsk2 %}{{current.snyuMnskSyuBbnMnsk2|float}}{% endif %}</td>
+					<td sort=建物構造>{{current.ttmnKuzu|default("")}}</td>
+					<td sort=築年月(西暦)>{{current.cknngtSirk|default("")}}</td>
+					<td sort=坪単価>{% if current and current.tbTnk %}{{current.tbTnk|float}}{% endif %}</td>
+					<td sort=登記簿地目>{{current.tukbCmk|default("")}}</td>
+					<td sort=土地面積>{% if current and current.tcMnsk2 %}{{current.tcMnsk2|float}}{% endif %}</td>
+					<td sort=現況有姿分譲地>{{current.bnjyuTkcGnkyuYusBnjyuc|default("")}}</td>
+					<td sort=接道方向1>{{current.stduHuku1|default("")}}</td>
+					<td sort=接道方向2>{{current.stduHuku2|default("")}}</td>
+					<td sort=接道状況>{{current.stduJyukyu|default("")}}</td>
+					<td sort=用途地域(1)>{{current.yutCik1|default("")}}</td>
+					<td sort=備考1>{{current.bku1|default("")}}</td>
+					<td sort=備考2>{{current.bku2|default("")}}</td>
+					<td sort=確認年月日>{{current.kknnngp|default("")}}</td>
+					<td sort=変更年月日>{{current.hnknngp|default("")}}</td>
+					<td sort=更新年月日>{{current.ksnnngp|default("")}}</td>
+					<td sort=登録年月日>{{current.turknngp|default("")}}</td>
 					</tr>
+					{% endif %}
 					<tr>
 					<th sort=物件番号>物件番号</th>
 					<th sort=作成状況>作成状況</th>

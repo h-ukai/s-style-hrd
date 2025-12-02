@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import request, render_template, jsonify
-import session
+from application import session
 import datetime
 
 from application.models.member import member

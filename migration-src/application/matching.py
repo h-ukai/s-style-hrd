@@ -16,7 +16,7 @@ from flask import request, Response, render_template
 from google.cloud import ndb, tasks_v2
 from google.protobuf.timestamp_pb2 import Timestamp
 
-import config
+from application import config
 from application.SecurePage import SecurePage
 from application.models.matchingdate import matchingdate
 from application.models.matchingparam import matchingparam
@@ -31,7 +31,7 @@ from application.mailvalidation import mailvalidation
 BASE_URL = config.BASE_URL
 ADMIN_EMAIL = config.ADMIN_EMAIL
 ADMIN_SYSTEM_ID = config.TNTOID
-PROJECT_ID = config.get('GCP_PROJECT_ID', 'your-project-id')
+PROJECT_ID = getattr(config, 'GCP_PROJECT_ID', 'your-project-id')
 TASKS_QUEUE = 'matching-tasks'
 TASKS_LOCATION = 'asia-northeast1'
 

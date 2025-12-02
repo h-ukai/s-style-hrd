@@ -1,0 +1,43 @@
+* fe931ff Secure API keys and add app.yaml templates
+* 671e785 Initial commit: Google App Engine Python migration project
+ M ../NEXT-SESSION-PROMPT.md
+ M ../TEMPLATE_MIGRATION_PROMPT.md
+ M application/GqlEncoder.py
+ M application/SecurePage.py
+ M application/SecurePageBase.py
+ M application/addresslist.py
+ M application/bksearch.py
+ M application/bksearchutl.py
+ M application/chkauth.py
+ M application/email_receiver.py
+ M application/index.py
+ M application/json.py
+ M application/login.py
+ M application/mailinglist.py
+ M application/matching.py
+ M application/memberSearchandMail.py
+ M application/memberedit.py
+ M application/messageManager.py
+ M application/proc.py
+ M application/sendmsg.py
+ M application/show.py
+ M application/test.py
+ M application/uploadaddressset.py
+ M main.py
+ M templates/followpagebase.html
+ M templates/index.html
+ M templates/login.html
+?? ../AGENT-PROMPTS.md
+?? ../MIGRATION-FIXES-CATALOG.md
+?? ../MIGRATION_TEST_DEPLOY_PROMPT.md
+?? ../PRODUCTION-REVERT-CHECKLIST.md
+?? ../SUBAGENT-FIX-LOG.md
+?? ../debug-session-log.txt
+?? ../dispatch.yaml
+?? ..debug-session-log.txt
+?? .gcloudignore
+?? fix_all_imports.py
+?? fix_imports.py
+?? fix_remaining_imports.py
+?? requirements.txt
+?? ../nul

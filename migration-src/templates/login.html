@@ -1,4 +1,4 @@
-{% extends "applicationpagebase.html" %}
+{% extends "userpagebase.html" %}
 
 {#
 Another login utility sample on Google App Engine
@@ -67,7 +67,7 @@ License   : Python
 </form>
 {% endif %}
 
-<iframe src="https://{{sitename}}/auth/setsid?sid={{sid}}" width="0" height="0" onload="{{onloadsclipt}}"></iframe>
+{% if sitename %}<iframe src="https://{{sitename}}/auth/setsid?sid={{sid}}" width="0" height="0" onload="{{onloadsclipt}}"></iframe>{% endif %}
 <br />
 <p>
 <a href="/regist?{{query_string}}">新規登録はこちら</a>

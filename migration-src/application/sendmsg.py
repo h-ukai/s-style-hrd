@@ -15,13 +15,13 @@ import smtplib
 from email.message import EmailMessage
 from flask import request, Response, render_template, redirect
 from google.cloud import ndb
-import config
+from application import config
 from application.SecurePageBase import SecurePageBase
 from application.models.member import member
 
 ADMIN_EMAIL = config.ADMIN_EMAIL
-SMTP_SERVER = config.get('SMTP_SERVER', 'smtp.example.com')
-SMTP_PORT = config.get('SMTP_PORT', 587)
+SMTP_SERVER = getattr(config, 'SMTP_SERVER', 'smtp.example.com')
+SMTP_PORT = getattr(config, 'SMTP_PORT', 587)
 
 
 def sendmsg_route():

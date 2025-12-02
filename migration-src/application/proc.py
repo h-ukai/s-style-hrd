@@ -35,7 +35,7 @@ def proc_route():
         urlstr = urlstr + "&branch_name=" + tmpl_val['branch_name']
         urlstr = urlstr + "&sitename=" + tmpl_val['sitename']
         urlstr = urlstr + "&togo=" + request.path
-        return redirect('/login?' + urlstr)
+        return redirect('/test/login?' + urlstr)
 
     # main command processing here
     # REVIEW-L2: Unused variable 'output' - original code writes "proc" before template

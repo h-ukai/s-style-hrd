@@ -46,3 +46,5 @@ csvupload/*.csv
 # App Engine config with secrets
 src/app.yaml
 migration-src/app.yaml
+nul
+node_modules/
