@@ -36,7 +36,7 @@ import sys
 import logging
 from urllib.parse import quote_plus, unquote_plus
 
-from flask import request, render_template, redirect, session as flask_session
+from flask import request, render_template, redirect, session as flask_session, make_response
 from google.cloud import ndb
 
 from application.models.member import member
@@ -52,6 +52,8 @@ def login_route():
     tmpl_val = {}
     tmpl_val['error_msg'] = ''
     auth = False
+    session_cookie_name = None  # Cookie設定用
+    session_cookie_value = None  # Cookie設定用
 
     # Get data from request
     # /login?corp_name=s-style&branch_name=hon&sitename=www.chikusaku.mansion.com
@@ -120,6 +122,8 @@ def login_route():
                 auth = True
                 tmpl_val['auth'] = True
                 tmpl_val['sid'] = ssn.sid_value
+                session_cookie_name = ssn_key  # Cookie名を保持
+                session_cookie_value = ssn.sid_value  # Cookie値を保持
 
                 # Session data
                 ssn.set_ssn_data('CorpOrg_key_name', user.CorpOrg_key_name)
@@ -162,10 +166,22 @@ def login_route():
 
     # Try to render custom template, fall back to generic
     try:
-        return render_template(template_path, **tmpl_val)
+        html_content = render_template(template_path, **tmpl_val)
     except:
         # Fall back to generic login template
-        return render_template('login.html', **tmpl_val)
+        html_content = render_template('login.html', **tmpl_val)
+
+    # レスポンス作成とCookie設定
+    response = make_response(html_content)
+    if session_cookie_name and session_cookie_value:
+        # セッションCookieを設定（オリジナルと同じ仕様）
+        response.set_cookie(
+            session_cookie_name,
+            session_cookie_value,
+            expires=datetime.datetime(2030, 1, 1),
+            path='/'
+        )
+    return response
 
 
 def logout_route():
