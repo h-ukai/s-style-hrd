@@ -9,6 +9,7 @@
 - `/bkedit.html` ルート修正完了（メニューからの遷移問題解決）
 - mdファイル整理完了
 - **Blobstore → GCS 移行調査完了**（4つのmdファイル作成）
+- **ソースコードTODO抽出完了**（6つの作業指示mdファイル作成）
 
 ### テスト環境URL
 - `https://s-style-hrd.appspot.com/test/` - インデックス
@@ -16,121 +17,169 @@
 
 ---
 
-## 次にやること
+## 本番移行に向けたTODOリスト
 
-### フェーズ1: テスト環境の機能検証（優先度: 高）
+### TODO-01: 環境変数・シークレット設定【優先度: 最高】
+**詳細**: `TODO-01-環境変数設定.md`
 
-1. **残りのルート機能テスト**
-   - 物件登録（保存・変更・確認ボタン）
-   - 物件検索
-   - その他の未テストルート
-
-2. **コンソールエラーの調査（任意）**
-   - bkedit.html: ローカルファイルパス参照（レガシー問題）
-   - bkedit.html: JavaScript null reference エラー
-   - Google Maps API 非推奨警告
-
----
-
-### フェーズ2: Blobstore → GCS 移行（優先度: 高）
-
-**参照ドキュメント**:
-- `BLOBSTORE-GCS-UNIFIED-SPEC.md` - **統一仕様書（最初に参照）**
-- `BLOBSTORE-GCS-MIGRATION-PLAN.md` - 実装プラン
-- `BLOBSTORE-GCS-DATA-MIGRATION-TOOL-SPEC.md` - データ移行ツール要件
-- `BLOBSTORE-GCS-MIGRATION-RESEARCH.md` - 調査報告書
-
-#### ステップ2-1: 前準備
-- [ ] GCS バケット作成: `s-style-hrd-blobs`
-- [ ] CORS 設定
-- [ ] `requirements.txt` に `google-cloud-storage>=2.10.0` 追加
-- [ ] `app.yaml` に環境変数追加
-
-#### ステップ2-2: コード実装
-- [ ] `gcs_utils.py` 新規作成（統一仕様書 セクション5.1）
-- [ ] `blobstoreutl.py` 修正（統一仕様書 セクション7.1）
-- [ ] `handler.py` 修正（統一仕様書 セクション7.3）
-- [ ] `mapreducemapper.py` 修正（統一仕様書 セクション7.2）
-- [ ] `main.py` にルート登録（統一仕様書 セクション5.2）
-- [ ] `templates/blobstoreutl.html` Django構文修正
-
-#### ステップ2-3: テスト環境検証
-- [ ] 画像アップロードテスト
-- [ ] 画像表示テスト（サムネイル・元画像）
-- [ ] ファイルダウンロードテスト
-- [ ] 削除テスト
-
-#### ステップ2-4: データ移行ツール作成
-- [ ] `tools/blobstore_migration/` ディレクトリ作成
-- [ ] スキャン機能実装
-- [ ] 移行処理実装
-- [ ] 検証機能実装
-
-#### ステップ2-5: 本番データ移行
-- [ ] ステージング環境でテスト移行
-- [ ] 本番移行実行（メンテナンス時間帯）
-- [ ] 移行後検証
+| 項目 | 状態 | 備考 |
+|------|------|------|
+| SECRET_KEY 設定 | ❌ | 本番用ランダム文字列生成必要 |
+| RECAPTCHA キー | ✅ | テスト環境に設定済み |
+| SENDGRID_API_KEY | ✅ | テスト環境に設定済み |
+| SMTP 認証情報 | ❌ | Secret Manager への移行必要 |
+| IMAP 認証情報 | ❌ | Secret Manager への移行必要 |
+| GCP_PROJECT | ❌ | app.yaml に追加必要 |
+| BASE_URL | ❌ | app.yaml に追加必要 |
+| GCS_BUCKET_NAME | ❌ | バケット作成後に設定 |
 
 ---
 
-### フェーズ3: 本番移行準備（優先度: 中）
+### TODO-02: Blobstore → GCS 移行【優先度: 高】
+**詳細**: `TODO-02-GCS移行.md`
+**統一仕様**: `BLOBSTORE-GCS-UNIFIED-SPEC.md`
 
-1. **本番移行チェックリスト確認**
-   - `PRODUCTION-REVERT-CHECKLIST.md` の確認
-   - 静的ファイルパス変更箇所の洗い出し
-   - Blueprintプレフィックス削除の準備
+| ステップ | 状態 | 内容 |
+|----------|------|------|
+| 2-1 前準備 | ❌ | GCSバケット作成、CORS設定 |
+| 2-2 コード実装 | ❌ | gcs_utils.py作成、各ファイル修正 |
+| 2-3 テスト | ❌ | アップロード/表示/削除テスト |
+| 2-4 移行ツール | ❌ | データ移行ツール作成 |
+| 2-5 本番移行 | ❌ | 既存データの移行 |
 
-2. **移行後の確認事項**
-   - 全ルートの動作確認
-   - 画像表示の確認
-   - パフォーマンス確認
+**影響ファイル**:
+- `application/blobstoreutl.py` - 12箇所のTODO
+- `application/handler.py` - 10箇所のTODO
+- `application/mapreducemapper.py` - 5箇所のTODO
 
 ---
 
-## 重要ファイル
+### TODO-03: メール機能移行【優先度: 高】
+**詳細**: `TODO-03-メール機能移行.md`
 
-| ファイル | 用途 |
-|----------|------|
-| **BLOBSTORE-GCS-UNIFIED-SPEC.md** | **Blob移行の統一仕様（必読）** |
-| BLOBSTORE-GCS-MIGRATION-PLAN.md | Blob移行の実装プラン |
+| 項目 | 状態 | 備考 |
+|------|------|------|
+| IMAP ポーリング設定 | ❌ | cron.yamlは設定済み、認証情報未設定 |
+| SMTP 送信設定 | ❌ | SendGrid API Key は設定済み |
+| Secret Manager 移行 | ❌ | 認証情報の安全な管理 |
+| memberSearchandMail Flask移行 | ❌ | webapp2 → Flask 変換必要 |
+| main.py ルート登録 | ❌ | check-incoming-mail エンドポイント |
+
+---
+
+### TODO-04: 本番移行対応【優先度: 中】
+**詳細**: `TODO-04-本番移行対応.md`
+**チェックリスト**: `PRODUCTION-REVERT-CHECKLIST.md`
+
+| 項目 | 状態 | 備考 |
+|------|------|------|
+| Blueprint URL プレフィックス変更 | ❌ | `/test` → 空 |
+| app.yaml service 行削除 | ❌ | test-service → default |
+| dispatch.yaml /test ルール削除 | ❌ | - |
+| ログインリダイレクト先変更 | ❌ | `/test/login` → `/login` |
+| 静的ファイルパス変更 | ❌ | テンプレート内の確認必要 |
+
+---
+
+### TODO-05: セキュリティ対応【優先度: 高】
+**詳細**: `TODO-05-セキュリティ対応.md`
+
+| 項目 | 状態 | 備考 |
+|------|------|------|
+| テストモードバイパス削除 | ✅ | 2025-12-01 完了 |
+| 認証情報の Secret Manager 移行 | ❌ | SMTP/IMAP |
+| CORS 設定制限 | ❌ | sendmsg.py |
+| XSS 対策 | ❌ | mapreducemapper.py |
+| 認証なしエンドポイント対策 | ❌ | uploadbkdata.py 等 |
+| Flask SECRET_KEY 設定 | ❌ | 本番用生成必要 |
+
+---
+
+### TODO-06: コードレビュー対応【優先度: 低】
+**詳細**: `TODO-06-コードレビュー対応.md`
+
+| レベル | 件数 | 内容 |
+|--------|------|------|
+| REVIEW-L1 | 約15件 | ndb構文、key()→key変換、Cloud Tasks |
+| REVIEW-L2 | 約20件 | パフォーマンス、例外処理 |
+| REVIEW-L3 | 約10件 | コード品質（u""削除等） |
+
+---
+
+## 推奨作業順序
+
+### フェーズ1: 環境準備（先に完了させる）
+1. **TODO-01**: 環境変数・シークレット設定
+2. **TODO-05**: セキュリティ対応（Secret Manager 移行含む）
+
+### フェーズ2: 機能実装
+3. **TODO-02**: Blobstore → GCS 移行
+4. **TODO-03**: メール機能移行
+
+### フェーズ3: 本番移行
+5. **TODO-04**: 本番移行対応
+6. **TODO-06**: コードレビュー対応（必要に応じて）
+
+---
+
+## 重要ファイル一覧
+
+### TODO作業指示書
+| ファイル名 | 概要 |
+|-----------|------|
+| **TODO-01-環境変数設定.md** | 環境変数とシークレットの設定手順 |
+| **TODO-02-GCS移行.md** | Blobstore→GCS移行の実装手順 |
+| **TODO-03-メール機能移行.md** | IMAP/SMTP移行の実装手順 |
+| **TODO-04-本番移行対応.md** | 本番環境への移行手順 |
+| **TODO-05-セキュリティ対応.md** | セキュリティ修正の手順 |
+| **TODO-06-コードレビュー対応.md** | コードレビュー指摘事項の修正 |
+
+### GCS移行関連
+| ファイル名 | 概要 |
+|-----------|------|
+| **BLOBSTORE-GCS-UNIFIED-SPEC.md** | **統一仕様書（必読）** |
+| BLOBSTORE-GCS-MIGRATION-PLAN.md | 実装プラン |
 | BLOBSTORE-GCS-DATA-MIGRATION-TOOL-SPEC.md | データ移行ツール要件 |
-| BLOBSTORE-GCS-MIGRATION-RESEARCH.md | Blob移行の調査報告 |
-| PRODUCTION-REVERT-CHECKLIST.md | 本番移行手順 |
+| BLOBSTORE-GCS-MIGRATION-RESEARCH.md | 調査報告書 |
+
+### その他
+| ファイル名 | 概要 |
+|-----------|------|
+| PRODUCTION-REVERT-CHECKLIST.md | 本番移行チェックリスト |
 | logs/summary-report.md | テスト結果サマリー |
 | mdcatalog.md | 使用中mdファイル一覧 |
-| .claude/CLAUDE.md | プロジェクト設定（自動読込） |
+| .claude/CLAUDE.md | プロジェクト設定 |
 
 ---
 
-## Blob移行の要点
+## クイックリファレンス
 
-### 移行対象
-| モデル | 対象 |
-|-------|-----|
-| Blob | ✅ `blobKey`, `bloburl`, `thumbnailurl`, `html` を更新 |
-| FileInfo | ✅ `blob` フィールドを更新 |
-| BKdata | ❌ 対象外（blob識別子なし） |
-| Bloblist | ❌ 除外（未使用） |
-
-### 統一エンドポイント
-```
-旧: /serve/{blobKey}, /gcs-serve/{blobKey}
-新: /blob/{object_name}
-    /blob/{object_name}/thumbnail
-```
-
-### GCS Object Name 形式
-```
-{CorpOrg_key}/{Branch_Key}/{bkID}/{blobNo}.{extension}
-例: s-style/hon/001/1.jpg
-```
-
----
-
-## 作業ディレクトリ
-`C:\Users\hrsuk\prj\s-style-hrd\migration-src\`
-
-## デプロイコマンド
+### デプロイコマンド（テスト環境）
 ```bash
 cd migration-src && gcloud app deploy app.yaml --project=s-style-hrd --version=test-$(date +%Y%m%dt%H%M%S) --no-promote
+```
+
+### 作業ディレクトリ
+```
+C:\Users\hrsuk\prj\s-style-hrd\migration-src\
+```
+
+### 主要な対象ファイル
+```
+# GCS移行
+application/blobstoreutl.py
+application/handler.py
+application/mapreducemapper.py
+
+# メール機能
+application/email_receiver.py
+application/messageManager.py
+application/sendmsg.py
+
+# 本番移行
+main.py
+app.yaml
+dispatch.yaml
+application/SecurePage.py
+application/proc.py
 ```

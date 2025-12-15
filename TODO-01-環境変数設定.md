@@ -1,0 +1,207 @@
+# TODO-01: 環境変数・シークレット設定
+
+**優先度**: 最高（本番移行前に必須）
+**作業種別**: 設定作業
+
+---
+
+## 概要
+
+アプリケーション動作に必要な環境変数とシークレットの設定。
+現在、多くの設定値がハードコードまたはプレースホルダーになっている。
+
+---
+
+## 必要な環境変数一覧
+
+### 1. Flask アプリケーション設定
+
+| 変数名 | 用途 | 現状 | 設定箇所 |
+|--------|------|------|----------|
+| `SECRET_KEY` | Flaskセッション暗号化キー | デフォルト値使用 | app.yaml |
+
+**対象ファイル**: `main.py:13`
+```python
+app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-please-change-in-production')
+```
+
+**対応**:
+1. 強力なランダム文字列を生成: `python -c "import secrets; print(secrets.token_hex(32))"`
+2. Cloud Secret Manager に保存
+3. app.yaml の env_variables に追加
+
+---
+
+### 2. reCAPTCHA 設定
+
+| 変数名 | 用途 | 現状 | 設定箇所 |
+|--------|------|------|----------|
+| `RECAPTCHA_SITE_KEY` | reCAPTCHA サイトキー | テスト環境に設定済み | app.yaml |
+| `RECAPTCHA_SECRET_KEY` | reCAPTCHA シークレットキー | テスト環境に設定済み | app.yaml |
+
+**対象ファイル**: `app.yaml:95-96`（現在設定済み）
+
+**本番対応**:
+- 本番用の reCAPTCHA キーペアを Google reCAPTCHA Console で取得
+- app.yaml.template のプレースホルダーを本番値に置換
+
+---
+
+### 3. SendGrid 設定
+
+| 変数名 | 用途 | 現状 | 設定箇所 |
+|--------|------|------|----------|
+| `SENDGRID_API_KEY` | SendGrid API キー | テスト環境に設定済み | app.yaml |
+
+**対象ファイル**: `app.yaml:98`（現在設定済み）
+
+**本番対応**:
+- SendGrid アカウントで本番用 API キーを確認
+- Cloud Secret Manager への移行を推奨
+
+---
+
+### 4. SMTP 設定（Cloud Secret Manager 推奨）
+
+| 変数名 | 用途 | 現状 | 設定箇所 |
+|--------|------|------|----------|
+| `SMTP_SERVER` | SMTPサーバーホスト | config.py でハードコード | config.py / Secret Manager |
+| `SMTP_PORT` | SMTPポート（通常587） | config.py でハードコード | config.py / Secret Manager |
+| `SMTP_USER` | SMTP認証ユーザー | 未設定 | Secret Manager |
+| `SMTP_PASSWORD` | SMTP認証パスワード | 未設定 | Secret Manager |
+
+**対象ファイル**:
+- `application/messageManager.py:23-27`
+- `application/sendmsg.py:153-158`
+
+**対応手順**:
+1. Cloud Secret Manager でシークレットを作成
+2. コードを修正して Secret Manager から取得
+```python
+from google.cloud import secretmanager
+
+def get_secret(secret_id):
+    client = secretmanager.SecretManagerServiceClient()
+    name = f"projects/s-style-hrd/secrets/{secret_id}/versions/latest"
+    response = client.access_secret_version(request={"name": name})
+    return response.payload.data.decode("UTF-8")
+
+SMTP_SERVER = get_secret('smtp-server')
+SMTP_PASSWORD = get_secret('smtp-password')
+```
+
+---
+
+### 5. IMAP 設定（Cloud Secret Manager 推奨）
+
+| 変数名 | 用途 | 現状 | 設定箇所 |
+|--------|------|------|----------|
+| `IMAP_SERVER` | IMAPサーバーホスト | プレースホルダー | config.py / Secret Manager |
+| `IMAP_PORT` | IMAPポート（通常993） | 993 | config.py |
+| `IMAP_USER` | IMAP認証ユーザー | プレースホルダー | Secret Manager |
+| `IMAP_PASSWORD` | IMAP認証パスワード | 未設定 | Secret Manager |
+
+**対象ファイル**: `application/email_receiver.py:28-32`
+```python
+# 現状
+IMAP_SERVER = getattr(config, 'IMAP_SERVER', 'imap.example.com')
+IMAP_PORT = getattr(config, 'IMAP_PORT', 993)
+IMAP_USER = getattr(config, 'IMAP_USER', 'mailbox@example.com')
+IMAP_PASSWORD = getattr(config, 'IMAP_PASSWORD', '')
+```
+
+**対応**: SMTP と同様に Secret Manager から取得するよう修正
+
+---
+
+### 6. GCP プロジェクト設定
+
+| 変数名 | 用途 | 現状 | 設定箇所 |
+|--------|------|------|----------|
+| `GCP_PROJECT` | GCPプロジェクトID | 環境変数から取得 | app.yaml |
+| `BASE_URL` | アプリケーションベースURL | config.py でハードコード | app.yaml |
+
+**対象ファイル**:
+- `application/bksearchutl.py:293, 303`
+- `application/tantochangetasks.py:22, 49`
+
+**対応**:
+```yaml
+# app.yaml に追加
+env_variables:
+  GCP_PROJECT: 's-style-hrd'
+  BASE_URL: 'https://s-style-hrd.appspot.com'
+```
+
+---
+
+### 7. Redis 設定（オプション）
+
+| 変数名 | 用途 | 現状 | 設定箇所 |
+|--------|------|------|----------|
+| `REDIS_HOST` | Redis ホスト | localhost | app.yaml |
+| `REDIS_PORT` | Redis ポート | 6379 | app.yaml |
+
+**対象ファイル**: `application/bksearchutl.py:31-32`
+
+**注意**: GAE Standard では Memorystore for Redis の使用にはVPCコネクタが必要
+
+---
+
+### 8. GCS バケット設定
+
+| 変数名 | 用途 | 現状 | 設定箇所 |
+|--------|------|------|----------|
+| `GCS_BUCKET_NAME` | GCSバケット名 | YOUR_BUCKET | app.yaml |
+
+**対象ファイル**: `application/mapreducemapper.py:119-122`
+```python
+# 現状（プレースホルダー）
+entity.thumbnailurl = f"https://storage.googleapis.com/YOUR_BUCKET/{entity.blobKey}"
+```
+
+**対応**:
+1. GCSバケット `s-style-hrd-blobs` を作成
+2. app.yaml に環境変数追加
+3. コードを修正して環境変数を参照
+
+---
+
+## 作業チェックリスト
+
+- [ ] Cloud Secret Manager API を有効化
+- [ ] `google-cloud-secret-manager` を requirements.txt に追加
+- [ ] シークレット取得ユーティリティ関数を作成
+- [ ] SMTP シークレットを Secret Manager に登録
+- [ ] IMAP シークレットを Secret Manager に登録
+- [ ] `SECRET_KEY` を生成して app.yaml に設定
+- [ ] `GCP_PROJECT` を app.yaml に設定
+- [ ] `BASE_URL` を app.yaml に設定
+- [ ] `GCS_BUCKET_NAME` を app.yaml に設定
+- [ ] messageManager.py を修正して Secret Manager を使用
+- [ ] email_receiver.py を修正して Secret Manager を使用
+- [ ] sendmsg.py を修正して Secret Manager を使用
+
+---
+
+## app.yaml 環境変数の最終形
+
+```yaml
+env_variables:
+  SECRET_KEY: 'YOUR_GENERATED_SECRET_KEY'
+  RECAPTCHA_SITE_KEY: 'YOUR_RECAPTCHA_SITE_KEY'
+  RECAPTCHA_SECRET_KEY: 'YOUR_RECAPTCHA_SECRET_KEY'
+  SENDGRID_API_KEY: 'YOUR_SENDGRID_API_KEY'
+  GCP_PROJECT: 's-style-hrd'
+  BASE_URL: 'https://s-style-hrd.appspot.com'
+  GCS_BUCKET_NAME: 's-style-hrd-blobs'
+  # REDIS_HOST: 'your-redis-host'  # Memorystore使用時のみ
+  # REDIS_PORT: '6379'
+```
+
+---
+
+## 関連ドキュメント
+
+- [Cloud Secret Manager](https://cloud.google.com/secret-manager/docs)
+- [GAE 環境変数](https://cloud.google.com/appengine/docs/standard/python3/config/appref#environment_variables)
