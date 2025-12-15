@@ -1,0 +1,26 @@
+/*input01*/
+div#input01 { background-color: #ebe6e1; height: 45px; margin-right: 10px; margin-bottom: 15px; margin-left: 10px; padding: 8px 10px; outline: solid 2px #d1cec9; }
+div#input01 .left { width: 85%; float: left; }
+div#input01 .right { text-align: right; }
+/*input02*/
+div#input02 { background-color: #ebe6e1; margin-right: 10px; margin-bottom: 15px; margin-left: 10px; padding: 8px 10px; outline: solid 2px #d1cec9; }
+div#input02 .left { width: 80%; float: left; }
+div#input02 .right { text-align: right; }
+/*input03*/
+div#input03 { background-color: #ebe6e1; height: 45px; margin-right: 10px; margin-bottom: 15px; margin-left: 10px; padding: 8px 10px; outline: solid 2px #d1cec9; }
+div#input03 .left { width: 85%; float: left; }
+div#input03 .right { text-align: right; }
+/*input04*/
+div#input04 { background-color: #ebe6e1; height: 390px; margin-right: 10px; margin-bottom: 15px; margin-left: 10px; padding: 8px 10px; outline: solid 2px #d1cec9; }
+div#input04 .left { width: 85%; float: left; }
+div#input04 .right { text-align: right; }
+/*input05*/
+div#input05 { background-color: #ebe6e1; height: 210px; margin-right: 10px; margin-bottom: 15px; margin-left: 10px; padding: 8px 10px; outline: solid 2px #d1cec9; }
+div#input05 .left { width: 85%; float: left; }
+div#input05 .right { text-align: right; }
+/*input06*/
+div#input06 { background-color: #d1cec9; text-align: center; margin-right: 10px; margin-bottom: 15px; margin-left: 10px; padding: 8px 10px; outline: solid 2px #d1cec9; }
+/*input07*/
+div#input07 { background-color: #ebe6e1; height: 45px; margin-right: 10px; margin-bottom: 15px; margin-left: 10px; padding: 8px 10px; outline: solid 2px #d1cec9; }
+div#input07 .left { float: left; }
+div#input07 .right { text-align: right; }

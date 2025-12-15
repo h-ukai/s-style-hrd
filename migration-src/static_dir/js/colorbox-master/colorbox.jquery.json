@@ -1,0 +1,30 @@
+{
+	"name": "colorbox",
+	"title": "Colorbox",
+	"description": "jQuery lightbox and modal window plugin",
+	"version": "1.5.9",
+	"dependencies": {
+		"jquery": ">=1.3.2"
+	},
+	"keywords": [
+		"modal",
+		"lightbox",
+		"window",
+		"popup",
+		"ui",
+		"jQuery"
+	],
+	"author": {
+		"name": "Jack Moore",
+		"url": "https://www.jacklmoore.com",
+		"email": "hello@jacklmoore.com"
+	},
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "https://www.opensource.org/licenses/mit-license.php"
+		}
+	],
+	"homepage": "https://www.jacklmoore.com/colorbox",
+	"demo": "https://www.jacklmoore.com/colorbox"
+}

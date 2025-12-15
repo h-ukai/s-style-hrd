@@ -3,20 +3,20 @@
     <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8" />
     <title>{% block titile %}顧客フォロー状況{% endblock titile %}</title>
-    <link href="../css/baselayout.css" type="text/css" rel="stylesheet" media="all" />
+    <link href="/test/css/baselayout.css" type="text/css" rel="stylesheet" media="all" />
     <!-- jquery UI のcss-->
-    <link href="../css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css"/>
+    <link href="/test/css/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" type="text/css"/>
     <!-- jquery UI のcss-->
-    <script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script><!-- jquery　本体-->
-    <script type="text/javascript"  src="../js/jquery-ui-1.10.4.custom.min.js"></script><!-- jquery-UI　本体-->
-    <script type="text/javascript" src="../js/follow.js"></script>
-    <script type="text/javascript" src="../js/jQueryMultiCheckbox.js"></script>
-    <script type="text/javascript" src="../js/autocomletecustom.js"></script>
-    <link type="text/css" rel="stylesheet" href="../css/autocomletecustom.css">
-    <link type="text/css" rel="stylesheet" href="../css/follow.css">
-    <script type="text/javascript" src="../js/jTPS_follow.js"></script>
-    <link type="text/css" rel="stylesheet" href="../css/jTPS_follow.css">
-    <link type="text/css" rel="stylesheet" href="../css/mark.css">
+    <script type="text/javascript" src="/test/js/jquery-1.11.1.min.js"></script><!-- jquery　本体-->
+    <script type="text/javascript"  src="/test/js/jquery-ui-1.10.4.custom.min.js"></script><!-- jquery-UI　本体-->
+    <script type="text/javascript" src="/test/js/follow.js"></script>
+    <script type="text/javascript" src="/test/js/jQueryMultiCheckbox.js"></script>
+    <script type="text/javascript" src="/test/js/autocomletecustom.js"></script>
+    <link type="text/css" rel="stylesheet" href="/test/css/autocomletecustom.css">
+    <link type="text/css" rel="stylesheet" href="/test/css/follow.css">
+    <script type="text/javascript" src="/test/js/jTPS_follow.js"></script>
+    <link type="text/css" rel="stylesheet" href="/test/css/jTPS_follow.css">
+    <link type="text/css" rel="stylesheet" href="/test/css/mark.css">
 
 {% block addheder %}
 
@@ -24,7 +24,7 @@
 {% endblock addheder %}
 <style>
 .ui-autocomplete-loading {
-	background: white url('../img/ui-anim_basic_16x16.gif') right center no-repeat;
+	background: white url('/test/img/ui-anim_basic_16x16.gif') right center no-repeat;
 }
 .ui-autocomplete {
     max-height: 300px;
@@ -374,7 +374,7 @@ function selectgo(obj){
 <a href="../login.html?logoff=true&corp_name={{CorpOrg_key_name|default("")}}&branch_name={{Branch_Key_name|default("")}}&sitename={{sitename|default("")}}&togo={{pagepath|default("")}}">ログオフ</a>
 <select name="selectName" size="1" onchange="window.open($(this).val(),'_balank');$(this).val(0);">
 <option selected="selected" value=0 >メニュー</option>
-<option value="../bkedit.html">物件登録</option>
+<option value="/bkedit.html">物件登録</option>
 <option value="../csvupload/bkdata.html">レインズアップロード</option>
 <option value="../matching/{{CorpOrg_key_name|default("")}}/{{Branch_Key_name|default("")}}/{{sitename|default("")}}/matching.html">マッチング</option>
 <option value="../bkjoukyoulist.html">資料作成状況</option>

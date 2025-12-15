@@ -42,7 +42,7 @@ def teardown_request(exception=None):
 from application.login import login_route, logout_route
 # from application.regist import regist_route, confirm_route, resign_route
 # from application.proc import proc_route
-# from application.bkedit import bkedit_route
+from application.bkedit import bkedit_route
 # from application.blobstoreutl import blobstore_utl_route, upload_route, serve_route
 # from application import handler
 # from application.RemoveAll import remove_all_route
@@ -199,6 +199,17 @@ def bkjoukyoulist():
 def bkdchk():
     """Book data check handler"""
     return bkdchk_route()
+
+# BKEdit route - ドメインルートからのパス（メニューから /bkedit.html でアクセス）
+@app.route('/bkedit.html', methods=['GET', 'POST'])
+def bkedit_root():
+    """BKEdit handler (root path)"""
+    return bkedit_route()
+
+@test_bp.route('/bkedit.html', methods=['GET', 'POST'])
+def bkedit():
+    """BKEdit handler (test prefix)"""
+    return bkedit_route()
 
 # Index route
 @test_bp.route('/index.html', methods=['GET', 'POST'])

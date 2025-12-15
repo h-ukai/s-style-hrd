@@ -1,0 +1,6 @@
+/*input01*/
+div#input01 { background-color: #ebe6e1; margin-right: 10px; margin-bottom: 15px; margin-left: 10px; padding: 10px; outline: solid 2px #d1cec9; }
+div#input01 .left { width: 85%; float: left; }
+div#input01 .right { text-align: right; }
+/*input02*/
+div#input02 { background-color: #ebe6e1; margin-right: 10px; margin-bottom: 15px; margin-left: 10px; padding: 10px; outline: solid 2px #d1cec9; }

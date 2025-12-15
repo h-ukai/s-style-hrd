@@ -1,0 +1,58 @@
+body, font {
+	margin: 0px;
+	padding: 0px;
+}
+li {
+	list-style-type: none;
+}
+ul {
+	margin: 0px;
+	padding: 0px;
+}
+
+
+.HagakiBox {
+	page-break-before: always;　/*改行*/
+	display: block;
+	padding: 0px;
+	margin: 0px;
+	height: 420px;
+	width: 280px;
+	text-align: center;
+	/border: 1px dotted #999;
+}
+.HagakiBox .AtenaAria {
+	display: block;
+	padding: 0px;
+	overflow: hidden;
+	width: 220px;
+	margin-top: 160px;
+	margin-right: auto;
+	margin-left: auto;
+	height: auto;
+}
+.HagakiBox .AtenaAria .Yuubin2 {
+	display: block;
+	padding: 0px;
+	text-align: left;
+	font-size: 11px;
+	line-height: 1.5em;
+	margin: 0px;
+}
+.HagakiBox .AtenaAria .Address2 {
+	display: block;
+	padding: 0px;
+	text-align: left;
+	font-size: 12px;
+	line-height: 1.5em;
+	margin: 0px;
+}
+.HagakiBox .AtenaAria .Name2 {
+	display: block;
+	padding: 0px;
+	text-align: right;
+	font-size: 15px;
+	line-height: 1.5em;
+	margin-right: 0px;
+	margin-top: 8px;
+}

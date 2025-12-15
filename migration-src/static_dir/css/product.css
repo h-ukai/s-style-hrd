@@ -1,0 +1,11 @@
+/* Menu-JavaScript combo[2009.04.11] */
+.ProductBoxWidth         {width: 100%;margin-bottom: 20px;padding: 0px;display: block;}
+.ProductBoxWidth .Left   {width: 220px;margin-right: 9px;padding: 0px;border: 1px dotted #65b752;float: left;display: block;}
+.ProductBoxWidth .Center {width: 220px;margin-right: 9px;padding: 0px;border: 1px dotted #65b752;float: left;display: block;}
+.ProductBoxWidth .Right  {width: 220px;margin-right: 0px;padding: 0px;border: 1px dotted #65b752;float: left;display: block;}
+.ProductBox .Image       {padding: 5px;text-align: center;border-style: none;display: block;}
+.ProductBox .Name        {padding: 5px;text-align: left;width: auto;height: 4em;font-weight: bold;color: #65B752;border-style: none;display: block;}
+.ProductBox .PriceBox    {padding: 5px;background-color: #f4ecd5;display: block;}
+.ProductBox .Price       {font-weight: bold;color: #65B752;display: block;float: left;}
+.ProductBox .More      a {line-height: 0px;font-size: 10px;padding: 0px;width: 87px;height: 16px;text-align: left;text-indent: -999em;
+                          background-image: url(../product/cmn_img/b-kochira.jpg);float: right;display: block;}
