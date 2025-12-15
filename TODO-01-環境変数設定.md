@@ -47,28 +47,16 @@ app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-please-change-in-p
 
 ---
 
-### 3. SendGrid 設定
+### 3. SMTP 設定（Cloud Secret Manager 推奨）
 
-| 変数名 | 用途 | 現状 | 設定箇所 |
-|--------|------|------|----------|
-| `SENDGRID_API_KEY` | SendGrid API キー | テスト環境に設定済み | app.yaml |
+**使用するSMTPサーバー**: Xserver
 
-**対象ファイル**: `app.yaml:98`（現在設定済み）
-
-**本番対応**:
-- SendGrid アカウントで本番用 API キーを確認
-- Cloud Secret Manager への移行を推奨
-
----
-
-### 4. SMTP 設定（Cloud Secret Manager 推奨）
-
-| 変数名 | 用途 | 現状 | 設定箇所 |
-|--------|------|------|----------|
-| `SMTP_SERVER` | SMTPサーバーホスト | config.py でハードコード | config.py / Secret Manager |
-| `SMTP_PORT` | SMTPポート（通常587） | config.py でハードコード | config.py / Secret Manager |
-| `SMTP_USER` | SMTP認証ユーザー | 未設定 | Secret Manager |
-| `SMTP_PASSWORD` | SMTP認証パスワード | 未設定 | Secret Manager |
+| 変数名 | 用途 | 設定値 | 設定箇所 |
+|--------|------|--------|----------|
+| `SMTP_SERVER` | SMTPサーバーホスト | `sv1231.xserver.jp` | Secret Manager |
+| `SMTP_PORT` | SMTPポート | `465`（SSL/TLS推奨）または `587`（STARTTLS） | Secret Manager |
+| `SMTP_USER` | SMTP認証ユーザー | `info@s-style.ne.jp` | Secret Manager |
+| `SMTP_PASSWORD` | SMTP認証パスワード | （Secret Managerに保存） | Secret Manager |
 
 **対象ファイル**:
 - `application/messageManager.py:23-27`
@@ -76,6 +64,12 @@ app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-please-change-in-p
 
 **対応手順**:
 1. Cloud Secret Manager でシークレットを作成
+   ```bash
+   echo -n "sv1231.xserver.jp" | gcloud secrets create smtp-server --data-file=-
+   echo -n "465" | gcloud secrets create smtp-port --data-file=-
+   echo -n "info@s-style.ne.jp" | gcloud secrets create smtp-user --data-file=-
+   echo -n "YOUR_PASSWORD" | gcloud secrets create smtp-password --data-file=-
+   ```
 2. コードを修正して Secret Manager から取得
 ```python
 from google.cloud import secretmanager
@@ -87,12 +81,25 @@ def get_secret(secret_id):
     return response.payload.data.decode("UTF-8")
 
 SMTP_SERVER = get_secret('smtp-server')
+SMTP_PORT = int(get_secret('smtp-port'))
+SMTP_USER = get_secret('smtp-user')
 SMTP_PASSWORD = get_secret('smtp-password')
+```
+
+**SSL/TLS接続の場合（ポート465）**:
+```python
+import smtplib
+import ssl
+
+context = ssl.create_default_context()
+with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, context=context) as server:
+    server.login(SMTP_USER, SMTP_PASSWORD)
+    server.send_message(message)
 ```
 
 ---
 
-### 5. IMAP 設定（Cloud Secret Manager 推奨）
+### 4. IMAP 設定（Cloud Secret Manager 推奨）
 
 | 変数名 | 用途 | 現状 | 設定箇所 |
 |--------|------|------|----------|
@@ -114,7 +121,7 @@ IMAP_PASSWORD = getattr(config, 'IMAP_PASSWORD', '')
 
 ---
 
-### 6. GCP プロジェクト設定
+### 5. GCP プロジェクト設定
 
 | 変数名 | 用途 | 現状 | 設定箇所 |
 |--------|------|------|----------|
@@ -135,7 +142,7 @@ env_variables:
 
 ---
 
-### 7. Redis 設定（オプション）
+### 6. Redis 設定（オプション）
 
 | 変数名 | 用途 | 現状 | 設定箇所 |
 |--------|------|------|----------|
@@ -148,7 +155,7 @@ env_variables:
 
 ---
 
-### 8. GCS バケット設定
+### 7. GCS バケット設定
 
 | 変数名 | 用途 | 現状 | 設定箇所 |
 |--------|------|------|----------|
@@ -191,13 +198,14 @@ env_variables:
   SECRET_KEY: 'YOUR_GENERATED_SECRET_KEY'
   RECAPTCHA_SITE_KEY: 'YOUR_RECAPTCHA_SITE_KEY'
   RECAPTCHA_SECRET_KEY: 'YOUR_RECAPTCHA_SECRET_KEY'
-  SENDGRID_API_KEY: 'YOUR_SENDGRID_API_KEY'
   GCP_PROJECT: 's-style-hrd'
   BASE_URL: 'https://s-style-hrd.appspot.com'
   GCS_BUCKET_NAME: 's-style-hrd-blobs'
   # REDIS_HOST: 'your-redis-host'  # Memorystore使用時のみ
   # REDIS_PORT: '6379'
 ```
+
+**注意**: SMTP認証情報はCloud Secret Managerで管理（app.yamlには含めない）
 
 ---
 

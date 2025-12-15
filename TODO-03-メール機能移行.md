@@ -122,20 +122,29 @@ IMAP_PASSWORD = '****'  # Secret Manager から取得
 
 ### 2. SMTP 設定（メール送信用）
 
-**オプションA: SendGrid（推奨）**
-```python
-SMTP_SERVER = 'smtp.sendgrid.net'
-SMTP_PORT = 587
-SMTP_USER = 'apikey'
-SMTP_PASSWORD = os.environ.get('SENDGRID_API_KEY')
-```
+**使用するSMTPサーバー**: Xserver
 
-**オプションB: Nifty SMTP**
+| 項目 | 設定値 |
+|------|--------|
+| SMTPサーバー | `sv1231.xserver.jp` |
+| ポート | `465`（SSL/TLS推奨）または `587`（STARTTLS） |
+| ユーザー名 | `info@s-style.ne.jp` |
+| パスワード | Cloud Secret Manager に保存 |
+
 ```python
-SMTP_SERVER = 'smtp.nifty.com'
-SMTP_PORT = 587
-SMTP_USER = 's-style.s8@nifty.com'
-SMTP_PASSWORD = '****'  # Secret Manager から取得
+# SSL/TLS接続（ポート465）
+import smtplib
+import ssl
+
+SMTP_SERVER = 'sv1231.xserver.jp'
+SMTP_PORT = 465
+SMTP_USER = 'info@s-style.ne.jp'
+SMTP_PASSWORD = get_secret('smtp-password')  # Secret Manager から取得
+
+context = ssl.create_default_context()
+with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, context=context) as server:
+    server.login(SMTP_USER, SMTP_PASSWORD)
+    server.send_message(message)
 ```
 
 ---
@@ -146,15 +155,16 @@ SMTP_PASSWORD = '****'  # Secret Manager から取得
 
 1. **シークレット作成**
    ```bash
-   # IMAP
+   # IMAP（メール受信用）
    echo -n "imap.nifty.com" | gcloud secrets create imap-server --data-file=-
    echo -n "s-style.s8@nifty.com" | gcloud secrets create imap-user --data-file=-
-   echo -n "YOUR_PASSWORD" | gcloud secrets create imap-password --data-file=-
+   echo -n "YOUR_IMAP_PASSWORD" | gcloud secrets create imap-password --data-file=-
 
-   # SMTP
-   echo -n "smtp.sendgrid.net" | gcloud secrets create smtp-server --data-file=-
-   echo -n "apikey" | gcloud secrets create smtp-user --data-file=-
-   # SMTP_PASSWORD は SendGrid API Key を使用（既に app.yaml に設定済み）
+   # SMTP（メール送信用 - Xserver）
+   echo -n "sv1231.xserver.jp" | gcloud secrets create smtp-server --data-file=-
+   echo -n "465" | gcloud secrets create smtp-port --data-file=-
+   echo -n "info@s-style.ne.jp" | gcloud secrets create smtp-user --data-file=-
+   echo -n "YOUR_SMTP_PASSWORD" | gcloud secrets create smtp-password --data-file=-
    ```
 
 2. **コード修正（email_receiver.py）**
@@ -175,13 +185,27 @@ SMTP_PASSWORD = '****'  # Secret Manager から取得
 
 3. **コード修正（messageManager.py）**
    ```python
-   import os
+   from google.cloud import secretmanager
+   import smtplib
+   import ssl
 
-   # SendGrid を使用する場合
-   SMTP_SERVER = 'smtp.sendgrid.net'
-   SMTP_PORT = 587
-   SMTP_USER = 'apikey'
-   SMTP_PASSWORD = os.environ.get('SENDGRID_API_KEY')
+   def get_secret(secret_id):
+       client = secretmanager.SecretManagerServiceClient()
+       name = f"projects/s-style-hrd/secrets/{secret_id}/versions/latest"
+       response = client.access_secret_version(request={"name": name})
+       return response.payload.data.decode("UTF-8")
+
+   # Xserver SMTP設定
+   SMTP_SERVER = get_secret('smtp-server')  # sv1231.xserver.jp
+   SMTP_PORT = int(get_secret('smtp-port'))  # 465
+   SMTP_USER = get_secret('smtp-user')  # info@s-style.ne.jp
+   SMTP_PASSWORD = get_secret('smtp-password')
+
+   # SSL/TLS接続
+   context = ssl.create_default_context()
+   with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, context=context) as server:
+       server.login(SMTP_USER, SMTP_PASSWORD)
+       server.send_message(message)
    ```
 
 ### ステップ2: main.py へのルート登録
@@ -223,11 +247,11 @@ def check_incoming_mail():
 - [ ] 既読フラグの扱いを決定（\Seen を付けるかどうか）
 - [ ] テスト環境でメール受信テスト
 
-### SMTP（メール送信）
-- [ ] SendGrid または SMTP プロバイダを決定
-- [ ] Secret Manager に SMTP 認証情報を登録
-- [ ] messageManager.py を修正して Secret Manager / 環境変数から認証情報を取得
-- [ ] sendmsg.py の SMTP 認証コードを有効化
+### SMTP（メール送信 - Xserver）
+- [ ] Secret Manager に SMTP 認証情報を登録（sv1231.xserver.jp, info@s-style.ne.jp）
+- [ ] messageManager.py を修正して Secret Manager から認証情報を取得
+- [ ] messageManager.py を SSL/TLS接続（ポート465）に対応
+- [ ] sendmsg.py の SMTP 認証コードを有効化・SSL対応
 - [ ] テスト環境でメール送信テスト
 
 ### memberSearchandMail 移行
@@ -255,6 +279,7 @@ curl -X POST https://s-style-hrd.appspot.com/test/tasks/check-incoming-mail \
 
 ## 関連ドキュメント
 
-- [SendGrid SMTP](https://docs.sendgrid.com/for-developers/sending-email/integrating-with-the-smtp-api)
 - [Cloud Secret Manager](https://cloud.google.com/secret-manager/docs)
+- [Xserver メール設定](https://www.xserver.ne.jp/manual/man_mail_setting.php)
 - [Nifty IMAP設定](https://support.nifty.com/support/manual/mail/imap.htm)
+- [Python smtplib SSL/TLS](https://docs.python.org/3/library/smtplib.html#smtplib.SMTP_SSL)

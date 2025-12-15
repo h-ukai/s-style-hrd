@@ -26,8 +26,7 @@
 |------|------|------|
 | SECRET_KEY 設定 | ❌ | 本番用ランダム文字列生成必要 |
 | RECAPTCHA キー | ✅ | テスト環境に設定済み |
-| SENDGRID_API_KEY | ✅ | テスト環境に設定済み |
-| SMTP 認証情報 | ❌ | Secret Manager への移行必要 |
+| SMTP 認証情報 | ❌ | Xserver（sv1231.xserver.jp）をSecret Managerに登録 |
 | IMAP 認証情報 | ❌ | Secret Manager への移行必要 |
 | GCP_PROJECT | ❌ | app.yaml に追加必要 |
 | BASE_URL | ❌ | app.yaml に追加必要 |
@@ -60,8 +59,8 @@
 | 項目 | 状態 | 備考 |
 |------|------|------|
 | IMAP ポーリング設定 | ❌ | cron.yamlは設定済み、認証情報未設定 |
-| SMTP 送信設定 | ❌ | SendGrid API Key は設定済み |
-| Secret Manager 移行 | ❌ | 認証情報の安全な管理 |
+| SMTP 送信設定 | ❌ | Xserver（sv1231.xserver.jp, ポート465 SSL） |
+| Secret Manager 移行 | ❌ | IMAP/SMTP認証情報の安全な管理 |
 | memberSearchandMail Flask移行 | ❌ | webapp2 → Flask 変換必要 |
 | main.py ルート登録 | ❌ | check-incoming-mail エンドポイント |
 
