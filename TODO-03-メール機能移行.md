@@ -107,17 +107,21 @@ SMTP_PASSWORD = getattr(config, 'SMTP_PASSWORD', '')
 
 ### 1. IMAP 設定（メール受信用）
 
-使用するメールサービス:
-- **プロバイダ**: Nifty (`s-style.s8@nifty.com` の場合)
-- **IMAPサーバー**: `imap.nifty.com`
-- **IMAPポート**: 993 (SSL)
+**使用するIMAPサーバー**: Xserver
+
+| 項目 | 設定値 |
+|------|--------|
+| IMAPサーバー | `sv1231.xserver.jp` |
+| ポート | `993`（SSL） |
+| ユーザー名 | `info@s-style.ne.jp` |
+| パスワード | Cloud Secret Manager に保存（SMTPと共通） |
 
 ```python
-# config.py に追加（または Secret Manager で管理）
-IMAP_SERVER = 'imap.nifty.com'
+# Secret Manager から取得
+IMAP_SERVER = get_secret('imap-server')  # sv1231.xserver.jp
 IMAP_PORT = 993
-IMAP_USER = 's-style.s8@nifty.com'
-IMAP_PASSWORD = '****'  # Secret Manager から取得
+IMAP_USER = get_secret('imap-user')  # info@s-style.ne.jp
+IMAP_PASSWORD = get_secret('smtp-password')  # SMTPと共通
 ```
 
 ### 2. SMTP 設定（メール送信用）
@@ -155,17 +159,17 @@ with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, context=context) as server:
 
 1. **シークレット作成**
    ```bash
-   # IMAP（メール受信用）
-   echo -n "imap.nifty.com" | gcloud secrets create imap-server --data-file=-
-   echo -n "s-style.s8@nifty.com" | gcloud secrets create imap-user --data-file=-
-   echo -n "YOUR_IMAP_PASSWORD" | gcloud secrets create imap-password --data-file=-
+   # IMAP/SMTP共通（Xserver - info@s-style.ne.jp）
+   echo -n "sv1231.xserver.jp" | gcloud secrets create mail-server --data-file=-
+   echo -n "info@s-style.ne.jp" | gcloud secrets create mail-user --data-file=-
+   echo -n "YOUR_PASSWORD" | gcloud secrets create mail-password --data-file=-
 
-   # SMTP（メール送信用 - Xserver）
-   echo -n "sv1231.xserver.jp" | gcloud secrets create smtp-server --data-file=-
+   # ポート番号
+   echo -n "993" | gcloud secrets create imap-port --data-file=-
    echo -n "465" | gcloud secrets create smtp-port --data-file=-
-   echo -n "info@s-style.ne.jp" | gcloud secrets create smtp-user --data-file=-
-   echo -n "YOUR_SMTP_PASSWORD" | gcloud secrets create smtp-password --data-file=-
    ```
+
+   **注意**: IMAP/SMTPは同じXserverアカウントを使用するため、サーバー・ユーザー・パスワードは共通
 
 2. **コード修正（email_receiver.py）**
    ```python
@@ -177,10 +181,11 @@ with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, context=context) as server:
        response = client.access_secret_version(request={"name": name})
        return response.payload.data.decode("UTF-8")
 
-   IMAP_SERVER = get_secret('imap-server')
-   IMAP_PORT = 993
-   IMAP_USER = get_secret('imap-user')
-   IMAP_PASSWORD = get_secret('imap-password')
+   # Xserver IMAP設定
+   IMAP_SERVER = get_secret('mail-server')  # sv1231.xserver.jp
+   IMAP_PORT = int(get_secret('imap-port'))  # 993
+   IMAP_USER = get_secret('mail-user')  # info@s-style.ne.jp
+   IMAP_PASSWORD = get_secret('mail-password')
    ```
 
 3. **コード修正（messageManager.py）**
@@ -195,11 +200,11 @@ with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, context=context) as server:
        response = client.access_secret_version(request={"name": name})
        return response.payload.data.decode("UTF-8")
 
-   # Xserver SMTP設定
-   SMTP_SERVER = get_secret('smtp-server')  # sv1231.xserver.jp
+   # Xserver SMTP設定（IMAP/SMTPでサーバー・ユーザー・パスワード共通）
+   SMTP_SERVER = get_secret('mail-server')  # sv1231.xserver.jp
    SMTP_PORT = int(get_secret('smtp-port'))  # 465
-   SMTP_USER = get_secret('smtp-user')  # info@s-style.ne.jp
-   SMTP_PASSWORD = get_secret('smtp-password')
+   SMTP_USER = get_secret('mail-user')  # info@s-style.ne.jp
+   SMTP_PASSWORD = get_secret('mail-password')
 
    # SSL/TLS接続
    context = ssl.create_default_context()
@@ -238,9 +243,14 @@ def check_incoming_mail():
 
 ## 作業チェックリスト
 
-### IMAP（メール受信）
-- [ ] IMAP サーバー情報を確認（プロバイダのドキュメント参照）
-- [ ] Secret Manager に IMAP 認証情報を登録
+### Secret Manager 登録（IMAP/SMTP共通 - Xserver）
+- [ ] `mail-server` シークレット作成（sv1231.xserver.jp）
+- [ ] `mail-user` シークレット作成（info@s-style.ne.jp）
+- [ ] `mail-password` シークレット作成
+- [ ] `imap-port` シークレット作成（993）
+- [ ] `smtp-port` シークレット作成（465）
+
+### IMAP（メール受信 - Xserver）
 - [ ] email_receiver.py を修正して Secret Manager から認証情報を取得
 - [ ] main.py に `/tasks/check-incoming-mail` ルートを登録
 - [ ] cron.yaml の設定を確認
@@ -248,7 +258,6 @@ def check_incoming_mail():
 - [ ] テスト環境でメール受信テスト
 
 ### SMTP（メール送信 - Xserver）
-- [ ] Secret Manager に SMTP 認証情報を登録（sv1231.xserver.jp, info@s-style.ne.jp）
 - [ ] messageManager.py を修正して Secret Manager から認証情報を取得
 - [ ] messageManager.py を SSL/TLS接続（ポート465）に対応
 - [ ] sendmsg.py の SMTP 認証コードを有効化・SSL対応
@@ -281,5 +290,5 @@ curl -X POST https://s-style-hrd.appspot.com/test/tasks/check-incoming-mail \
 
 - [Cloud Secret Manager](https://cloud.google.com/secret-manager/docs)
 - [Xserver メール設定](https://www.xserver.ne.jp/manual/man_mail_setting.php)
-- [Nifty IMAP設定](https://support.nifty.com/support/manual/mail/imap.htm)
 - [Python smtplib SSL/TLS](https://docs.python.org/3/library/smtplib.html#smtplib.SMTP_SSL)
+- [Python imaplib](https://docs.python.org/3/library/imaplib.html)

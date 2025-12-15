@@ -101,23 +101,26 @@ with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, context=context) as server:
 
 ### 4. IMAP 設定（Cloud Secret Manager 推奨）
 
-| 変数名 | 用途 | 現状 | 設定箇所 |
-|--------|------|------|----------|
-| `IMAP_SERVER` | IMAPサーバーホスト | プレースホルダー | config.py / Secret Manager |
-| `IMAP_PORT` | IMAPポート（通常993） | 993 | config.py |
-| `IMAP_USER` | IMAP認証ユーザー | プレースホルダー | Secret Manager |
-| `IMAP_PASSWORD` | IMAP認証パスワード | 未設定 | Secret Manager |
+**使用するIMAPサーバー**: Xserver
+
+| 変数名 | 用途 | 設定値 | 設定箇所 |
+|--------|------|--------|----------|
+| `IMAP_SERVER` | IMAPサーバーホスト | `sv1231.xserver.jp` | Secret Manager |
+| `IMAP_PORT` | IMAPポート | `993`（SSL） | Secret Manager |
+| `IMAP_USER` | IMAP認証ユーザー | `info@s-style.ne.jp` | Secret Manager |
+| `IMAP_PASSWORD` | IMAP認証パスワード | （SMTPと同じ） | Secret Manager |
 
 **対象ファイル**: `application/email_receiver.py:28-32`
-```python
-# 現状
-IMAP_SERVER = getattr(config, 'IMAP_SERVER', 'imap.example.com')
-IMAP_PORT = getattr(config, 'IMAP_PORT', 993)
-IMAP_USER = getattr(config, 'IMAP_USER', 'mailbox@example.com')
-IMAP_PASSWORD = getattr(config, 'IMAP_PASSWORD', '')
+
+**対応手順**:
+```bash
+echo -n "sv1231.xserver.jp" | gcloud secrets create imap-server --data-file=-
+echo -n "993" | gcloud secrets create imap-port --data-file=-
+echo -n "info@s-style.ne.jp" | gcloud secrets create imap-user --data-file=-
+# パスワードはSMTPと同じ（smtp-passwordを共用可能）
 ```
 
-**対応**: SMTP と同様に Secret Manager から取得するよう修正
+**注意**: SMTP/IMAPで同じメールアカウントを使用するため、パスワードは共通
 
 ---
 

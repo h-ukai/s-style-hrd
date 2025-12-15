@@ -58,9 +58,8 @@
 
 | 項目 | 状態 | 備考 |
 |------|------|------|
-| IMAP ポーリング設定 | ❌ | cron.yamlは設定済み、認証情報未設定 |
-| SMTP 送信設定 | ❌ | Xserver（sv1231.xserver.jp, ポート465 SSL） |
-| Secret Manager 移行 | ❌ | IMAP/SMTP認証情報の安全な管理 |
+| IMAP/SMTP 設定 | ❌ | Xserver（sv1231.xserver.jp）共通アカウント |
+| Secret Manager 移行 | ❌ | mail-server, mail-user, mail-password 登録 |
 | memberSearchandMail Flask移行 | ❌ | webapp2 → Flask 変換必要 |
 | main.py ルート登録 | ❌ | check-incoming-mail エンドポイント |
 
