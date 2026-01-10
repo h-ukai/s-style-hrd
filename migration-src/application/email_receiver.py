@@ -24,12 +24,7 @@ from application import config
 from application.email_decoder import email_decoder
 from application.messageManager import messageManager
 from application.models.member import member
-
-# IMAP server configuration (should be in Cloud Secret Manager)
-IMAP_SERVER = getattr(config, 'IMAP_SERVER', 'imap.example.com')
-IMAP_PORT = getattr(config, 'IMAP_PORT', 993)
-IMAP_USER = getattr(config, 'IMAP_USER', 'mailbox@example.com')
-IMAP_PASSWORD = getattr(config, 'IMAP_PASSWORD', '')
+from application.secret_manager import get_imap_config
 
 
 def mail_handler_route():
@@ -48,12 +43,13 @@ def mail_handler_route():
 
 def check_incoming_mail():
     """Check IMAP mailbox for new messages and process them"""
-    # REVIEW-L2: IMAP接続情報が平文で設定されている
-    # 推奨: Cloud Secret Manager から認証情報を取得するようにセキュリティを強化
     try:
+        # IMAP設定をSecret Managerから取得
+        imap_config = get_imap_config()
+
         # Connect to IMAP server (SSL)
-        imap = imaplib.IMAP4_SSL(IMAP_SERVER, IMAP_PORT)
-        imap.login(IMAP_USER, IMAP_PASSWORD)
+        imap = imaplib.IMAP4_SSL(imap_config['server'], imap_config['port'])
+        imap.login(imap_config['user'], imap_config['password'])
 
         # Select INBOX
         status, mailbox_data = imap.select('INBOX')

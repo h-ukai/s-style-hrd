@@ -12,16 +12,16 @@ import urllib.parse
 import logging
 import sys
 import smtplib
+import ssl
 from email.message import EmailMessage
 from flask import request, Response, render_template, redirect
 from google.cloud import ndb
 from application import config
 from application.SecurePageBase import SecurePageBase
 from application.models.member import member
+from application.secret_manager import get_smtp_config
 
 ADMIN_EMAIL = config.ADMIN_EMAIL
-SMTP_SERVER = getattr(config, 'SMTP_SERVER', 'smtp.example.com')
-SMTP_PORT = getattr(config, 'SMTP_PORT', 587)
 
 
 def sendmsg_route():
@@ -135,8 +135,6 @@ class Sendmsg(SecurePageBase):
 
     def _send_mail(self, email, subject):
         """Send email using SMTP (migration from Mail API)"""
-        # REVIEW-L2: 旧コード request.POST.multi._items の動作確認が必要
-        # 推奨: request.form.items() が正しく POST データを取得しているか確認
         msgbody = ''
         # Build message body from request parameters
         for key, value in request.form.items():
@@ -149,14 +147,14 @@ class Sendmsg(SecurePageBase):
         message['Subject'] = subject
         message.set_content(msgbody + "\n" + self.dumpdata())
 
-        # Send via SMTP
-        # REVIEW-L2: SMTP認証がコメントアウトされている
-        # 推奨: Cloud Secret Manager から認証情報を取得し、server.login() を有効化
+        # SMTP設定をSecret Managerから取得
+        smtp_config = get_smtp_config()
+
+        # SSL/TLS接続（ポート465）で送信
         try:
-            with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-                server.starttls()
-                # Note: SMTP credentials should be stored in Cloud Secret Manager
-                # server.login(config.SMTP_USER, config.SMTP_PASSWORD)
+            context = ssl.create_default_context()
+            with smtplib.SMTP_SSL(smtp_config['server'], smtp_config['port'], context=context) as server:
+                server.login(smtp_config['user'], smtp_config['password'])
                 server.send_message(message)
                 logging.info("Email sent successfully to %s", email)
         except Exception as e:

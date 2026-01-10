@@ -17,14 +17,10 @@ from application import timemanager
 from application import config
 import logging
 import smtplib
+import ssl
 from email.message import EmailMessage
 from email.utils import formataddr
-
-# SMTP Configuration (should be in Cloud Secret Manager)
-SMTP_SERVER = getattr(config, 'SMTP_SERVER', 'smtp.example.com')
-SMTP_PORT = getattr(config, 'SMTP_PORT', 587)
-SMTP_USER = getattr(config, 'SMTP_USER', '')
-SMTP_PASSWORD = getattr(config, 'SMTP_PASSWORD', '')
+from application.secret_manager import get_smtp_config
 
 
 class messageManager:
@@ -42,8 +38,6 @@ class messageManager:
             body: Plain text body (optional)
             html: HTML body (optional)
         """
-        # REVIEW-L2: SMTP接続情報が平文で設定されている
-        # 推奨: Cloud Secret Manager から認証情報を取得するようにセキュリティを強化
         try:
             # Create EmailMessage (Python 3.11 standard library)
             message = EmailMessage()
@@ -59,11 +53,13 @@ class messageManager:
             else:
                 message.set_content("", subtype='plain')
 
-            # Send via SMTP
-            with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-                server.starttls()
-                if SMTP_USER and SMTP_PASSWORD:
-                    server.login(SMTP_USER, SMTP_PASSWORD)
+            # SMTP設定をSecret Managerから取得
+            smtp_config = get_smtp_config()
+
+            # SSL/TLS接続（ポート465）で送信
+            context = ssl.create_default_context()
+            with smtplib.SMTP_SSL(smtp_config['server'], smtp_config['port'], context=context) as server:
+                server.login(smtp_config['user'], smtp_config['password'])
                 server.send_message(message)
                 logging.warning('送信しました')
 
