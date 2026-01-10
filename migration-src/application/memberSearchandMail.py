@@ -260,3 +260,327 @@ class memberSearchandMail(memberSearchandMailbase):
             response = client.create_task(request={'parent': parent, 'task': task})
         except Exception as e:
             print(f"Error creating cloud task: {e}")
+
+
+class mailsendback(memberSearchandMailbase):
+    """メール送信バックエンドタスク"""
+
+    def get(self, **kwargs):
+        return self.post(**kwargs)
+
+    def post(self, **kwargs):
+        self.memberSearchandMailbase_init()
+        memberID = request.values.get("memberID", "")
+        mailbody = ""
+
+        if self.submit == u"メール送信":
+            if self.htmlmail == "1":
+                htmlml = True
+                try:
+                    mailbody = self.makebody(self.memsitename, self.msID, self.media, self.tmpl_val)
+                except IOError:
+                    mailbody = u'適切なテンプレートファイルが存在しません。顧客データのサイト名等をチェックしてください。'
+                    self.tmpl_val['subject'] += u'送信時エラー 　テンプレートエラー'
+                    msgkey2 = messageManager.messageManager.post(
+                        corp=self.corp_name, sub=self.tmpl_val['subject'], body=mailbody,
+                        done=False, memfrom=memberID, kindname=u"顧客リストエラー",
+                        combkind=u"所有", msgkey=None,
+                        commentto=self._get_message(self.msgkey), mailto=None
+                    )
+                    return "Template error", 400
+                except Exception as e:
+                    mailbody = u"未確認のエラーが発生したため送信できませんでした\n%s" % str(e)
+                    self.tmpl_val['subject'] += u'送信時エラー　未確認システムエラー'
+                    msgkey2 = messageManager.messageManager.post(
+                        corp=self.corp_name, sub=self.tmpl_val['subject'], body=mailbody,
+                        done=False, memfrom=memberID, kindname=u"顧客リストエラー",
+                        combkind=u"所有", msgkey=None,
+                        commentto=self._get_message(self.msgkey), mailto=None
+                    )
+                    return "System error", 500
+            else:
+                htmlml = False
+                try:
+                    mailbody = self.makebody(self.memsitename, self.msID, self.media, self.tmpl_val, 'bklistml.txt')
+                except IOError:
+                    mailbody = u'適切なテンプレートファイルが存在しません。顧客データのサイト名等をチェックしてください。'
+                    self.tmpl_val['subject'] += u'送信時エラー 　テンプレートエラー'
+                    msgkey2 = messageManager.messageManager.post(
+                        corp=self.corp_name, sub=self.tmpl_val['subject'], body=mailbody,
+                        done=False, memfrom=memberID, kindname=u"顧客リストエラー",
+                        combkind=u"所有", msgkey=None,
+                        commentto=self._get_message(self.msgkey), mailto=None
+                    )
+                    return "Template error", 400
+                except Exception as e:
+                    mailbody = u"未確認のエラーが発生したため送信できませんでした\n%s" % str(e)
+                    self.tmpl_val['subject'] += u'送信時エラー　未確認システムエラー'
+                    msgkey2 = messageManager.messageManager.post(
+                        corp=self.corp_name, sub=self.tmpl_val['subject'], body=mailbody,
+                        done=False, memfrom=memberID, kindname=u"顧客リストエラー",
+                        combkind=u"所有", msgkey=None,
+                        commentto=self._get_message(self.msgkey), mailto=None
+                    )
+                    return "System error", 500
+
+            msgkey2 = messageManager.messageManager.post(
+                corp=self.corp_name, sub=self.tmpl_val['subject'], body=mailbody,
+                done=True, memfrom=memberID, kindname=u"メーリングリスト",
+                combkind=u"所有", msgkey=None,
+                commentto=self._get_message(self.msgkey), mailto="member", htmlmail=htmlml
+            )
+        elif self.submit == u"リスト保存":
+            msgkey2 = messageManager.messageManager.post(
+                corp=self.corp_name, sub=self.tmpl_val['subject'], body=mailbody,
+                done=False, memfrom=memberID, kindname=u"顧客リスト",
+                combkind=u"所有", msgkey=None,
+                commentto=self._get_message(self.msgkey), mailto=None
+            )
+
+        return "OK", 200
+
+    def _get_message(self, msgkey):
+        """メッセージキーからMessageオブジェクトを取得"""
+        if not msgkey:
+            return None
+        try:
+            return ndb.Key(Message, int(msgkey)).get()
+        except:
+            return None
+
+
+class memberSearchandMailback(memberSearchandMailbase):
+    """メンバー検索バックエンドタスク"""
+
+    def get(self, **kwargs):
+        return self.post(**kwargs)
+
+    def post(self, **kwargs):
+        try:
+            rep = ''
+            self.memberSearchandMailbase_init()
+            self.tmpl_val['msgkey'] = str(self.msgkey)
+            memlist = []
+
+            # followsubject でメッセージ検索
+            if self.followsubject:
+                meslist = Message.query(
+                    Message.subject >= self.followsubject,
+                    Message.subject < self.followsubject + u"\uFFFD",
+                    Message.corp == self.corp_name,
+                    Message.kill == False
+                )
+                for mes in meslist:
+                    comblist = mes.refmemlist
+                    for e in comblist:
+                        if e.combkind == u"所有":
+                            e2 = e.refmem.key
+                            if e2 not in memlist:
+                                memlist.append(e2)
+
+            # bkID で物件検索
+            if self.bkID:
+                meslist = bklistutl.getmeslistbybkID(self.corp_name, self.branch_name, self.bkID)
+                if len(memlist):
+                    reslist = []
+                    for mes in meslist:
+                        m = messageManager.messageManager.getmemlist(mes, u"所有")
+                        for e in m:
+                            e2 = e.refmem.key
+                            if e2 in memlist:
+                                if e2 not in reslist:
+                                    reslist.append(e2)
+                    memlist = reslist
+                else:
+                    for mes in meslist:
+                        m = messageManager.messageManager.getmemlist(mes, u"所有")
+                        for e in m:
+                            e2 = e.refmem.key
+                            if e2 not in memlist:
+                                memlist.append(e2)
+
+            # rireki で履歴検索
+            if self.rireki:
+                mes = messageManager.messageManager.getmesbyID(self.corp_name, self.rireki)
+                if mes:
+                    meslist = mes.refmes
+                    if len(memlist):
+                        reslist = []
+                        for mes in meslist:
+                            m = messageManager.messageManager.getmemlist(mes, u"所有")
+                            for e in m:
+                                e2 = e.refmem.key
+                                if e2 in memlist:
+                                    if e2 not in reslist:
+                                        reslist.append(e2)
+                        memlist = reslist
+                    else:
+                        for mes in meslist:
+                            m = messageManager.messageManager.getmemlist(mes, u"所有")
+                            for e in m:
+                                e2 = e.refmem.key
+                                if e2 not in memlist:
+                                    memlist.append(e2)
+
+            # フィルター条件でメンバー検索
+            if (self.service or self.status or self.seiyaku or
+                self.tourokunengappiL or self.tourokunengappiU or
+                (self.filter and self.filtervalue)):
+                query = member.query(member.CorpOrg_key_name == self.corp_name)
+                if self.service:
+                    query = query.filter(member.service == self.service)
+                if self.status:
+                    query = query.filter(member.status == self.status)
+                if self.seiyaku:
+                    query = query.filter(member.seiyaku == self.seiyaku)
+                if self.tourokunengappiL:
+                    query = query.filter(member.tourokunengappi >= self.tourokunengappiL)
+                if self.tourokunengappiU:
+                    query = query.filter(member.tourokunengappi <= self.tourokunengappiU)
+                if self.filter and self.filtervalue:
+                    filtervalue1 = self._parse_filter_value(self.filtervalue)
+                    # 動的フィルターは NDB では直接サポートされないため、後処理が必要
+
+                if len(memlist):
+                    reslist = []
+                    for e in query.iter(keys_only=True):
+                        if e in memlist:
+                            if e not in reslist:
+                                reslist.append(e)
+                    memlist = reslist
+                else:
+                    for e in query.iter(keys_only=True):
+                        if e not in memlist:
+                            memlist.append(e)
+
+            # キーからメンバーオブジェクトを取得
+            memlist = ndb.get_multi(memlist)
+            memlist = [m for m in memlist if m is not None]
+
+            if self.submit == u"メール送信" or self.submit == u"リスト保存":
+                mv = mailvalidation()
+                for mem in memlist:
+                    if mem.tanto:
+                        if mem.mail:
+                            if not mv.chk(mem.mail):
+                                msgkey2 = messageManager.messageManager.post(
+                                    corp=self.corp_name, sub=u"メールアドレスチェック",
+                                    body=u"パターンがマッチしない警告を受けました。このユーザーのメールアドレスをチェックしてください。",
+                                    done=False, memfrom=mem.memberID, kindname=u"アドレスチェック",
+                                    combkind=u"所有", msgkey=None,
+                                    commentto=self._get_message(self.msgkey), mailto=None
+                                )
+                                rep += u"アドレス不正チェック:" + mem.memberID + " :" + mem.mail + u"\n"
+
+                            # Cloud Tasks でメール送信タスクを作成
+                            self.create_cloud_task(
+                                '/tasks/mailsendback',
+                                {
+                                    "corp_name": self.corp_name,
+                                    "branch_name": self.branch_name,
+                                    "bkID": self.bkID,
+                                    "followsubject": self.followsubject,
+                                    "rireki": str(self.rireki) if self.rireki else "",
+                                    "service": self.service,
+                                    "status": self.status,
+                                    "seiyaku": self.seiyaku,
+                                    "tourokunengappiL": self.tmpl_val["tourokunengappiL"],
+                                    "tourokunengappiU": self.tmpl_val["tourokunengappiU"],
+                                    "filter": self.filter,
+                                    "filtervalue": self.filtervalue,
+                                    "htmlmail": self.htmlmail,
+                                    "com": self.submit,
+                                    "msg": str(self.msg) if self.msg else "",
+                                    "subject": self.tmpl_val['subject'],
+                                    "body": self.tmpl_val['body'],
+                                    "msID": self.msID,
+                                    "media": self.media,
+                                    "msgkey": str(self.msgkey),
+                                    "memberID": mem.memberID,
+                                    "memsitename": mem.sitename or ""
+                                }
+                            )
+                        else:
+                            rep += u"アドレス未設定チェック:" + mem.memberID + u"\n"
+                    else:
+                        rep += u"担当未設定チェック:" + mem.memberID + u"\n"
+
+                if rep:
+                    msgkey = messageManager.messageManager.post(
+                        corp=self.corp_name, sub=u"メールアドレスチェック結果", body=rep,
+                        done=False, memfrom=ADMIN_SYSTEM_ID, kindname=u"メールアドレスチェック",
+                        combkind=u"所有", msgkey=None, mailto=None
+                    )
+
+            if self.submit == u"はがき" or self.submit == u"タックシール":
+                self.tmpl_val["memlist"] = memlist
+                if self.submit == u"はがき":
+                    path = 'templates/HAGAKI.html'
+                elif self.submit == u"タックシール":
+                    path = 'templates/ATENA.html'
+                try:
+                    with open(path, 'r', encoding='utf-8') as f:
+                        return render_template_string(f.read(), **self.tmpl_val)
+                except FileNotFoundError:
+                    return f"Template not found: {path}", 404
+
+            return "OK", 200
+
+        except Exception as e:
+            import traceback
+            mailbody = u"エラーが発生したため一部のメールが送信できませんでした\n%s\nその他のエラー\n%s" % (str(e), rep)
+            sub = u'タスクキューエラー　未確認システムエラー'
+            msgkey2 = messageManager.messageManager.post(
+                corp=self.corp_name, sub=sub, body=mailbody,
+                done=False, memfrom=ADMIN_SYSTEM_ID, kindname=u"顧客リストエラー",
+                combkind=u"所有", msgkey=None, mailto=None
+            )
+            raise
+
+    def _get_message(self, msgkey):
+        """メッセージキーからMessageオブジェクトを取得"""
+        if not msgkey:
+            return None
+        try:
+            return ndb.Key(Message, int(msgkey)).get()
+        except:
+            return None
+
+    def _parse_filter_value(self, filtervalue):
+        """フィルター値をパース"""
+        if filtervalue == "true":
+            return True
+        elif filtervalue == "false":
+            return False
+        elif filtervalue == "none":
+            return None
+        elif filtervalue.isdigit():
+            return float(filtervalue)
+        elif self.gettime(filtervalue):
+            return self.gettime(filtervalue)
+        return filtervalue
+
+    def create_cloud_task(self, url, params):
+        """Create a Cloud Tasks task"""
+        try:
+            project = config.PROJECT_ID
+            queue = config.TASK_QUEUE
+            location = config.TASK_LOCATION
+
+            client = tasks_v2.CloudTasksClient()
+            parent = client.queue_path(project, location, queue)
+
+            task = {
+                'http_request': {
+                    'http_method': tasks_v2.HttpMethod.POST,
+                    'url': BASE_URL + url,
+                    'headers': {'Content-Type': 'application/x-www-form-urlencoded'},
+                }
+            }
+
+            import urllib.parse
+            task['http_request']['body'] = urllib.parse.urlencode(params).encode()
+
+            response = client.create_task(request={'parent': parent, 'task': task})
+        except Exception as e:
+            print(f"Error creating cloud task: {e}")

@@ -61,11 +61,11 @@ from application.addresslist import addresslist_route
 from application.show import show_route
 from application.mailinglist import mailinglist_route
 from application.uploadaddressset import addresssetupload_route
-# from application.memberSearchandMail import memberSearchandMail, memberSearchandMailback, mailsendback  # TODO: Flask migration incomplete
+from application.memberSearchandMail import memberSearchandMail, memberSearchandMailback, mailsendback
 from application.bksearchutl import filterWorker, filterWorker2
 # from application.cron import cron_jobs_route
 # from application.sendmsg import sendmsg_route
-# from application.email_receiver import mail_handler_route  # /_ah/mail/* は廃止、IMAP ポーリング方式に移行
+from application.email_receiver import mail_handler_route
 # from application.matching import (
 #     matching_route, matching_worker_route, matching_task_route,
 #     send_mail_task_route, send_mail_worker_route
@@ -120,24 +120,25 @@ def uploadaddressset():
     """Address set upload handler"""
     return addresssetupload_route()
 
-# TODO: memberSearchandMail Flask migration incomplete
-# @app.route('/membersearch', methods=['GET', 'POST'])
-# def member_search():
-#     """Member search and mail handler"""
-#     handler = memberSearchandMail()
-#     return handler.post()
-#
-# @app.route('/membersearchback', methods=['GET', 'POST'])
-# def member_search_back():
-#     """Member search back handler"""
-#     handler = memberSearchandMailback()
-#     return handler.post()
-#
-# @app.route('/mailsendback', methods=['GET', 'POST'])
-# def mail_send_back():
-#     """Mail send back handler"""
-#     handler = mailsendback()
-#     return handler.post()
+@test_bp.route('/membersearch', methods=['GET', 'POST'])
+def member_search():
+    """Member search and mail handler"""
+    handler = memberSearchandMail()
+    return handler.post()
+
+@test_bp.route('/membersearchback', methods=['GET', 'POST'])
+@test_bp.route('/tasks/mailinglistsend', methods=['GET', 'POST'])
+def member_search_back():
+    """Member search back handler (also handles /tasks/mailinglistsend)"""
+    handler = memberSearchandMailback()
+    return handler.post()
+
+@test_bp.route('/mailsendback', methods=['GET', 'POST'])
+@test_bp.route('/tasks/mailsendback', methods=['GET', 'POST'])
+def mail_send_back():
+    """Mail send back handler"""
+    handler = mailsendback()
+    return handler.post()
 
 @test_bp.route('/tasks/filterWorker', methods=['POST'])
 def filter_worker():
@@ -150,6 +151,11 @@ def filter_worker2():
     """Filter worker2 task handler"""
     handler = filterWorker2()
     return handler.post()
+
+@test_bp.route('/tasks/check-incoming-mail', methods=['GET', 'POST'])
+def check_incoming_mail():
+    """IMAP mail polling handler (called by Cron)"""
+    return mail_handler_route()
 
 @test_bp.route('/duplicationcheck', methods=['GET', 'POST'])
 def duplicationcheck():
