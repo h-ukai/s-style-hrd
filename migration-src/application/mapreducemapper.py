@@ -12,9 +12,12 @@ Migration Strategy:
 - Each mapper function becomes a background task handler
 - Execution triggered via cron jobs (cron.yaml) or Cloud Tasks API
 - No changes to core business logic, only wrapper changes
+
+GCS移行完了: Blobstore → GCS
 """
 
 from google.cloud import ndb
+from application import gcs_utils
 import os.path
 
 
@@ -66,82 +69,54 @@ def bloburlschange(entity):
     """
     Mapper: Update blob URLs and generate thumbnails
 
-    Migration Note: BLOBSTORE → GCS MIGRATION IN PROGRESS
+    GCS移行完了: gcs_utils で URL 生成
 
     Original Purpose:
     - Migrate blob references during BlobStore→CloudStorage transition
     - Generate thumbnail URLs for image files
     - Store HTML snippets for display
 
-    Current Status: PARTIALLY IMPLEMENTED
-    - The BlobMigrationRecord.get_new_blob_key() function is GAE legacy and removed
-    - GCS migration implementation is deferred (see GAE_MIGRATION_STATE.md)
-
-    Workaround for now:
-    1. Check if entity.blobKey exists
-    2. Skip migration record lookup (not available in Python 3.11)
-    3. Regenerate GCS URLs if needed (future work)
-
     Args:
         entity: ndb.Model entity (bkdata or blob model)
-
-    TODO:
-    - Implement GCS signed URL generation using google.cloud.storage
-    - Update thumbnail generation for GCS objects
-    - Test image rendering with various formats (JPEG, PNG, GIF, BMP)
     """
     if entity.blobKey:
-        # Legacy: blobstore.BlobMigrationRecord.get_new_blob_key(entity.blobKey)
-        # This function is specific to GAE BlobStore and not available in Cloud Storage
-
-        # TODO: Implement GCS migration
-        # blobkey = get_gcs_migrated_key(entity.blobKey)  # Future implementation
-
-        # For now, attempt to use existing blobKey as-is (may be already migrated to GCS)
         blobkey = entity.blobKey
 
         if blobkey:
-            # Extract file extension
+            # 拡張子を取得
             if not hasattr(entity, 'fileextension') or not entity.fileextension:
                 root, ext = os.path.splitext(entity.filename if hasattr(entity, 'filename') else '')
                 ext = ext.lower().strip(".")
                 entity.fileextension = ext
 
-            # Generate thumbnail and display URLs for image files
+            # 画像ファイルの場合
             if entity.fileextension in ["jpeg", "jpg", "png", "gif", "bmp"]:
                 try:
-                    # REVIEW-L2: SECURITY - XSS Risk: HTML generation without proper escaping
-                    # Recommendation: Use HTML escaping or template rendering for user-provided data
-                    # TODO: Replace with GCS signed URL generation
-                    # entity.thumbnailurl = generate_gcs_signed_url(entity.blobKey, size=100)
-                    # entity.bloburl = generate_gcs_signed_url(entity.blobKey)
+                    # GCS移行完了: 統一エンドポイントを使用
+                    entity.thumbnailurl = gcs_utils.get_thumbnail_url(entity.blobKey)
+                    entity.bloburl = gcs_utils.get_blob_url(entity.blobKey)
 
-                    # REVIEW-L2: Placeholder URLs contain hardcoded 'YOUR_BUCKET' - needs environment config
-                    # Placeholder: Use direct GCS URL (requires public bucket or signed URLs)
-                    entity.thumbnailurl = f"https://storage.googleapis.com/YOUR_BUCKET/{entity.blobKey}"
-                    entity.bloburl = f"https://storage.googleapis.com/YOUR_BUCKET/{entity.blobKey}"
-
-                    # Generate HTML snippet for display
-                    entity.html = f'<a href="{entity.bloburl}" target="_blank">'
-                    if hasattr(entity, 'thumbnailurl') and entity.thumbnailurl:
-                        entity.html += f'<img src="{entity.thumbnailurl}"'
-                        if hasattr(entity, 'title') and entity.title:
-                            # REVIEW-L2: Potential XSS - entity.title should be HTML-escaped
-                            entity.html += f' title="{entity.title}"'
-                        if hasattr(entity, 'content') and entity.content:
-                            # REVIEW-L2: Potential XSS - entity.content should be HTML-escaped
-                            entity.html += f':{entity.content}'
-                        entity.html += ' />'
-                    entity.html += '</a>'
+                    # HTML スニペットを生成（XSSエスケープ済み）
+                    title = entity.title if hasattr(entity, 'title') else None
+                    content = entity.content if hasattr(entity, 'content') else None
+                    entity.html = gcs_utils.generate_html(
+                        entity.blobKey,
+                        entity.filename if hasattr(entity, 'filename') else '',
+                        title=title,
+                        content=content,
+                        is_image=True
+                    )
                 except Exception as e:
                     print(f"Error generating image URLs: {e}")
                     entity.html = "error"
             else:
-                # Non-image files: Direct download link
-                # REVIEW-L2: Potential XSS - filename not escaped in HTML attribute
-                # TODO: Replace with GCS signed URL
-                entity.bloburl = f"/serve/{entity.blobKey}/{entity.filename if hasattr(entity, 'filename') else ''}"
-                entity.html = f'<a href="{entity.bloburl}">{entity.filename if hasattr(entity, "filename") else "Download"}</a>'
+                # 非画像ファイル: GCS移行完了
+                entity.bloburl = gcs_utils.get_blob_url(entity.blobKey)
+                entity.html = gcs_utils.generate_html(
+                    entity.blobKey,
+                    entity.filename if hasattr(entity, 'filename') else 'Download',
+                    is_image=False
+                )
 
             entity.put()
 

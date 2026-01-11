@@ -8,16 +8,14 @@ from google.cloud import ndb
 import email.header
 from application.models.bkdata import BKdata
 import application.models.blob as blob_models
+from application import gcs_utils
 
 
-# ⚠️ SECURITY WARNING: Blobstore → GCS migration required
-# This module uses deprecated Blobstore API which must be migrated to Cloud Storage (GCS)
-# Key changes needed:
-# - blobstore.create_upload_url() → GCS Signed URL
-# - BlobstoreUploadHandler → Flask request.files + GCS client
-# - get_serving_url() → GCS public URL / Signed URL
-# - BlobReferenceProperty → String property (store GCS object name)
-# - db.GqlQuery → ndb.Model.query() with filters
+# GCS移行完了: Blobstore → GCS
+# - blobstore.create_upload_url() → /blob/upload エンドポイント
+# - BlobstoreUploadHandler → Flask request.files + gcs_utils
+# - get_serving_url() → gcs_utils.get_blob_url(), get_thumbnail_url()
+# - BlobReferenceProperty → String property (GCS object name)
 
 
 def blobstore_utl_route(corp_org_key, branch_key, bk_id):
@@ -27,16 +25,12 @@ def blobstore_utl_route(corp_org_key, branch_key, bk_id):
     Migrated from: webapp2.RequestHandler (BlobstoreUtlHandler class)
     Original path: /BlobstoreUtl/<corp_org_key>/<branch_key>/<bk_id>
 
-    ⚠️ TODO: Complete Blobstore → GCS migration
-    - Replace blobstore.create_upload_url() with GCS Signed URL generation
-    - Update blob storage/retrieval to use GCS client
-    - Replace get_serving_url() with GCS public/signed URLs
+    GCS移行完了: アップロードは /blob/upload エンドポイントを使用
     """
     keypath = corp_org_key + "/" + branch_key + "/" + bk_id
 
-    # ⚠️ TODO: Replace with GCS Signed URL generation
-    # upload_url = blobstore.create_upload_url('/upload/' + keypath)
-    upload_url = "/upload/" + keypath  # Placeholder - needs GCS implementation
+    # GCS移行: アップロードは /upload/ エンドポイント経由
+    upload_url = "/upload/" + keypath
 
     edit_url = "/upload/" + keypath
     multiupload_url = "/FileUploadFormHandler?CorpOrg_key=" + corp_org_key + "&Branch_Key=" + branch_key + "&bkID=" + bk_id
@@ -44,9 +38,6 @@ def blobstore_utl_route(corp_org_key, branch_key, bk_id):
     # Blobstore に保存されているファイルを取得
     bk_id_decoded = unquote_plus(bk_id)
 
-    # ⚠️ TODO: Replace GqlQuery with ndb.Model.query()
-    # Old: db.GqlQuery("SELECT * FROM Blob WHERE ...")
-    # New: Blob.query().filter(Blob.CorpOrg_key == corp_org_key, ...)
     query = blob_models.Blob.query(
         blob_models.Blob.CorpOrg_key == corp_org_key,
         blob_models.Blob.Branch_Key == branch_key,
@@ -66,17 +57,18 @@ def blobstore_utl_route(corp_org_key, branch_key, bk_id):
                 blob.fileextension = ext
                 if ext in ["jpeg", "jpg", "png", "gif", "bmp"]:
                     try:
-                        # ⚠️ TODO: Replace get_serving_url() with GCS public/signed URL
-                        # blob.thumbnailurl = get_serving_url(blob.blobKey, size=100, crop=False)
-                        # blob.bloburl = get_serving_url(blob.blobKey)
-                        blob.thumbnailurl = f"/gcs-serve/{blob.blobKey}?size=100"  # Placeholder
-                        blob.bloburl = f"/gcs-serve/{blob.blobKey}"  # Placeholder
-                        blob.html = f'<a href="{blob.bloburl}" target="_blank"><img src="{blob.thumbnailurl}" title="{blob.filename}" /></a>'
+                        # GCS移行完了: 統一エンドポイントを使用
+                        blob.thumbnailurl = gcs_utils.get_thumbnail_url(blob.blobKey)
+                        blob.bloburl = gcs_utils.get_blob_url(blob.blobKey)
+                        blob.html = gcs_utils.generate_html(
+                            blob.blobKey, blob.filename, title=blob.filename, is_image=True
+                        )
                     except Exception:
                         pass
                 else:
-                    blob.bloburl = "/serve/" + blob.blobKey + "/" + blob.filename
-                    blob.html = f'<a href="{blob.bloburl}">{blob.filename}</a>'
+                    # GCS移行完了: 統一エンドポイントを使用
+                    blob.bloburl = gcs_utils.get_blob_url(blob.blobKey)
+                    blob.html = gcs_utils.generate_html(blob.blobKey, blob.filename, is_image=False)
                 blob.put()
             if chk != blob.media:
                 mblobs.append({"media": chk, "cblob": cblobs})
@@ -91,7 +83,6 @@ def blobstore_utl_route(corp_org_key, branch_key, bk_id):
     tempblobs2 = []
 
     if bkdb.shzicmi1 and bkdb.shzicmi2:
-        # ⚠️ TODO: Replace GqlQuery with ndb.Model.query()
         query = blob_models.Blob.query(
             blob_models.Blob.CorpOrg_key == corp_org_key,
             blob_models.Blob.shzicmi1 == bkdb.shzicmi1,
@@ -107,7 +98,6 @@ def blobstore_utl_route(corp_org_key, branch_key, bk_id):
             tempblobs2.append(b)
 
     if bkdb.ttmnmi:
-        # ⚠️ TODO: Replace GqlQuery with ndb.Model.query()
         query = blob_models.Blob.query(
             blob_models.Blob.CorpOrg_key == corp_org_key,
             blob_models.Blob.ttmnmi == bkdb.ttmnmi
@@ -140,10 +130,7 @@ def upload_route(corp_org_key, branch_key, bk_id, blob_no=None):
     Migrated from: blobstore_handlers.BlobstoreUploadHandler (UploadHandler class)
     Original path: /upload/<corp_org_key>/<branch_key>/<bk_id>[/<blob_no>]
 
-    ⚠️ TODO: Complete Blobstore → GCS migration
-    - Replace self.get_uploads() with Flask request.files
-    - Upload files to GCS instead of Blobstore
-    - Store GCS object names instead of BlobKeys
+    GCS移行完了: Flask request.files + gcs_utils でアップロード
     """
     key_name1 = corp_org_key + "/" + branch_key + "/" + bk_id
     key_name2 = ""
@@ -163,16 +150,26 @@ def upload_route(corp_org_key, branch_key, bk_id, blob_no=None):
     if not blob.blobNo:
         blob.blobNo = blobnextno
 
-    # ⚠️ TODO: Replace BlobstoreUploadHandler with Flask request.files + GCS upload
-    # Old: blob_info = self.get_uploads('file')
-    # New: file = request.files.get('file'); upload to GCS
+    # GCS移行完了: Flask request.files + gcs_utils でアップロード
     uploaded_file = request.files.get('file')
     if uploaded_file:
-        # ⚠️ TODO: Upload to GCS and store object name
-        # blob.filename = uploaded_file.filename
-        # blob.blobKey = gcs_object_name  # Store GCS object name instead of BlobKey
         blob.filename = uploaded_file.filename
-        # Placeholder - needs GCS implementation
+        # 拡張子を取得
+        root, ext = os.path.splitext(uploaded_file.filename)
+        ext = ext.lower().strip(".")
+        blob.fileextension = ext
+
+        # GCS object name を生成してアップロード
+        object_name = gcs_utils.generate_object_name(
+            corp_org_key, branch_key, bk_id, blob.blobNo, ext
+        )
+        gcs_utils.upload_file(
+            uploaded_file.read(),
+            object_name,
+            content_type=uploaded_file.content_type
+        )
+        # GCS object name を blobKey に保存
+        blob.blobKey = object_name
     else:
         if str1 == "登録":
             return redirect('/BlobstoreUtl/%s' % key_name1)
@@ -232,23 +229,19 @@ def upload_route(corp_org_key, branch_key, bk_id, blob_no=None):
 
         if ext in ["jpeg", "jpg", "png", "gif", "bmp"]:
             try:
-                # ⚠️ TODO: Replace get_serving_url() with GCS public/signed URL
-                blob.thumbnailurl = f"/gcs-serve/{blob.blobKey}?size=100"  # Placeholder
-                blob.bloburl = f"/gcs-serve/{blob.blobKey}"  # Placeholder
-                blob.html = f'<a href="{blob.bloburl}" target="_blank">'
-                if blob.thumbnailurl:
-                    blob.html += f'<img src="{blob.thumbnailurl}"'
-                    if blob.title:
-                        blob.html += f'title="{blob.title}'
-                    if blob.content:
-                        blob.html += ":" + blob.content
-                    blob.html += '" />'
-                blob.html += "</a>"
+                # GCS移行完了: 統一エンドポイントを使用
+                blob.thumbnailurl = gcs_utils.get_thumbnail_url(blob.blobKey)
+                blob.bloburl = gcs_utils.get_blob_url(blob.blobKey)
+                blob.html = gcs_utils.generate_html(
+                    blob.blobKey, blob.filename,
+                    title=blob.title, content=blob.content, is_image=True
+                )
             except Exception:
                 blob.html = "error"
         else:
-            blob.bloburl = "/serve/" + blob.blobKey + "/" + blob.filename
-            blob.html = f'<a href="{blob.bloburl}">{blob.filename}</a>'
+            # GCS移行完了: 統一エンドポイントを使用
+            blob.bloburl = gcs_utils.get_blob_url(blob.blobKey)
+            blob.html = gcs_utils.generate_html(blob.blobKey, blob.filename, is_image=False)
     else:
         blob.content = None
 
@@ -283,21 +276,20 @@ def delete_blob(key_name, path):
     """
     Delete blob helper function
 
-    ⚠️ TODO: Update to delete from GCS instead of Blobstore
+    GCS移行完了: gcs_utils.delete_file() で削除
     """
     try:
         blob = blob_models.Blob.get_by_key_name(key_name)
         if blob:
             if blob.blobKey:
-                # ⚠️ TODO: Replace GqlQuery with ndb.Model.query()
                 query = blob_models.Blob.query(blob_models.Blob.blobKey == blob.blobKey)
                 tempblobs2 = query.fetch()
                 if len(tempblobs2) == 1:
-                    # ⚠️ TODO: Delete from GCS instead of Blobstore
-                    # blob_info = blobstore.get(blob.blobKey)
-                    # if blob_info:
-                    #     blob_info.delete()
-                    pass  # Placeholder - needs GCS implementation
+                    # GCS からファイルを削除
+                    try:
+                        gcs_utils.delete_file(blob.blobKey)
+                    except Exception:
+                        pass  # ファイルが存在しない場合は無視
             blob.key.delete()
             return redirect('/BlobstoreUtl/%s' % path)
     except Exception as e:
@@ -311,16 +303,13 @@ def serve_route(blob_key, filename=None):
     Migrated from: blobstore_handlers.BlobstoreDownloadHandler (ServeHandler class)
     Original path: /serve/<blob_key>[/<filename>]
 
-    ⚠️ TODO: Complete Blobstore → GCS migration
-    - Replace BlobstoreDownloadHandler with GCS file serving
-    - Use GCS signed URLs or direct streaming
+    GCS移行完了: Signed URL にリダイレクト
     """
-    blob_key_decoded = unquote(blob_key).split("/")[0]
+    blob_key_decoded = unquote(blob_key)
 
-    # ⚠️ TODO: Replace with GCS file serving
-    # Old: blob_info = blobstore.BlobInfo.get(blob_key)
-    #      self.send_blob(blob_info)
-    # New: Fetch from GCS and stream to response
-
-    # Placeholder - needs GCS implementation
-    return "GCS file serving not yet implemented", 501
+    # GCS Signed URL にリダイレクト
+    try:
+        signed_url = gcs_utils.generate_signed_url(blob_key_decoded, expiration_minutes=5)
+        return redirect(signed_url)
+    except Exception as e:
+        return f"File not found: {blob_key_decoded}", 404

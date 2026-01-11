@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import Flask, g, Blueprint
+from flask import Flask, g, Blueprint, redirect, request, jsonify
 import os
 from google.cloud import ndb
+from application import gcs_utils
 
 # NDB クライアント初期化
 ndb_client = ndb.Client()
@@ -283,6 +284,109 @@ def index():
 # - self.redirect() → return redirect()
 # - /_ah/mail/* ルートは廃止されました（IMAP ポーリング方式に移行）
 # - 各モジュールのマイグレーション完了後、ここにルート登録を追加してください
+
+# =============================================================================
+# GCS Blob ルート（Blobstore → GCS 移行）
+# =============================================================================
+
+@test_bp.route('/blob/<path:object_name>/thumbnail')
+def blob_thumbnail(object_name):
+    """
+    サムネイル取得
+    Signed URL にリダイレクト
+    """
+    try:
+        signed_url = gcs_utils.generate_signed_url(object_name, expiration_minutes=5)
+        return redirect(signed_url)
+    except Exception as e:
+        return f"File not found: {object_name}", 404
+
+
+@test_bp.route('/blob/<path:object_name>', methods=['GET'])
+def blob_download(object_name):
+    """
+    ファイルダウンロード
+    Signed URL にリダイレクト
+    """
+    try:
+        signed_url = gcs_utils.generate_signed_url(object_name, expiration_minutes=5)
+        return redirect(signed_url)
+    except Exception as e:
+        return f"File not found: {object_name}", 404
+
+
+@test_bp.route('/blob/upload', methods=['POST'])
+def blob_upload():
+    """
+    ファイルアップロード
+    """
+    uploaded_file = request.files.get('file')
+    if not uploaded_file:
+        return jsonify({"error": "No file"}), 400
+
+    corp_org_key = request.form.get('CorpOrg_key')
+    branch_key = request.form.get('Branch_Key')
+    bk_id = request.form.get('bkID')
+    blob_no = request.form.get('blobNo')
+
+    if not all([corp_org_key, branch_key, bk_id, blob_no]):
+        return jsonify({"error": "Missing required parameters"}), 400
+
+    # 拡張子取得
+    _, ext = os.path.splitext(uploaded_file.filename)
+
+    # object name 生成
+    object_name = gcs_utils.generate_object_name(
+        corp_org_key, branch_key, bk_id, int(blob_no), ext
+    )
+
+    # GCS にアップロード
+    gcs_utils.upload_file(
+        uploaded_file.read(),
+        object_name,
+        content_type=uploaded_file.content_type
+    )
+
+    return jsonify({"object_name": object_name}), 200
+
+
+@test_bp.route('/blob/upload-url', methods=['GET'])
+def blob_upload_url():
+    """
+    クライアント直接アップロード用の Signed URL を生成
+    """
+    corp_org_key = request.args.get('CorpOrg_key')
+    branch_key = request.args.get('Branch_Key')
+    bk_id = request.args.get('bkID')
+    blob_no = request.args.get('blobNo')
+    ext = request.args.get('extension', 'bin')
+    content_type = request.args.get('content_type', 'application/octet-stream')
+
+    if not all([corp_org_key, branch_key, bk_id, blob_no]):
+        return jsonify({"error": "Missing required parameters"}), 400
+
+    object_name = gcs_utils.generate_object_name(
+        corp_org_key, branch_key, bk_id, int(blob_no), ext
+    )
+
+    signed_url = gcs_utils.generate_upload_signed_url(
+        object_name, content_type, expiration_minutes=15
+    )
+
+    return jsonify({"upload_url": signed_url, "object_name": object_name}), 200
+
+
+@test_bp.route('/blob/<path:object_name>', methods=['DELETE'])
+def blob_delete(object_name):
+    """
+    ファイル削除
+    """
+    try:
+        gcs_utils.delete_file(object_name)
+        return jsonify({"deleted": object_name}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 404
+
 
 # Blueprint を登録（dispatch.yaml が /test/* を test-service にルーティングするため）
 app.register_blueprint(test_bp)

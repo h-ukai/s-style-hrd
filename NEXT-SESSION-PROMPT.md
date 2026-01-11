@@ -20,6 +20,118 @@
 
 ---
 
+## ✅ 完了: TODO-02 Blobstore → GCS 移行（ステップ2-1〜2-3）
+
+### 完了日時: 2026-01-10
+
+### ステップ2-1: 前準備 ✅ 完了
+
+| 項目 | 状態 | 詳細 |
+|------|------|------|
+| GCSバケット作成 | ✅ 完了 | `s-style-hrd-blobs` |
+| requirements.txt | ✅ 完了 | `google-cloud-storage==2.14.0` |
+| app.yaml 環境変数 | ✅ 完了 | `GCS_BUCKET_NAME: s-style-hrd-blobs` |
+| CORS設定 | ✅ 完了 | 適用済み |
+| IAM API有効化 | ✅ 完了 | `iamcredentials.googleapis.com` |
+| IAM権限付与 | ✅ 完了 | `roles/iam.serviceAccountTokenCreator`
+
+**CORS設定内容**:
+```json
+[
+  {
+    "origin": ["https://s-style-hrd.appspot.com"],
+    "method": ["GET", "PUT", "POST", "DELETE"],
+    "responseHeader": ["Content-Type"],
+    "maxAgeSeconds": 3600
+  }
+]
+```
+
+#### ステップ2-2: コード実装 ✅ 完了
+
+##### 2-2-1: gcs_utils.py 新規作成 ✅
+- **パス**: `migration-src/application/gcs_utils.py`
+- **実装済み関数**: `get_gcs_client()`, `generate_object_name()`, `upload_file()`, `download_file()`, `delete_file()`, `generate_signed_url()`, `get_blob_url()`, `get_thumbnail_url()`, `generate_html()`, `is_image_file()`
+
+##### 2-2-2: main.py に Blob ルート追加 ✅
+- **実装済みエンドポイント**:
+  - `GET /test/blob/<path:object_name>` - ファイルダウンロード
+  - `GET /test/blob/<path:object_name>/thumbnail` - サムネイル取得
+  - `POST /test/blob/upload` - ファイルアップロード
+  - `GET /test/blob/upload-url` - アップロード用Signed URL取得
+  - `DELETE /test/blob/<path:object_name>` - ファイル削除
+
+##### 2-2-3: blobstoreutl.py 修正 ✅
+##### 2-2-4: handler.py 修正 ✅
+##### 2-2-5: mapreducemapper.py 修正 ✅
+
+#### ステップ2-3: テスト ✅ 完了
+
+| テスト項目 | 結果 |
+|-----------|------|
+| アップロードURL生成 API | ✅ 成功 |
+| ファイルアップロード | ✅ 成功 |
+| ファイルダウンロード | ✅ 成功（Signed URLリダイレクト） |
+| ファイル削除 | ✅ 成功 |
+| 削除後のアクセス | ✅ 404（正常） |
+
+**デプロイバージョン**: `test-20260110-gcs2`
+
+---
+
+## ✅ 完了: TODO-02 ステップ2-4: データ移行ツール作成
+
+### 完了日時: 2026-01-10
+
+### ツール概要
+- **パス**: `migration-src/tools/migrate_blob_to_gcs.py`
+- **機能**: 日付範囲を指定して Blob データを GCS に移行
+
+### 使用方法
+
+```bash
+# dry-run（移行対象の確認のみ）
+python tools/migrate_blob_to_gcs.py --dry-run
+
+# 日付範囲を指定して移行（yyyy/mm/dd形式）
+python tools/migrate_blob_to_gcs.py --from 2024/01/01 --to 2024/12/31
+
+# 特定日以降のデータを移行
+python tools/migrate_blob_to_gcs.py --from 2024/06/01
+
+# 特定日以前のデータを移行
+python tools/migrate_blob_to_gcs.py --to 2024/06/01
+
+# ファイル転送も行う（Blobstore内部GCS→新GCSバケット）
+python tools/migrate_blob_to_gcs.py --from 2024/01/01 --transfer-files
+
+# 処理件数を指定
+python tools/migrate_blob_to_gcs.py --from 2024/01/01 --limit 500
+```
+
+### 日付指定の仕様
+- `--from`: 指定日の 00:00:00 **以降**のデータが対象
+- `--to`: 指定日の 00:00:00 **より前**のデータが対象（指定日は含まない）
+- 片方のみの指定も可能
+
+### オプション一覧
+
+| オプション | 説明 |
+|-----------|------|
+| `--from DATE` | 開始日（yyyy/mm/dd形式） |
+| `--to DATE` | 終了日（yyyy/mm/dd形式） |
+| `--dry-run` | ドライランモード（実際の更新なし） |
+| `--transfer-files` | ファイル転送も行う |
+| `--limit N` | 処理件数上限（0で無制限） |
+| `--batch-size N` | 一度に取得する件数（デフォルト: 100） |
+
+### 注意事項
+- GAE 上で実行する必要あり（NDB が必要）
+- `--transfer-files` なしの場合はメタデータのみ更新
+- 既に移行済みのデータはスキップされる
+
+---
+
 ## 完了済みTODO
 
 ### TODO-01: 環境変数・シークレット設定 ✅ 完了
@@ -59,16 +171,55 @@
 
 | ステップ | 状態 | 内容 |
 |----------|------|------|
-| 2-1 前準備 | ✅ | GCSバケット作成済み、CORS設定必要 |
-| 2-2 コード実装 | ❌ | gcs_utils.py作成、各ファイル修正 |
-| 2-3 テスト | ❌ | アップロード/表示/削除テスト |
-| 2-4 移行ツール | ❌ | データ移行ツール作成 |
-| 2-5 本番移行 | ❌ | 既存データの移行 |
+| 2-1 前準備 | ✅ 完了 | GCSバケット、CORS、IAM設定 |
+| 2-2 コード実装 | ✅ 完了 | gcs_utils.py作成、各ファイル修正 |
+| 2-3 テスト | ✅ 完了 | アップロード/表示/削除テスト |
+| 2-4 移行ツール | ✅ 完了 | `tools/migrate_blob_to_gcs.py` |
+| 2-5 本番移行 | ❌ 未実施 | 既存データの移行実行 |
 
-**影響ファイル**:
-- `application/blobstoreutl.py` - 12箇所のTODO
-- `application/handler.py` - 10箇所のTODO
-- `application/mapreducemapper.py` - 5箇所のTODO
+#### Blobデータ ボリューム確認結果（2026-01-10）
+
+| 区分 | 件数 | 割合 |
+|------|------|------|
+| **全体** | 29,876 件 | 100% |
+| 2023/01/01 より前 | 29,610 件 | 99.1% |
+| 2023/01/01 以降 | 266 件 | 0.9% |
+
+#### ✅ 2023年以降のデータ GCSコピー完了（2026-01-11）
+
+| 項目 | 結果 |
+|------|------|
+| 処理対象 | 266件 |
+| 成功 | 264件 |
+| スキップ | 2件（blobKeyなし） |
+| エラー | 0件 |
+| **合計サイズ** | **155.4 MB** |
+| 平均サイズ | 602.8 KB |
+
+**コピー先**: `gs://s-style-hrd-blobs/`
+
+**注意**: Datastoreは未更新（blobKeyは元のまま）。ファイルコピーのみ完了。
+
+#### 残り作業: 2023年より前のデータ
+
+| 項目 | 値 |
+|------|------|
+| 件数 | 29,610件 |
+| 推定サイズ | 約17.4 GB |
+| 推定所要時間 | 15〜25時間（HTTP経由） |
+
+**高速化オプション**: Python 2.7側に移行ハンドラを追加すればGAE内部で処理可能
+
+#### 移行ツールドキュメント
+- **パス**: `migration-src/tools/README.md`
+
+**修正済みファイル**:
+- `application/gcs_utils.py` - 新規作成（GCSユーティリティ）
+- `application/blobstoreutl.py` - GCS対応完了
+- `application/handler.py` - GCS対応完了
+- `application/mapreducemapper.py` - GCS対応完了
+- `main.py` - Blobルート追加
+- `tools/migrate_blob_to_gcs.py` - データ移行ツール
 
 ---
 

@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["https://s-style-hrd.appspot.com"],
+    "method": ["GET", "PUT", "POST", "DELETE"],
+    "responseHeader": ["Content-Type"],
+    "maxAgeSeconds": 3600
+  }
+]

@@ -6,22 +6,21 @@ from flask import request, redirect, render_template, Response
 from urllib.parse import unquote_plus
 import application.models.blob as blob_models
 from application.models.bkdata import BKdata
+from application import gcs_utils
 import email.header
 import os
 
 
-# ⚠️ SECURITY WARNING: Blobstore → GCS migration required
-# This module uses deprecated Blobstore API which must be migrated to Cloud Storage (GCS)
-# See blobstoreutl.py for detailed migration notes
+# GCS移行完了: Blobstore → GCS
 
 
 class FileInfo(ndb.Model):
     """
     FileInfo model (migrated from db.Model)
 
-    ⚠️ TODO: Update BlobReferenceProperty → String property (store GCS object name)
+    GCS移行完了: blob フィールドは GCS object name を格納
     """
-    blob = ndb.StringProperty(required=True)  # Store GCS object name instead of BlobKey
+    blob = ndb.StringProperty(required=True)  # GCS object name を格納
     uploaded_by = ndb.StringProperty(required=True)  # Store user ID/email as string
     uploaded_at = ndb.DateTimeProperty(required=True, auto_now_add=True)
 
@@ -43,29 +42,37 @@ def file_upload_route():
     Migrated from: blobstore_handlers.BlobstoreUploadHandler (FileUploadHandler class)
     Original path: /FileUploadFormHandler/upload
 
-    ⚠️ TODO: Complete Blobstore → GCS migration
-    - Replace self.get_uploads() with Flask request.files
-    - Upload files to GCS instead of Blobstore
-    - Store GCS object names instead of BlobKeys
+    GCS移行完了: Flask request.files + gcs_utils でアップロード
     """
     uploaded_file = request.files.get('file')
     if not uploaded_file:
         return "No file uploaded", 404
 
-    # ⚠️ TODO: Upload to GCS and get object name
-    # Old: blob_info = self.get_uploads('file')[0]
-    #      blob_info = blobstore.BlobInfo.get(blob_info.key())
-    #      filename = blob_info.filename
-    # New: Upload to GCS, store object name
     filename = uploaded_file.filename
-    # Placeholder - needs GCS implementation
-    blobkey = "gcs-placeholder-key"  # TODO: Replace with GCS object name
-
     corp_org_key = request.form.get("CorpOrg_key")
     branch_key = request.form.get("Branch_Key")
     bk_id = request.form.get("bkID")
 
-    lobdbkey = setblobdb(blobkey, filename, corp_org_key, branch_key, bk_id)
+    # 拡張子を取得
+    _, ext = os.path.splitext(filename)
+    ext = ext.lower().strip(".")
+
+    # blobNo を取得
+    key_name1 = corp_org_key + "/" + branch_key + "/" + bk_id
+    blobno = blob_models.blobNo.get_or_insert(key_name1, blob_key_name=key_name1)
+    blobnextno = blobno.getNextNum()
+
+    # GCS object name を生成してアップロード
+    object_name = gcs_utils.generate_object_name(
+        corp_org_key, branch_key, bk_id, blobnextno, ext
+    )
+    gcs_utils.upload_file(
+        uploaded_file.read(),
+        object_name,
+        content_type=uploaded_file.content_type
+    )
+
+    lobdbkey = setblobdb(object_name, filename, corp_org_key, branch_key, bk_id)
     return redirect("/FileUploadFormHandler/file/%d/success" % lobdbkey)
 
 
@@ -73,7 +80,7 @@ def setblobdb(blobkey, filename, corp_org_key, branch_key, bk_id):
     """
     Helper function to save blob metadata to Datastore
 
-    ⚠️ TODO: Update to store GCS object names instead of BlobKeys
+    GCS移行完了: blobkey は GCS object name
     """
     key_name1 = corp_org_key + "/" + branch_key + "/" + bk_id
     bkdb = ndb.Key(BKdata, key_name1).get()
@@ -113,18 +120,19 @@ def delete_file_route():
     """
     Delete file route handler
 
-    ⚠️ TODO: Update to delete from GCS instead of Blobstore
+    GCS移行完了: gcs_utils.delete_file() で削除
     """
     key = request.args.get('key') or request.form.get('key')
 
-    # ⚠️ TODO: Replace GqlQuery with ndb.Model.query()
     query = blob_models.Blob.query(blob_models.Blob.blobKey == key)
     blobs = query.fetch()
 
     if len(blobs) == 1:
-        # ⚠️ TODO: Delete from GCS instead of Blobstore
-        # Old: blobstore.delete(key or '')
-        pass  # Placeholder - needs GCS implementation
+        # GCS からファイルを削除
+        try:
+            gcs_utils.delete_file(key)
+        except Exception:
+            pass  # ファイルが存在しない場合は無視
 
     for blob in blobs:
         blob.key.delete()
@@ -170,20 +178,18 @@ def file_download_route(file_id):
     Migrated from: blobstore_handlers.BlobstoreDownloadHandler (FileDownloadHandler class)
     Original path: /FileUploadFormHandler/file/<file_id>/download
 
-    ⚠️ TODO: Complete Blobstore → GCS migration
-    - Replace BlobstoreDownloadHandler with GCS file serving
-    - Use GCS signed URLs or direct streaming
+    GCS移行完了: Signed URL にリダイレクト
     """
     file_info = FileInfo.get_by_id(int(file_id))
     if not file_info or not file_info.blob:
         return "File not found", 404
 
-    # ⚠️ TODO: Replace with GCS file serving
-    # Old: self.send_blob(file_info.blob, save_as=True)
-    # New: Fetch from GCS and stream to response with Content-Disposition header
-
-    # Placeholder - needs GCS implementation
-    return "GCS file download not yet implemented", 501
+    # GCS Signed URL にリダイレクト
+    try:
+        signed_url = gcs_utils.generate_signed_url(file_info.blob, expiration_minutes=5)
+        return redirect(signed_url)
+    except Exception as e:
+        return f"File not found: {file_info.blob}", 404
 
 
 def generate_upload_url_route():
@@ -193,8 +199,7 @@ def generate_upload_url_route():
     Migrated from: webapp2.RequestHandler (GenerateUploadUrlHandler class)
     Original path: /FileUploadFormHandler/generate_upload_url
 
-    ⚠️ TODO: Complete Blobstore → GCS migration
-    - Replace blobstore.create_upload_url() with GCS Signed URL generation
+    GCS移行完了: アップロードはサーバー経由で行うため、エンドポイントURLを返す
     """
     urlstr = ""
     corp_org_key = request.args.get("CorpOrg_key")
@@ -204,10 +209,8 @@ def generate_upload_url_route():
     bk_id = request.args.get("bkID")
     urlstr += "&bkID=" + bk_id
 
-    # ⚠️ TODO: Replace with GCS Signed URL generation
-    # Old: blobstore.create_upload_url('/FileUploadFormHandler/upload?' + urlstr)
-    # New: Generate GCS Signed URL for upload
-    upload_url = '/FileUploadFormHandler/upload?' + urlstr  # Placeholder
+    # GCS移行: サーバー経由でアップロードするため、エンドポイントURLを返す
+    upload_url = '/FileUploadFormHandler/upload?' + urlstr
 
     response = Response(upload_url)
     response.headers['Content-Type'] = 'text/plain'
