@@ -289,6 +289,18 @@ def index():
 # GCS Blob ルート（Blobstore → GCS 移行）
 # =============================================================================
 
+@test_bp.route('/serve/<path:blob_key>')
+def serve_legacy(blob_key):
+    """
+    レガシーBlobstore互換ルート
+
+    未移行データ（bloburl="/serve/..."）をPython 2.7アプリにリダイレクト
+    移行完了後も残しておいて問題なし（使われなくなるだけ）
+    """
+    # Python 2.7アプリにリダイレクト
+    return redirect(f"https://s-style-hrd.appspot.com/serve/{blob_key}")
+
+
 @test_bp.route('/blob/<path:object_name>/thumbnail')
 def blob_thumbnail(object_name):
     """

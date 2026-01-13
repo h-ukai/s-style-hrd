@@ -35,6 +35,14 @@ from application.models.blob import Blob
 from application import gcs_utils
 
 
+# BKdataモデル（dataSourceフィルタ用）
+class BKdata(ndb.Model):
+    dataSource = ndb.StringProperty()
+    bkID = ndb.StringProperty()
+    nyrykkisyID = ndb.StringProperty()
+    nyrykstnID = ndb.StringProperty()
+
+
 # Python 2.7 アプリのベースURL
 BASE_URL = os.environ.get('PY27_BASE_URL', 'https://s-style-hrd.appspot.com')
 
@@ -186,11 +194,32 @@ def download_and_upload(blob_key, object_name, filename, dry_run=False):
         return False, 0, f"Error: {str(e)}"
 
 
-def copy_blobs(start_date, end_date, limit, dry_run=False, batch_size=100):
+def get_manual_bkids():
+    """dataSourceが空のbkIDリストを取得"""
+    print("dataSourceが空のbkIDを取得中...")
+    bkids = set()
+    query = BKdata.query(BKdata.dataSource == None)
+    for bkdata in query.fetch():
+        if bkdata.bkID:
+            bkids.add(bkdata.bkID)
+    print(f"  → {len(bkids)} 件のbkIDを取得")
+    return bkids
+
+
+def copy_blobs(start_date, end_date, limit, dry_run=False, batch_size=100,
+               corp=None, branch=None, manual_only=False):
     """Blob ファイルをコピー（Datastoreは更新しない）"""
     stats = CopyStats()
     cursor = None
     processed = 0
+
+    # 手動入力データのみの場合、対象bkIDを取得
+    manual_bkids = None
+    if manual_only:
+        manual_bkids = get_manual_bkids()
+        if not manual_bkids:
+            print("dataSourceが空のデータがありません")
+            return stats
 
     print("=" * 60)
     print("Blobstore → GCS ファイルコピー（HTTP経由）")
@@ -198,6 +227,11 @@ def copy_blobs(start_date, end_date, limit, dry_run=False, batch_size=100):
     print(f"モード: {'DRY-RUN（実際のコピーなし）' if dry_run else 'コピー実行'}")
     print(f"ソースURL: {BASE_URL}/serve/{{blobKey}}")
     print(f"宛先バケット: {gcs_utils.BUCKET_NAME}")
+    if manual_only:
+        print(f"フィルタ: 手動入力データのみ（dataSource空）")
+    if corp or branch:
+        print(f"会社: {corp if corp else '指定なし'}")
+        print(f"支店: {branch if branch else '指定なし'}")
     print(f"開始日: {start_date.strftime('%Y/%m/%d') if start_date else '指定なし'}")
     print(f"終了日: {end_date.strftime('%Y/%m/%d') if end_date else '指定なし'}")
     print(f"処理上限: {limit if limit > 0 else '無制限'}")
@@ -208,6 +242,10 @@ def copy_blobs(start_date, end_date, limit, dry_run=False, batch_size=100):
     while True:
         # クエリ作成
         query = Blob.query()
+        if corp:
+            query = query.filter(Blob.CorpOrg_key == corp)
+        if branch:
+            query = query.filter(Blob.Branch_Key == branch)
         if start_date:
             query = query.filter(Blob.date >= start_date)
         if end_date:
@@ -238,6 +276,10 @@ def copy_blobs(start_date, end_date, limit, dry_run=False, batch_size=100):
             if not blob.blobKey:
                 stats.add_skipped(f"No blobKey: key={blob.key}")
                 continue
+
+            # 手動入力データのみの場合、対象外のbkIDはスキップ
+            if manual_bkids is not None and blob.bkID not in manual_bkids:
+                continue  # サイレントスキップ（対象外）
 
             # 既に移行済みの場合はスキップ
             if is_already_migrated(blob):
@@ -319,7 +361,27 @@ def main():
 
   # 最初の10件だけコピー
   python tools/download_and_upload_blob.py --from 2023/01/01 --limit 10
+
+  # 特定の会社・支店のデータをすべてコピー（日付指定なし）
+  python tools/download_and_upload_blob.py --corp s-style --branch hon
+
+  # 会社・支店 + 日付範囲の組み合わせ
+  python tools/download_and_upload_blob.py --corp s-style --branch hon --from 2020/01/01
+
+  # 手動入力データのみ（dataSourceが空）をコピー
+  python tools/download_and_upload_blob.py --manual-only
+
+  # 手動入力データのサイズ確認（dry-run）
+  python tools/download_and_upload_blob.py --manual-only --dry-run --limit 10
 """
+    )
+    parser.add_argument(
+        '--corp', dest='corp', metavar='NAME',
+        help='会社名（CorpOrg_key）でフィルタ（例: s-style）'
+    )
+    parser.add_argument(
+        '--branch', dest='branch', metavar='NAME',
+        help='支店名（Branch_Key）でフィルタ（例: hon）'
     )
     parser.add_argument(
         '--from', dest='start_date', metavar='DATE',
@@ -341,6 +403,10 @@ def main():
         '--batch-size', type=int, default=100,
         help='一度に取得する件数（デフォルト: 100）'
     )
+    parser.add_argument(
+        '--manual-only', action='store_true',
+        help='手動入力データのみ（dataSourceが空のbkdataに紐づくBlob）'
+    )
 
     args = parser.parse_args()
 
@@ -357,7 +423,9 @@ def main():
     with client.context():
         stats = copy_blobs(
             start_date, end_date,
-            args.limit, args.dry_run, args.batch_size
+            args.limit, args.dry_run, args.batch_size,
+            corp=args.corp, branch=args.branch,
+            manual_only=args.manual_only
         )
 
     # エラーがあった場合は非ゼロで終了

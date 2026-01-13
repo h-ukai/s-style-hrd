@@ -104,11 +104,51 @@ python tools/download_and_upload_blob.py --to 2023/01/01
 
 | オプション | 説明 | デフォルト |
 |-----------|------|-----------|
+| `--corp NAME` | 会社名（CorpOrg_key）でフィルタ | なし |
+| `--branch NAME` | 支店名（Branch_Key）でフィルタ | なし |
 | `--from DATE` | 開始日（yyyy/mm/dd、この日の00:00:00以降） | なし |
 | `--to DATE` | 終了日（yyyy/mm/dd、この日の00:00:00より前） | なし |
 | `--dry-run` | ドライラン（ダウンロードのみ、アップロードなし） | false |
 | `--limit N` | 処理件数上限（0で無制限） | 0 |
 | `--batch-size N` | 一度に取得する件数 | 100 |
+| `--manual-only` | 手動入力データのみ（dataSource空） | false |
+
+### 会社・支店指定の例
+
+```bash
+# s-style/hon のデータをすべてコピー（日付関係なく）
+python tools/download_and_upload_blob.py --corp s-style --branch hon
+
+# s-style/hon で 2020年以降のデータをコピー
+python tools/download_and_upload_blob.py --corp s-style --branch hon --from 2020/01/01
+
+# 件数確認（dry-run）
+python tools/download_and_upload_blob.py --corp s-style --branch hon --dry-run --limit 10
+```
+
+### 手動入力データのみ移行
+
+bkdataの `dataSource` が空のデータ（手動入力されたデータ）のみを移行できます。
+
+```bash
+# 手動入力データのサイズ確認（dry-run）
+python tools/download_and_upload_blob.py --manual-only --dry-run --limit 10
+
+# 手動入力データをすべてコピー
+python tools/download_and_upload_blob.py --manual-only
+
+# 手動入力データ + 日付範囲の組み合わせ
+python tools/download_and_upload_blob.py --manual-only --from 2020/01/01
+```
+
+#### dataSourceの分布（2026-01-11調査）
+
+| dataSource | 件数 | 割合 |
+|------------|------|------|
+| レインズ | 44,525件 | 96.9% |
+| 空（手動入力） | 860件 | 1.9% |
+| その他 | 575件 | 1.3% |
+| **合計** | 45,960件 | 100% |
 
 ### 出力ファイルの場所
 ```
@@ -133,6 +173,16 @@ gs://s-style-hrd-blobs/{CorpOrg_key}/{Branch_Key}/{bkID}/{blobNo}.{ext}
 - Datastoreの `blobKey` フィールドを新しいGCS object nameに**上書き**します
 - 元のBlobstore参照が失われます
 - 本番移行の最終段階でのみ使用してください
+- **`--transfer-files` オプションは使用しないでください**（下記参照）
+
+### ❌ `--transfer-files` オプションについて
+このオプションはBlobstoreの内部GCS（`gs://s-style-hrd.appspot.com/encoded_gs_key/...`）への直接アクセスを試みますが、**動作しません**。
+
+理由:
+- Blobstoreの内部GCSパス形式が不明
+- `AMIfv...` 形式のblobKeyからGCSパスを特定できない
+
+代わりに `download_and_upload_blob.py` でHTTP経由のコピーを先に実行してください。
 
 ### 特徴
 - Datastoreを**更新する**
@@ -162,6 +212,38 @@ python tools/migrate_blob_to_gcs.py --from 2023/01/01 --transfer-files
 | `--transfer-files` | ファイル転送も行う | false |
 | `--limit N` | 処理件数上限 | 0 |
 | `--batch-size N` | バッチサイズ | 100 |
+
+---
+
+## ハイブリッド運用（移行期間中）
+
+### 問題
+部分的に移行すると、2種類のURLが混在します：
+- 移行済み: `bloburl = "/blob/s-style/hon/53043/1.pdf"`
+- 未移行: `bloburl = "/serve/AMIfv94..."`
+
+### 解決策
+Flask側に `/serve/` ルートを追加し、Python 2.7アプリにリダイレクト：
+
+```python
+# main.py に追加済み
+@test_bp.route('/serve/<path:blob_key>')
+def serve_legacy(blob_key):
+    return redirect(f"https://s-style-hrd.appspot.com/serve/{blob_key}")
+```
+
+### ルート対応表
+
+| URL形式 | 処理 | 対象データ |
+|---------|------|-----------|
+| `/test/blob/<path>` | GCS Signed URL | 移行済み |
+| `/test/serve/<blobKey>` | Python 2.7へリダイレクト | 未移行 |
+
+### フロントエンド変更
+**不要** - `Blob.bloburl` フィールドの値をそのまま使用している場合、移行ツールが `bloburl` を更新するため変更不要。
+
+### 移行完了後
+`/serve/` ルートは使われなくなりますが、残しておいても無害です。
 
 ---
 
@@ -251,6 +333,33 @@ C:\Python311\python.exe tools/download_and_upload_blob.py --from 2023/01/01
 | 2023/01/01 以降 | 266件 | 155.4 MB（実測） |
 | 2023/01/01 より前 | 29,610件 | 約17.4 GB（推定） |
 | 全体 | 29,876件 | 約17.5 GB |
+
+---
+
+## データ整合性について
+
+### コピー元とコピー先の同一性
+
+`download_and_upload_blob.py` によるコピーは以下の理由で**同一性が保証**されます：
+
+1. **完全なバイナリ転送**: HTTP GETでファイル全体をダウンロード
+2. **変換なし**: ダウンロードしたバイト列をそのままGCSにアップロード
+3. **Content-Type保持**: 元のContent-Typeヘッダーを維持
+
+### 検証方法
+
+コピー後にファイルサイズで検証可能：
+```bash
+# GCS側のファイルサイズ確認
+gsutil ls -l gs://s-style-hrd-blobs/s-style/hon/53043/1.pdf
+
+# 元ファイルのサイズ確認（HTTP HEAD）
+curl -I https://s-style-hrd.appspot.com/serve/{blobKey}
+```
+
+### 注意事項
+- 元のBlobstoreファイルは削除されない（両方に存在する状態）
+- Datastore更新前であれば、いつでもやり直し可能
 
 ---
 
